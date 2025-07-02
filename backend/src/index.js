@@ -8,6 +8,7 @@ import { connectDB } from "./lib/db.js";
 import authRouter from "./routes/auth.route.js";
 import noteRouter from "./routes/note.route.js";
 import columnRouter from "./routes/column.route.js";
+import projectRouter from "./routes/project.route.js";
 
 dotenv.config();
 const app = express();
@@ -24,6 +25,7 @@ app.use(cors({
 app.use("/api/auth", authRouter);
 app.use("/api/notes", noteRouter);
 app.use("/api/columns", columnRouter);
+app.use("/api/projects", projectRouter);
 app.get('/api/test', (req, res) => res.json({ ok: true }));
 
 app.listen(5001, () => {

@@ -13,17 +13,19 @@ function normalizeColumns(columns) {
       ? col.cards.map((card) => ({ ...card, id: card._id || card.id }))
       : [],
     id: col._id || col.id,
+    project: col.project || (col.projectId ? col.projectId : undefined),
   }));
 }
 
 export const useColumnStore = create((set, get) => ({
   columns: [],
   isLoading: false,
+  selectedProjectId: null,
 
-  fetchColumns: async () => {
-    set({ isLoading: true });
+  fetchColumns: async (projectId) => {
+    set({ isLoading: true, selectedProjectId: projectId });
     try {
-      const res = await API.get("/columns");
+      const res = await API.get(projectId ? `/columns?projectId=${projectId}` : "/columns");
       set({ columns: normalizeColumns(res.data) });
     } finally {
       set({ isLoading: false });
@@ -31,8 +33,11 @@ export const useColumnStore = create((set, get) => ({
   },
 
   createColumn: async (title) => {
-    const res = await API.post("/columns", { title });
-    set((state) => ({ columns: normalizeColumns([...state.columns, res.data]) }));
+    const state = get();
+    const projectId = state.selectedProjectId;
+    if (!projectId) throw new Error('No project selected');
+    const res = await API.post("/columns", { title, projectId });
+    set((state) => ({ columns: normalizeColumns([...state.columns, res.data]).filter(col => col.project == projectId) }));
   },
 
   updateColumn: async (id, title) => {
@@ -55,16 +60,49 @@ export const useColumnStore = create((set, get) => ({
 
   addCard: async (columnId, card) => {
     await API.post(`/columns/${columnId}/cards`, card);
-    await get().fetchColumns();
+    // After adding card, only fetch columns for current project
+    await get().fetchColumns(get().selectedProjectId);
   },
 
   updateCard: async (columnId, cardId, card) => {
     await API.put(`/columns/${columnId}/cards/${cardId}`, card);
-    await get().fetchColumns();
+    await get().fetchColumns(get().selectedProjectId);
   },
 
   deleteCard: async (columnId, cardId) => {
     await API.delete(`/columns/${columnId}/cards/${cardId}`);
-    await get().fetchColumns();
+    await get().fetchColumns(get().selectedProjectId);
+  },
+
+  moveCard: async (cardToMove, fromColumnIndex, toColumnIndex) => {
+    const state = get();
+    const columns = state.columns;
+    const fromColumn = columns[fromColumnIndex];
+    const toColumn = columns[toColumnIndex];
+    if (!fromColumn || !toColumn) return;
+    const cardId = cardToMove._id || cardToMove.id;
+    set((s) => {
+      const newColumns = [...s.columns];
+      newColumns[fromColumnIndex] = {
+        ...newColumns[fromColumnIndex],
+        cards: newColumns[fromColumnIndex].cards.filter(
+          (card) => card.id !== cardToMove.id && card._id !== cardToMove._id
+        ),
+      };
+      newColumns[toColumnIndex] = {
+        ...newColumns[toColumnIndex],
+        cards: [...newColumns[toColumnIndex].cards, { ...cardToMove }],
+      };
+      // Always filter columns by selectedProjectId after move
+      return { columns: newColumns.filter(col => col.project == s.selectedProjectId) };
+    });
+    try {
+      if (cardId) {
+        await get().deleteCard(fromColumn.id || fromColumn._id, cardId);
+        await get().addCard(toColumn.id || toColumn._id, { ...cardToMove });
+      }
+    } catch (err) {
+      await get().fetchColumns(get().selectedProjectId);
+    }
   },
 }));

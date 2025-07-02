@@ -2,10 +2,12 @@ import Column from '../models/column.model.js';
 
 export const createColumn = async (req, res) => {
   try {
-    const { title } = req.body;
+    const { title, projectId } = req.body;
+    if (!projectId) return res.status(400).json({ error: 'Missing projectId' });
     const column = await Column.create({
       title,
       user: req.user._id,
+      project: projectId,
       cards: [],
     });
     res.status(201).json(column);
@@ -16,7 +18,10 @@ export const createColumn = async (req, res) => {
 
 export const getColumns = async (req, res) => {
   try {
-    const columns = await Column.find({ user: req.user._id });
+    const { projectId } = req.query;
+    const filter = { user: req.user._id };
+    if (projectId) filter.project = projectId;
+    const columns = await Column.find(filter);
     res.status(200).json(columns);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -56,8 +61,9 @@ export const deleteColumn = async (req, res) => {
 
 export const addCard = async (req, res) => {
   try {
-    const { id } = req.params; 
+    const { id } = req.params;
     const { member, tasks } = req.body;
+    // Không cần projectId ở đây vì column đã gắn project từ đầu, chỉ cần kiểm tra user và column id
     const column = await Column.findOneAndUpdate(
       { _id: id, user: req.user._id },
       { $push: { cards: { member, tasks } } },
