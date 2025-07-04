@@ -7,6 +7,7 @@ import CardModal from "../components/CardModal";
 import Sidebar from "../components/Sidebar";
 import ProjectModal from "../components/ProjectModal";
 import ProjectSettingsPage from "./ProjectSettingsPage";
+import NotesPage from "./NotesPage";
 import { useColumnStore } from "../store/useColumnStore";
 import { useProjectStore } from "../store/useProjectStore";
 
@@ -23,11 +24,7 @@ const App = () => {
     columns,
     moveCard,
   } = useColumnStore();
-  const {
-    projects,
-    fetchProjects,
-    createProject,
-  } = useProjectStore();
+  const { projects, fetchProjects, createProject } = useProjectStore();
 
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [activePage, setActivePage] = useState("tasks");
@@ -101,11 +98,15 @@ const App = () => {
   };
 
   const pageList = [
-    { key: 'tasks', label: 'Tasks' },
-    { key: 'calendar', label: 'Calendar' },
-    { key: 'notes', label: 'Notes' },
-    { key: 'members', label: 'Members' },
-    { key: 'settings', label: 'Settings', icon: <Settings size={16} className="inline mr-1" /> },
+    { key: "tasks", label: "Tasks" },
+    { key: "calendar", label: "Calendar" },
+    { key: "notes", label: "Notes" },
+    { key: "members", label: "Members" },
+    {
+      key: "settings",
+      label: "Settings",
+      icon: <Settings size={16} className="inline mr-1" />,
+    },
   ];
 
   return (
@@ -134,11 +135,15 @@ const App = () => {
               }
             `}
           </style>
-          <div className="flex gap-4 mb-6">
+          <div className="flex gap-4 mb-6 justify-center items-center">
             {pageList.map((page) => (
               <button
                 key={page.key}
-                className={`capitalize px-4 py-2 rounded ${activePage === page.key ? 'bg-gray-500 text-white' : 'bg-gray-200 text-gray-700' } hover:bg-gray-300 transition-colors`}
+                className={`capitalize px-6 py-2 rounded-lg text-lg font-medium shadow transition-colors duration-150 ${
+                  activePage === page.key
+                    ? "bg-gray-500 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
                 onClick={() => setActivePage(page.key)}
               >
                 {page.icon} {page.label}
@@ -148,7 +153,9 @@ const App = () => {
           {activePage === "tasks" && (
             <div className="flex flex-col md:flex-row gap-6 justify-center items-start">
               {isLoading && columns.length === 0 ? (
-                <div className="text-center text-gray-400 text-2xl mt-20 w-full">Loading...</div>
+                <div className="text-center text-gray-400 text-2xl mt-20 w-full">
+                  Loading...
+                </div>
               ) : columns.length === 0 ? (
                 <div className="text-center text-gray-400 text-2xl mt-20 w-full">
                   Create your schedule now
@@ -170,7 +177,7 @@ const App = () => {
               )}
               <button
                 onClick={handleAddColumn}
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded-full w-12 h-12 flex items-center justify-center text-xl shadow-lg transition-all duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+                className="bg-gray-500 hover:bg-gray-600 text-white rounded-full w-12 h-12 flex items-center justify-center text-xl shadow-lg transition-all duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75"
                 aria-label="Add new column"
               >
                 <Plus size={24} />
@@ -178,16 +185,23 @@ const App = () => {
             </div>
           )}
           {activePage === "calendar" && (
-            <div className="text-center text-gray-400 text-2xl mt-20 w-full">Calendar page (coming soon)</div>
+            <div className="text-center text-gray-400 text-2xl mt-20 w-full">
+              Calendar page (coming soon)
+            </div>
           )}
           {activePage === "notes" && (
-            <div className="text-center text-gray-400 text-2xl mt-20 w-full">Notes page (coming soon)</div>
+            <NotesPage selectedProjectId={selectedProjectId} />
           )}
           {activePage === "members" && (
-            <div className="text-center text-gray-400 text-2xl mt-20 w-full">Members page (coming soon)</div>
+            <div className="text-center text-gray-400 text-2xl mt-20 w-full">
+              Members page (coming soon)
+            </div>
           )}
           {activePage === "settings" && (
-            <ProjectSettingsPage selectedProjectId={selectedProjectId} onProjectDeleted={handleProjectDeleted} />
+            <ProjectSettingsPage
+              selectedProjectId={selectedProjectId}
+              onProjectDeleted={handleProjectDeleted}
+            />
           )}
           <CardModal
             isOpen={isModalOpen}

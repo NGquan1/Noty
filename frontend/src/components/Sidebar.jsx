@@ -31,7 +31,7 @@ const Sidebar = ({
         <div className="flex items-center justify-between mb-2">
           <span className="font-semibold">Projects</span>
           <button
-            className="bg-gray-500 hover:bg-gray-400 text-white rounded px-1 py-1 ml-2 rounded-full"
+            className="bg-gray-700 transition-all duration-200 ease-in-out transform hover:scale-110 hover:bg-gray-500 text-white rounded px-1 py-1 ml-2 rounded-md"
             onClick={() => setModalOpen(true)}
             aria-label="Add project"
           >

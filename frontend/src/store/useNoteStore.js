@@ -1,66 +1,37 @@
-import { create } from 'zustand';
-import { axiosInstance } from '../lib/axios';
+import { create } from "zustand";
+import axios from "axios";
 
-const useNoteStore = create((set) => ({
+const API = axios.create({
+  baseURL: "http://localhost:5001/api",
+  withCredentials: true,
+});
+
+export const useNoteStore = create((set, get) => ({
   notes: [],
   isLoading: false,
-  error: null,
 
-  fetchNotes: async () => {
+  fetchNotes: async (projectId) => {
     set({ isLoading: true });
     try {
-      const response = await axiosInstance.get('/notes');
-      set({ notes: response.data, isLoading: false });
-    } catch (error) {
-      set({ error: error.message, isLoading: false });
+      const res = await API.get("/notes", { params: { projectId } });
+      set({ notes: res.data });
+    } finally {
+      set({ isLoading: false });
     }
   },
 
   createNote: async (noteData) => {
-    set({ isLoading: true });
-    try {
-      const response = await axiosInstance.post('/notes', noteData);
-      set((state) => ({
-        notes: [...state.notes, response.data],
-        isLoading: false
-      }));
-      return response.data;
-    } catch (error) {
-      set({ error: error.message, isLoading: false });
-      throw error;
-    }
+    const res = await API.post("/notes", noteData);
+    set((state) => ({ notes: [...state.notes, res.data] }));
   },
 
-  updateNote: async (id, noteData) => {
-    set({ isLoading: true });
-    try {
-      const response = await axiosInstance.put(`/notes/${id}`, noteData);
-      set((state) => ({
-        notes: state.notes.map((note) =>
-          note._id === id ? response.data : note
-        ),
-        isLoading: false
-      }));
-      return response.data;
-    } catch (error) {
-      set({ error: error.message, isLoading: false });
-      throw error;
-    }
+  updateNote: async (noteId, updateData) => {
+    await API.put(`/notes/${noteId}`, updateData);
+    await get().fetchNotes(updateData.projectId);
   },
 
-  deleteNote: async (id) => {
-    set({ isLoading: true });
-    try {
-      await axiosInstance.delete(`/notes/${id}`);
-      set((state) => ({
-        notes: state.notes.filter((note) => note._id !== id),
-        isLoading: false
-      }));
-    } catch (error) {
-      set({ error: error.message, isLoading: false });
-      throw error;
-    }
+  deleteNote: async (noteId, projectId) => {
+    await API.delete(`/notes/${noteId}`);
+    await get().fetchNotes(projectId);
   },
 }));
-
-export default useNoteStore;

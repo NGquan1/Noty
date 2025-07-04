@@ -8,14 +8,14 @@ import ProjectSettingsPage from "./pages/ProjectSettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 import NotePage from "./pages/NotePage";
 
-import {Loader} from "lucide-react"
-import { useAuthStore } from './store/useAuthStore';
+import { Loader } from "lucide-react";
+import { useAuthStore } from "./store/useAuthStore";
 import Navbar from "./components/Navbar";
 import { useThemeStore } from "./store/useThemeStore";
 
 const App = () => {
-  const {authUser, checkAuth, isCheckingAuth} = useAuthStore();
-  const {theme} = useThemeStore();
+  const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const { theme } = useThemeStore();
 
   useEffect(() => {
     checkAuth();
@@ -31,7 +31,7 @@ const App = () => {
     );
 
   return (
-    <div data-theme = {theme}>
+    <div data-theme={theme}>
       <Navbar />
 
       <Routes>
@@ -52,10 +52,13 @@ const App = () => {
           path="/profile"
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
         />
-        <Route path="/notes" element={authUser ? <NotePage /> : <Navigate to="/login" />} />
+        <Route
+          path="/notes"
+          element={authUser ? <NotePage /> : <Navigate to="/login" />}
+        />
       </Routes>
     </div>
   );
-}
+};
 
-export default App
+export default App;

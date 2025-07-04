@@ -72,7 +72,7 @@ const CardModal = ({
         <div className="flex gap-3 mt-4 justify-end">
           <button
             type="submit"
-            className="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition-colors shadow-md"
+            className="bg-gray-700 text-white px-5 py-2 rounded-md hover:bg-gray-500 transition-colors shadow-md"
           >
             {initialCardData ? "Update" : "Save"}
           </button>
@@ -81,7 +81,7 @@ const CardModal = ({
             onClick={onClose}
             className="bg-gray-300 text-gray-800 px-5 py-2 rounded-md hover:bg-gray-400 transition-colors shadow-md"
           >
-            Hủy
+            Cancel
           </button>
         </div>
       </form>

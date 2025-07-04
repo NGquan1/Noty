@@ -30,7 +30,12 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this project and all its data?")) return;
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this project and all its data?"
+      )
+    )
+      return;
     setLoading(true);
     setError("");
     try {
@@ -58,7 +63,7 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
               disabled={loading}
             />
             <button
-              className="bg-blue-500 text-white px-3 py-1 rounded"
+              className="bg-gray-600 text-white px-3 py-1 rounded"
               onClick={handleRename}
               disabled={loading || !newName.trim()}
             >
@@ -90,7 +95,7 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
           onClick={handleDelete}
           disabled={loading}
         >
-            <Trash size={20}/>
+          <Trash size={20} />
           Delete Project
         </button>
       </div>

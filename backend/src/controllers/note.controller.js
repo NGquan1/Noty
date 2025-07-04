@@ -1,22 +1,31 @@
+import mongoose from 'mongoose';
 import Note from '../models/note.model.js';
 
 export const createNote = async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, projectId } = req.body;
+    if (!title || !projectId) {
+      return res.status(400).json({ error: 'Title and projectId are required.' });
+    }
     const note = await Note.create({
       title,
-      content,
+      content: content && content.trim() !== '' ? content : ' ',
       user: req.user._id,
+      projectId: new mongoose.Types.ObjectId(projectId),
     });
     res.status(201).json(note);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('Create note error:', error);
+    res.status(400).json({ error: error.message, stack: error.stack });
   }
 };
 
 export const getNotes = async (req, res) => {
   try {
-    const notes = await Note.find({ user: req.user._id }).sort({ createdAt: -1 });
+    const { projectId } = req.query;
+    const filter = { user: req.user._id };
+    if (projectId) filter.projectId = projectId;
+    const notes = await Note.find(filter).sort({ createdAt: -1 });
     res.status(200).json(notes);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -26,10 +35,10 @@ export const getNotes = async (req, res) => {
 export const updateNote = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, content } = req.body;
+    const { title, content, projectId } = req.body;
     const note = await Note.findOneAndUpdate(
       { _id: id, user: req.user._id },
-      { title, content },
+      { title, content, projectId },
       { new: true }
     );
     if (!note) {

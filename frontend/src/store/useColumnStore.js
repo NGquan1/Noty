@@ -25,7 +25,9 @@ export const useColumnStore = create((set, get) => ({
   fetchColumns: async (projectId) => {
     set({ isLoading: true, selectedProjectId: projectId });
     try {
-      const res = await API.get(projectId ? `/columns?projectId=${projectId}` : "/columns");
+      const res = await API.get(
+        projectId ? `/columns?projectId=${projectId}` : "/columns"
+      );
       set({ columns: normalizeColumns(res.data) });
     } finally {
       set({ isLoading: false });
@@ -35,18 +37,20 @@ export const useColumnStore = create((set, get) => ({
   createColumn: async (title) => {
     const state = get();
     const projectId = state.selectedProjectId;
-    if (!projectId) throw new Error('No project selected');
+    if (!projectId) throw new Error("No project selected");
     const res = await API.post("/columns", { title, projectId });
-    set((state) => ({ columns: normalizeColumns([...state.columns, res.data]).filter(col => col.project == projectId) }));
+    set((state) => ({
+      columns: normalizeColumns([...state.columns, res.data]).filter(
+        (col) => col.project == projectId
+      ),
+    }));
   },
 
   updateColumn: async (id, title) => {
     await API.put(`/columns/${id}`, { title });
     set((state) => ({
       columns: state.columns.map((col) =>
-        (col.id === id || col._id === id)
-          ? { ...col, title }
-          : col
+        col.id === id || col._id === id ? { ...col, title } : col
       ),
     }));
   },
@@ -60,7 +64,6 @@ export const useColumnStore = create((set, get) => ({
 
   addCard: async (columnId, card) => {
     await API.post(`/columns/${columnId}/cards`, card);
-    // After adding card, only fetch columns for current project
     await get().fetchColumns(get().selectedProjectId);
   },
 
@@ -93,8 +96,9 @@ export const useColumnStore = create((set, get) => ({
         ...newColumns[toColumnIndex],
         cards: [...newColumns[toColumnIndex].cards, { ...cardToMove }],
       };
-      // Always filter columns by selectedProjectId after move
-      return { columns: newColumns.filter(col => col.project == s.selectedProjectId) };
+      return {
+        columns: newColumns.filter((col) => col.project == s.selectedProjectId),
+      };
     });
     try {
       if (cardId) {
