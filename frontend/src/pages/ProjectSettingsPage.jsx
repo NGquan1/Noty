@@ -4,8 +4,7 @@ import { Trash } from "lucide-react";
 
 const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
   const { projects, renameProject, deleteProject } = useProjectStore();
-  const [isRenaming, setIsRenaming] = useState(false);
-  const [newName, setNewName] = useState("");
+    const [newName, setNewName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -22,7 +21,6 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
     setError("");
     try {
       await renameProject(selectedProjectId, newName);
-      setIsRenaming(false);
     } catch (err) {
       setError("Rename failed");
     }
@@ -54,40 +52,21 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
       <h2 className="text-2xl font-bold mb-4">Project Settings</h2>
       <div className="mb-6">
         <label className="block font-semibold mb-2">Project Name</label>
-        {isRenaming ? (
-          <div className="flex gap-2">
-            <input
-              className="border px-2 py-1 rounded w-full"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              disabled={loading}
-            />
-            <button
-              className="bg-gray-600 text-white px-3 py-1 rounded"
-              onClick={handleRename}
-              disabled={loading || !newName.trim()}
-            >
-              Save
-            </button>
-            <button
-              className="bg-gray-300 px-3 py-1 rounded"
-              onClick={() => setIsRenaming(false)}
-              disabled={loading}
-            >
-              Cancel
-            </button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2">
-            <span className="text-lg">{project.name}</span>
-            <button
-              className="bg-gray-200 px-2 py-1 rounded text-sm"
-              onClick={() => setIsRenaming(true)}
-            >
-              Rename
-            </button>
-          </div>
-        )}
+        <div className="flex flex-col items-start gap-3 w-full max-w-xs">
+          <input
+            className="border border-gray-200 px-3 py-2 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 text-base bg-white"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            disabled={loading}
+          />
+          <button
+            className="bg-blue-400 text-white px-5 py-2 rounded-lg font-semibold transition-colors duration-150 hover:bg-blue-500 disabled:opacity-60"
+            onClick={handleRename}
+            disabled={loading || !newName.trim()}
+          >
+            Save
+          </button>
+        </div>
       </div>
       <div className="mb-6">
         <button

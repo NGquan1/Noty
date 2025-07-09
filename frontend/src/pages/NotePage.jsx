@@ -8,6 +8,7 @@ import Sidebar from "../components/Sidebar";
 import ProjectModal from "../components/ProjectModal";
 import ProjectSettingsPage from "./ProjectSettingsPage";
 import NotesPage from "./NotesPage";
+import CalendarPage from "./CalendarPage";
 import { useColumnStore } from "../store/useColumnStore";
 import { useProjectStore } from "../store/useProjectStore";
 
@@ -184,11 +185,7 @@ const App = () => {
               </button>
             </div>
           )}
-          {activePage === "calendar" && (
-            <div className="text-center text-gray-400 text-2xl mt-20 w-full">
-              Calendar page (coming soon)
-            </div>
-          )}
+          {activePage === "calendar" && <CalendarPage />}
           {activePage === "notes" && (
             <NotesPage selectedProjectId={selectedProjectId} />
           )}

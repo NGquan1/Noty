@@ -63,7 +63,6 @@ export const addCard = async (req, res) => {
   try {
     const { id } = req.params;
     const { member, tasks } = req.body;
-    // Không cần projectId ở đây vì column đã gắn project từ đầu, chỉ cần kiểm tra user và column id
     const column = await Column.findOneAndUpdate(
       { _id: id, user: req.user._id },
       { $push: { cards: { member, tasks } } },
