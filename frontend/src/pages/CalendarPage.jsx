@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { useCalendarStore } from "../store/useCalendarStore";
+import { AnimatePresence, motion } from "framer-motion";
+import EventModalForm from "../components/EventModal";
 
 const CalendarPage = () => {
   const {
@@ -23,17 +25,17 @@ const CalendarPage = () => {
   } = useCalendarStore();
 
   useEffect(() => {
-    loadEvents(); // load events khi vào trang
+    loadEvents();
   }, []);
 
   const handleDayClick = (date) => {
     setSelectedDate(date);
-    setSelectedEvent(null); // bỏ chọn event khi chọn ngày khác
+    setSelectedEvent(null);
     setModalOpen(true);
   };
 
   const handleFormChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
+    const { name, value, type, files } = e.target;
     if (type === "checkbox") {
       updateEventForm("shareWith", value);
     } else if (type === "file") {
@@ -52,10 +54,9 @@ const CalendarPage = () => {
   const events = tasks[selectedKey] || [];
 
   return (
-    <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-8 mt-10 border border-gray-200">
+    <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-8 mt-5 border border-gray-200">
       <h2 className="text-3xl font-bold mb-6 text-center">Event Calendar</h2>
       <div className="flex flex-col md:flex-row gap-8">
-        {/* Calendar */}
         <div className="flex-1 min-w-[700px]">
           <Calendar
             value={selectedDate}
@@ -106,7 +107,6 @@ const CalendarPage = () => {
           />
         </div>
 
-        {/* Event List + Detail */}
         <div className="flex-1 max-w-xs mx-auto">
           <h3 className="font-semibold mb-2 text-gray-700">
             Events for {formatDate(selectedDate)}:
@@ -123,8 +123,8 @@ const CalendarPage = () => {
                 }`}
                 onClick={() => setSelectedEvent(event)}
               >
-                <div className="font-bold">{event.title}</div>
-                <div className="text-xs text-gray-600">{event.description}</div>
+                <div className="font-bold ">{event.title}</div>
+                <div className="text-xs text-gray-300">{event.description}</div>
                 <div className="text-xs text-gray-200">
                   {event.startDate} {event.startTime} - {event.endDate}{" "}
                   {event.endTime}
@@ -133,158 +133,106 @@ const CalendarPage = () => {
             ))}
           </ul>
 
-          {/* Event Detail */}
-          {selectedEvent && (
-            <div className="mt-4 p-4 border rounded bg-gray-50">
-              <h4 className="font-bold text-lg mb-2">Event Details</h4>
-              <div className="text-sm text-gray-700">
-                <div>
-                  <strong>Title:</strong> {selectedEvent.title}
-                </div>
-                <div>
-                  <strong>Description:</strong> {selectedEvent.description}
-                </div>
-                <div>
-                  <strong>Date:</strong> {selectedEvent.startDate} →{" "}
-                  {selectedEvent.endDate}
-                </div>
-                <div>
-                  <strong>Time:</strong> {selectedEvent.startTime} →{" "}
-                  {selectedEvent.endTime}
-                </div>
-                <div>
-                  <strong>Location:</strong> {selectedEvent.location}
-                </div>
-                <div>
-                  <strong>Client:</strong> {selectedEvent.client}
-                </div>
-                <div>
-                  <strong>Labels:</strong> {selectedEvent.labels}
-                </div>
-              </div>
-              <div className="flex gap-2 mt-3">
-                <button
-                  className="px-4 py-1 bg-yellow-400 text-white rounded"
-                  onClick={() => {
-                    setEventForm(selectedEvent);
-                    setModalOpen(true);
-                  }}
+          {/* Animated Event Detail */}
+          <AnimatePresence>
+            {selectedEvent && (
+              <>
+                {/* Blur background */}
+                <motion.div
+                  className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setSelectedEvent(null)} 
+                />
+
+                {/* Event Detail modal */}
+                <motion.div
+                  className="fixed inset-0 z-50 flex items-center justify-center"
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.95, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  Edit
-                </button>
-                <button
-                  className="px-4 py-1 bg-red-500 text-white rounded"
-                  onClick={async () => {
-                    const confirmed = window.confirm(
-                      "Are you sure you want to delete this event?"
-                    );
-                    if (confirmed) {
-                      await deleteEvent(selectedEvent._id);
-                      setSelectedEvent(null);
-                    }
-                  }}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          )}
+                  <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative z-50">
+                    <h3 className="text-xl font-bold mb-2">
+                      {selectedEvent.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-2">
+                      {selectedEvent.description}
+                    </p>
+                    <div className="text-sm text-gray-700 space-y-1">
+                      <div>
+                        📅 <strong>Date:</strong> {selectedEvent.startDate} →{" "}
+                        {selectedEvent.endDate}
+                      </div>
+                      <div>
+                        🕒 <strong>Time:</strong> {selectedEvent.startTime} -{" "}
+                        {selectedEvent.endTime}
+                      </div>
+                      {selectedEvent.location && (
+                        <div>
+                          📍 <strong>Location:</strong> {selectedEvent.location}
+                        </div>
+                      )}
+                      {selectedEvent.client && (
+                        <div>
+                          👤 <strong>Client:</strong> {selectedEvent.client}
+                        </div>
+                      )}
+                      {selectedEvent.labels && (
+                        <div>
+                          🏷 <strong>Labels:</strong> {selectedEvent.labels}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex justify-end gap-2 mt-4">
+                      <button
+                        className="text-sm px-4 py-1 rounded border border-gray-300 hover:bg-gray-100"
+                        onClick={() => setSelectedEvent(null)}
+                      >
+                        Close
+                      </button>
+                      <button
+                        className="text-sm px-4 py-1 rounded bg-yellow-400 text-white hover:bg-yellow-500"
+                        onClick={() => {
+                          setEventForm(selectedEvent);
+                          setModalOpen(true);
+                          setSelectedEvent(null);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="text-sm px-4 py-1 rounded bg-red-500 text-white hover:bg-red-600"
+                        onClick={async () => {
+                          const confirmed = window.confirm(
+                            "Are you sure you want to delete this event?"
+                          );
+                          if (confirmed) {
+                            await deleteEvent(selectedEvent._id);
+                            setSelectedEvent(null);
+                          }
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
-      {/* Modal Form */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
-          <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-4 md:p-6 relative animate-fadeIn mx-2 max-h-[90vh] overflow-y-auto">
-            <button
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl z-10"
-              onClick={() => setModalOpen(false)}
-            >
-              &times;
-            </button>
-            <h3 className="text-xl font-bold mb-4">Add / Edit Event</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <input
-                name="title"
-                value={eventForm.title}
-                onChange={handleFormChange}
-                placeholder="Title"
-                className="col-span-2 w-full border px-3 py-2 rounded bg-gray-100"
-              />
-              <textarea
-                name="description"
-                value={eventForm.description}
-                onChange={handleFormChange}
-                placeholder="Description"
-                className="col-span-2 w-full border px-3 py-2 rounded bg-gray-100"
-                rows={2}
-              />
-              <input
-                type="date"
-                name="startDate"
-                value={eventForm.startDate}
-                onChange={handleFormChange}
-                className="border px-3 py-2 rounded bg-gray-100"
-              />
-              <input
-                type="time"
-                name="startTime"
-                value={eventForm.startTime}
-                onChange={handleFormChange}
-                className="border px-3 py-2 rounded bg-gray-100"
-              />
-              <input
-                type="date"
-                name="endDate"
-                value={eventForm.endDate}
-                onChange={handleFormChange}
-                className="border px-3 py-2 rounded bg-gray-100"
-              />
-              <input
-                type="time"
-                name="endTime"
-                value={eventForm.endTime}
-                onChange={handleFormChange}
-                className="border px-3 py-2 rounded bg-gray-100"
-              />
-              <input
-                name="location"
-                value={eventForm.location}
-                onChange={handleFormChange}
-                placeholder="Location"
-                className="col-span-2 w-full border px-3 py-2 rounded bg-gray-100"
-              />
-              <input
-                name="labels"
-                value={eventForm.labels}
-                onChange={handleFormChange}
-                placeholder="Labels"
-                className="col-span-2 w-full border px-3 py-2 rounded bg-gray-100"
-              />
-              <input
-                name="client"
-                value={eventForm.client}
-                onChange={handleFormChange}
-                placeholder="Client"
-                className="col-span-2 w-full border px-3 py-2 rounded bg-gray-100"
-              />
-            </div>
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                className="px-5 py-2 rounded border border-gray-300 text-gray-600 hover:bg-gray-100"
-                onClick={() => setModalOpen(false)}
-              >
-                Close
-              </button>
-              <button
-                className="px-5 py-2 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600"
-                onClick={handleSaveEvent}
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
+        <EventModalForm
+          eventForm={eventForm}
+          handleFormChange={handleFormChange}
+          onClose={() => setModalOpen(false)}
+          onSave={handleSaveEvent}
+        />
       )}
     </div>
   );
