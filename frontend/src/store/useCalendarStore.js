@@ -1,0 +1,163 @@
+import { create } from "zustand";
+import axios from "axios";
+
+const API = axios.create({
+  baseURL: "http://localhost:5001/api",
+  withCredentials: true,
+});
+
+const COLORS = [
+  "bg-blue-500 text-white",
+  "bg-green-500 text-white",
+  "bg-red-500 text-white",
+  "bg-purple-500 text-white",
+  "bg-yellow-400 text-black",
+  "bg-pink-500 text-white",
+  "bg-gray-400 text-white",
+  "bg-orange-500 text-white",
+];
+
+const formatDate = (date) => {
+  if (!date) return "";
+  const d = new Date(date);
+  return d.toISOString().slice(0, 10);
+};
+
+const defaultEvent = (date) => ({
+  title: "",
+  description: "",
+  startDate: date,
+  endDate: date,
+  startTime: "",
+  endTime: "",
+  location: "",
+  labels: "",
+  client: "",
+  shareWith: [],
+  file: null,
+});
+
+export const useCalendarStore = create((set, get) => ({
+  selectedDate: new Date(),
+  modalOpen: false,
+  tasks: {},
+  eventForm: defaultEvent(formatDate(new Date())),
+  selectedEvent: null,
+  isLoading: false,
+
+  setSelectedDate: (date) => {
+    set({
+      selectedDate: date,
+      eventForm: defaultEvent(formatDate(date)),
+      selectedEvent: null,
+    });
+  },
+
+  setModalOpen: (val) => set({ modalOpen: val }),
+
+  setEventForm: (form) => set({ eventForm: form }),
+
+  setSelectedEvent: (event) => set({ selectedEvent: event }),
+
+  updateEventForm: (key, value) => {
+    const current = get().eventForm;
+    if (key === "shareWith") {
+      set({
+        eventForm: {
+          ...current,
+          shareWith: current.shareWith.includes(value)
+            ? current.shareWith.filter((v) => v !== value)
+            : [...current.shareWith, value],
+        },
+      });
+    } else {
+      set({
+        eventForm: {
+          ...current,
+          [key]: value,
+        },
+      });
+    }
+  },
+
+  loadEvents: async () => {
+    set({ isLoading: true });
+    try {
+      const res = await API.get("/events");
+      const rawEvents = res.data;
+
+      const grouped = {};
+      rawEvents.forEach((event) => {
+        const key = formatDate(event.startDate);
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(event);
+      });
+
+      set({ tasks: grouped });
+    } catch (err) {
+      console.error("Failed to fetch events:", err);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  addEvent: async () => {
+    const { selectedDate, eventForm, tasks } = get();
+    const key = formatDate(selectedDate);
+
+    try {
+      let newEvent;
+      if (eventForm._id) {
+        const res = await API.put(`/events/${eventForm._id}`, eventForm);
+        newEvent = res.data;
+      } else {
+        const res = await API.post("/events", eventForm);
+        newEvent = res.data;
+      }
+
+      const updatedTasks = { ...tasks };
+      updatedTasks[key] = [...(updatedTasks[key] || [])];
+
+      updatedTasks[key] = updatedTasks[key].filter(
+        (e) => e._id !== newEvent._id
+      );
+      updatedTasks[key].push(newEvent);
+
+      set({
+        tasks: updatedTasks,
+        modalOpen: false,
+        selectedEvent: null,
+        eventForm: defaultEvent(key),
+      });
+    } catch (err) {
+      console.error("Failed to add/update event:", err);
+    }
+  },
+
+  deleteEvent: async (eventId) => {
+    try {
+      await API.delete(`/events/${eventId}`);
+
+      const tasks = get().tasks;
+      const updatedTasks = {};
+
+      Object.keys(tasks).forEach((dateKey) => {
+        updatedTasks[dateKey] = tasks[dateKey].filter(
+          (e) => e._id !== eventId && e.id !== eventId
+        );
+      });
+
+      set({ tasks: updatedTasks });
+    } catch (err) {
+      console.error("Failed to delete event:", err);
+    }
+  },
+
+  getEventsForDate: (date) => {
+    const key = formatDate(date);
+    return get().tasks[key] || [];
+  },
+
+  COLORS,
+  formatDate,
+}));
