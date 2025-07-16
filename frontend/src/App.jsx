@@ -12,6 +12,7 @@ import { Loader } from "lucide-react";
 import { useAuthStore } from "./store/useAuthStore";
 import Navbar from "./components/Navbar";
 import { useThemeStore } from "./store/useThemeStore";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -33,6 +34,7 @@ const App = () => {
   return (
     <div data-theme={theme}>
       <Navbar />
+      <Toaster position="top-center" />
 
       <Routes>
         <Route

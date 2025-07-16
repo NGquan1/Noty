@@ -11,7 +11,6 @@ import NotesPage from "./NotesPage";
 import CalendarPage from "./CalendarPage";
 import { useColumnStore } from "../store/useColumnStore";
 import { useProjectStore } from "../store/useProjectStore";
-import { AnimatePresence, motion } from "framer-motion";
 
 const App = () => {
   const {
@@ -89,7 +88,6 @@ const App = () => {
     await createProject(data);
     setProjectModalOpen(false);
   };
-
   const handleSelectProject = (id) => {
     setSelectedProjectId(id);
     setActivePage("tasks");
@@ -202,25 +200,13 @@ const App = () => {
               onProjectDeleted={handleProjectDeleted}
             />
           )}
-
-          <AnimatePresence>
-            {isModalOpen && (
-              <motion.div
-                className="fixed inset-0 bg-black/10 backdrop-blur-sm z-40"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <CardModal
-                  isOpen={isModalOpen}
-                  onClose={() => setIsModalOpen(false)}
-                  onSave={handleSaveCard}
-                  initialCardData={editingCard}
-                  columnIndex={currentColumnIndex}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <CardModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onSave={handleSaveCard}
+            initialCardData={editingCard}
+            columnIndex={currentColumnIndex}
+          />
         </div>
       </div>
     </DndProvider>

@@ -18,7 +18,6 @@ const ProjectModal = ({ isOpen, onClose, onSave }) => {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Overlay with blur only */}
           <motion.div
             className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
             initial={{ opacity: 0 }}
@@ -27,7 +26,6 @@ const ProjectModal = ({ isOpen, onClose, onSave }) => {
             onClick={onClose}
           />
 
-          {/* Modal giữ nguyên vị trí cũ */}
           <motion.div
             className="fixed inset-0 z-50 flex items-center justify-center"
             initial={{ opacity: 0, scale: 0.98 }}

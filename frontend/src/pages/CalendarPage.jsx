@@ -4,6 +4,7 @@ import "react-calendar/dist/Calendar.css";
 import { useCalendarStore } from "../store/useCalendarStore";
 import { AnimatePresence, motion } from "framer-motion";
 import EventModalForm from "../components/EventModal";
+import toast from "react-hot-toast";
 
 const CalendarPage = () => {
   const {
@@ -133,20 +134,17 @@ const CalendarPage = () => {
             ))}
           </ul>
 
-          {/* Animated Event Detail */}
           <AnimatePresence>
             {selectedEvent && (
               <>
-                {/* Blur background */}
                 <motion.div
                   className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  onClick={() => setSelectedEvent(null)} 
+                  onClick={() => setSelectedEvent(null)}
                 />
 
-                {/* Event Detail modal */}
                 <motion.div
                   className="fixed inset-0 z-50 flex items-center justify-center"
                   initial={{ scale: 0.95, opacity: 0 }}
@@ -205,14 +203,38 @@ const CalendarPage = () => {
                       </button>
                       <button
                         className="text-sm px-4 py-1 rounded bg-red-500 text-white hover:bg-red-600"
-                        onClick={async () => {
-                          const confirmed = window.confirm(
-                            "Are you sure you want to delete this event?"
+                        onClick={() => {
+                          toast(
+                            (t) => (
+                              <span className="flex flex-col items-start gap-2">
+                                <span>
+                                  Are you sure you want to delete this event?
+                                </span>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={async () => {
+                                      await deleteEvent(selectedEvent._id);
+                                      setSelectedEvent(null);
+                                      toast.dismiss(t.id);
+                                      toast.success("Event deleted");
+                                    }}
+                                    className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded"
+                                  >
+                                    Delete
+                                  </button>
+                                  <button
+                                    onClick={() => toast.dismiss(t.id)}
+                                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 text-sm px-3 py-1 rounded"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              </span>
+                            ),
+                            {
+                              duration: 10000,
+                            }
                           );
-                          if (confirmed) {
-                            await deleteEvent(selectedEvent._id);
-                            setSelectedEvent(null);
-                          }
                         }}
                       >
                         Delete
