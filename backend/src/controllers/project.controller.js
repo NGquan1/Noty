@@ -55,15 +55,28 @@ export const updateProject = async (req, res) => {
 export const deleteProject = async (req, res) => {
   try {
     const { id } = req.params;
-    // Only owner can delete
-    const project = await Project.findOneAndDelete({ _id: id, owner: req.user._id });
-    if (!project) return res.status(404).json({ error: 'Project not found' });
-    // Delete all columns of this project
+    
+    if (!id) {
+      return res.status(400).json({ error: 'Project ID is required' });
+    }
+
+    // Kiểm tra xem id có phải là một MongoDB ObjectId hợp lệ không
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ error: 'Invalid project ID format' });
+    }
+
+    const project = await Project.findByIdAndDelete(id);
+    if (!project) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    // Delete all related data
     await Column.deleteMany({ project: id });
-    // Delete all notes of this project (if notes are project-specific)
     await Note.deleteMany({ project: id });
+    
     res.json({ message: 'Project and all related data deleted' });
   } catch (err) {
+    console.error('Error deleting project:', err);
     res.status(400).json({ error: err.message });
   }
 };

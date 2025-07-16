@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Plus, Settings } from "lucide-react";
+import { Plus, Settings, FolderGit2 } from "lucide-react";
 import Column from "../components/Column";
 import CardModal from "../components/CardModal";
 import Sidebar from "../components/Sidebar";
@@ -139,69 +139,91 @@ const App = () => {
               }
             `}
           </style>
-          <div className="flex gap-4 mb-6 justify-center items-center">
-            {pageList.map((page) => (
-              <button
-                key={page.key}
-                className={`capitalize px-6 py-2 rounded-lg text-lg font-medium shadow transition-colors duration-150 ${
-                  activePage === page.key
-                    ? "bg-gray-500 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-                onClick={() => setActivePage(page.key)}
-              >
-                {page.icon} {page.label}
-              </button>
-            ))}
-          </div>
-          {activePage === "tasks" && (
-            <div className="flex flex-col md:flex-row gap-6 justify-center items-start">
-              {isLoading && columns.length === 0 ? (
-                <div className="text-center text-gray-400 text-2xl mt-20 w-full">
-                  Loading...
+          {!selectedProjectId ? (
+            <div className="flex flex-col items-center justify-center h-[calc(100vh-100px)]">
+              <div className="w-96 text-center bg-white p-8 rounded-lg shadow-lg">
+                <FolderGit2 className="w-16 h-16 text-gray-400 mb-4 mx-auto" />
+                <h2 className="text-2xl font-semibold text-gray-700 mb-2">
+                  Welcome to Noty
+                </h2>
+                <p className="text-gray-500 mb-8">
+                  Get started by creating your first project
+                </p>
+                <button
+                  onClick={() => setProjectModalOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors mx-auto"
+                >
+                  <Plus className="w-5 h-5" />
+                  Create New Project
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="flex gap-4 mb-6 justify-center items-center">
+                {pageList.map((page) => (
+                  <button
+                    key={page.key}
+                    className={`capitalize px-6 py-2 rounded-lg text-lg font-medium shadow transition-colors duration-150 ${
+                      activePage === page.key
+                        ? "bg-gray-500 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                    onClick={() => setActivePage(page.key)}
+                  >
+                    {page.icon} {page.label}
+                  </button>
+                ))}
+              </div>
+
+              {activePage === "tasks" && (
+                <div className="flex flex-col md:flex-row gap-6 justify-center items-start">
+                  {isLoading ? (
+                    <div className="text-center text-gray-400 text-2xl mt-20 w-full">
+                      Loading...
+                    </div>
+                  ) : (
+                    <>
+                      {columns.map((column, index) => (
+                        <Column
+                          key={column.id || column._id}
+                          column={column}
+                          columnIndex={index}
+                          moveCard={moveCard}
+                          onAddCard={handleAddCard}
+                          onEditCard={handleEditCard}
+                          updateColumnTitle={handleUpdateColumnTitle}
+                          onDeleteColumn={handleDeleteColumn}
+                          onDeleteCard={handleDeleteCard}
+                        />
+                      ))}
+                      <button
+                        onClick={handleAddColumn}
+                        className="bg-gray-500 hover:bg-gray-600 text-white rounded-full w-12 h-12 flex items-center justify-center text-xl shadow-lg transition-all duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75"
+                        aria-label="Add new column"
+                      >
+                        <Plus size={24} />
+                      </button>
+                    </>
+                  )}
                 </div>
-              ) : columns.length === 0 ? (
-                <div className="text-center text-gray-400 text-2xl mt-20 w-full">
-                  Create your schedule now
-                </div>
-              ) : (
-                columns.map((column, index) => (
-                  <Column
-                    key={column.id || column._id}
-                    column={column}
-                    columnIndex={index}
-                    moveCard={moveCard}
-                    onAddCard={handleAddCard}
-                    onEditCard={handleEditCard}
-                    updateColumnTitle={handleUpdateColumnTitle}
-                    onDeleteColumn={handleDeleteColumn}
-                    onDeleteCard={handleDeleteCard}
-                  />
-                ))
               )}
-              <button
-                onClick={handleAddColumn}
-                className="bg-gray-500 hover:bg-gray-600 text-white rounded-full w-12 h-12 flex items-center justify-center text-xl shadow-lg transition-all duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75"
-                aria-label="Add new column"
-              >
-                <Plus size={24} />
-              </button>
-            </div>
-          )}
-          {activePage === "calendar" && <CalendarPage projectId={selectedProjectId} />}
-          {activePage === "notes" && (
-            <NotesPage selectedProjectId={selectedProjectId} />
-          )}
-          {activePage === "members" && (
-            <div className="text-center text-gray-400 text-2xl mt-20 w-full">
-              Members page (coming soon)
-            </div>
-          )}
-          {activePage === "settings" && (
-            <ProjectSettingsPage
-              selectedProjectId={selectedProjectId}
-              onProjectDeleted={handleProjectDeleted}
-            />
+              {activePage === "calendar" && <CalendarPage projectId={selectedProjectId} />}
+              {activePage === "notes" && (
+                <NotesPage selectedProjectId={selectedProjectId} />
+              )}
+              {activePage === "members" && (
+                <div className="text-center text-gray-400 text-2xl mt-20 w-full">
+                  Members page (coming soon)
+                </div>
+              )}
+              {activePage === "settings" && (
+                <ProjectSettingsPage
+                  selectedProjectId={selectedProjectId}
+                  onProjectDeleted={handleProjectDeleted}
+                />
+              )}
+            </>
           )}
           <CardModal
             isOpen={isModalOpen}

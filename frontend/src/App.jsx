@@ -39,6 +39,10 @@ const App = () => {
       <Routes>
         <Route
           path="/"
+          element={authUser ? <HomePage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/tasks"
           element={authUser ? <NotePage /> : <Navigate to="/login" />}
         />
         <Route
