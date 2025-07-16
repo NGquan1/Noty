@@ -28,6 +28,7 @@ app.use("/api/notes", noteRouter);
 app.use("/api/columns", columnRouter);
 app.use("/api/projects", projectRouter);
 app.use("/api/events", calendarRouter); 
+app.use("/api/calendar", calendarRouter);
 app.get('/api/test', (req, res) => res.json({ ok: true }));
 
 app.listen(5001, () => {

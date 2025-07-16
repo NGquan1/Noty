@@ -11,6 +11,7 @@ import NotesPage from "./NotesPage";
 import CalendarPage from "./CalendarPage";
 import { useColumnStore } from "../store/useColumnStore";
 import { useProjectStore } from "../store/useProjectStore";
+import { useCalendarStore } from "../store/useCalendarStore";
 
 const App = () => {
   const {
@@ -26,6 +27,7 @@ const App = () => {
     moveCard,
   } = useColumnStore();
   const { projects, fetchProjects, createProject } = useProjectStore();
+  const { setCurrentProject } = useCalendarStore();
 
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [activePage, setActivePage] = useState("tasks");
@@ -90,6 +92,7 @@ const App = () => {
   };
   const handleSelectProject = (id) => {
     setSelectedProjectId(id);
+    setCurrentProject(id);
     setActivePage("tasks");
   };
 
@@ -185,7 +188,7 @@ const App = () => {
               </button>
             </div>
           )}
-          {activePage === "calendar" && <CalendarPage />}
+          {activePage === "calendar" && <CalendarPage projectId={selectedProjectId} />}
           {activePage === "notes" && (
             <NotesPage selectedProjectId={selectedProjectId} />
           )}

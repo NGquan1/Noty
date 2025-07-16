@@ -44,11 +44,15 @@ export const useCalendarStore = create((set, get) => ({
   eventForm: defaultEvent(formatDate(new Date())),
   selectedEvent: null,
   isLoading: false,
+  currentProjectId: null,
+
+  setCurrentProject: (projectId) => set({ currentProjectId: projectId }),
 
   setSelectedDate: (date) => {
+    const { currentProjectId } = get();
     set({
       selectedDate: date,
-      eventForm: defaultEvent(formatDate(date)),
+      eventForm: defaultEvent(formatDate(date), currentProjectId),
       selectedEvent: null,
     });
   },
@@ -80,19 +84,17 @@ export const useCalendarStore = create((set, get) => ({
     }
   },
 
-  loadEvents: async () => {
+  loadEvents: async (projectId) => {
     set({ isLoading: true });
     try {
-      const res = await API.get("/events");
+      const res = await API.get(`/calendar?projectId=${projectId}`);
       const rawEvents = res.data;
-
       const grouped = {};
       rawEvents.forEach((event) => {
         const key = formatDate(event.startDate);
         if (!grouped[key]) grouped[key] = [];
         grouped[key].push(event);
       });
-
       set({ tasks: grouped });
     } catch (err) {
       console.error("Failed to fetch events:", err);
@@ -102,32 +104,29 @@ export const useCalendarStore = create((set, get) => ({
   },
 
   addEvent: async () => {
-    const { selectedDate, eventForm, tasks } = get();
+    const { selectedDate, eventForm, tasks, currentProjectId } = get();
     const key = formatDate(selectedDate);
-
     try {
       let newEvent;
+      const eventData = { ...eventForm, project: currentProjectId };
       if (eventForm._id) {
-        const res = await API.put(`/events/${eventForm._id}`, eventForm);
+        const res = await API.put(`/calendar/${eventForm._id}`, eventData);
         newEvent = res.data;
       } else {
-        const res = await API.post("/events", eventForm);
+        const res = await API.post("/calendar", eventData);
         newEvent = res.data;
       }
-
       const updatedTasks = { ...tasks };
       updatedTasks[key] = [...(updatedTasks[key] || [])];
-
       updatedTasks[key] = updatedTasks[key].filter(
         (e) => e._id !== newEvent._id
       );
       updatedTasks[key].push(newEvent);
-
       set({
         tasks: updatedTasks,
         modalOpen: false,
         selectedEvent: null,
-        eventForm: defaultEvent(key),
+        eventForm: defaultEvent(key, currentProjectId),
       });
     } catch (err) {
       console.error("Failed to add/update event:", err);
