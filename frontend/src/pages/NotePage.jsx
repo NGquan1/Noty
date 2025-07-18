@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Plus, Settings, FolderGit2 } from "lucide-react";
+import {
+  Plus,
+  Settings,
+  FolderGit2,
+  CalendarDays,
+  StickyNote,
+  Users,
+  LayoutList,
+} from "lucide-react";
+
 import Column from "../components/Column";
 import CardModal from "../components/CardModal";
 import Sidebar from "../components/Sidebar";
@@ -9,6 +18,7 @@ import ProjectModal from "../components/ProjectModal";
 import ProjectSettingsPage from "./ProjectSettingsPage";
 import NotesPage from "./NotesPage";
 import CalendarPage from "./CalendarPage";
+
 import { useColumnStore } from "../store/useColumnStore";
 import { useProjectStore } from "../store/useProjectStore";
 import { useCalendarStore } from "../store/useCalendarStore";
@@ -90,6 +100,7 @@ const App = () => {
     await createProject(data);
     setProjectModalOpen(false);
   };
+
   const handleSelectProject = (id) => {
     setSelectedProjectId(id);
     setCurrentProject(id);
@@ -102,10 +113,26 @@ const App = () => {
   };
 
   const pageList = [
-    { key: "tasks", label: "Tasks" },
-    { key: "calendar", label: "Calendar" },
-    { key: "notes", label: "Notes" },
-    { key: "members", label: "Members" },
+    {
+      key: "tasks",
+      label: "Tasks",
+      icon: <LayoutList size={16} className="inline mr-1" />,
+    },
+    {
+      key: "calendar",
+      label: "Calendar",
+      icon: <CalendarDays size={16} className="inline mr-1" />,
+    },
+    {
+      key: "notes",
+      label: "Notes",
+      icon: <StickyNote size={16} className="inline mr-1" />,
+    },
+    {
+      key: "members",
+      label: "Members",
+      icon: <Users size={16} className="inline mr-1" />,
+    },
     {
       key: "settings",
       label: "Settings",
@@ -151,7 +178,7 @@ const App = () => {
                 </p>
                 <button
                   onClick={() => setProjectModalOpen(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors mx-auto"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-primary/90 transition-colors mx-auto"
                 >
                   <Plus className="w-5 h-5" />
                   Create New Project
@@ -208,7 +235,9 @@ const App = () => {
                   )}
                 </div>
               )}
-              {activePage === "calendar" && <CalendarPage projectId={selectedProjectId} />}
+              {activePage === "calendar" && (
+                <CalendarPage projectId={selectedProjectId} />
+              )}
               {activePage === "notes" && (
                 <NotesPage selectedProjectId={selectedProjectId} />
               )}

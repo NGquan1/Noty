@@ -43,4 +43,5 @@ export default {
       "sunset",
     ],
   },
+  plugins: [require("tailwind-scrollbar-hide")],
 };

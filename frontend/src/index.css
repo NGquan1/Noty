@@ -14,3 +14,12 @@
 .animate-bounce-slow {
   animation: bounce-slow 1.5s infinite;
 }
+
+.scrollbar-hide {
+  scrollbar-width: none; 
+  -ms-overflow-style: none; 
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; 
+}

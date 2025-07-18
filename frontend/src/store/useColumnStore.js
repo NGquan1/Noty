@@ -78,35 +78,34 @@ export const useColumnStore = create((set, get) => ({
   },
 
   moveCard: async (cardToMove, fromColumnIndex, toColumnIndex) => {
-    const state = get();
-    const columns = state.columns;
-    const fromColumn = columns[fromColumnIndex];
-    const toColumn = columns[toColumnIndex];
-    if (!fromColumn || !toColumn) return;
-    const cardId = cardToMove._id || cardToMove.id;
-    set((s) => {
-      const newColumns = [...s.columns];
-      newColumns[fromColumnIndex] = {
-        ...newColumns[fromColumnIndex],
-        cards: newColumns[fromColumnIndex].cards.filter(
-          (card) => card.id !== cardToMove.id && card._id !== cardToMove._id
-        ),
-      };
-      newColumns[toColumnIndex] = {
-        ...newColumns[toColumnIndex],
-        cards: [...newColumns[toColumnIndex].cards, { ...cardToMove }],
-      };
-      return {
-        columns: newColumns.filter((col) => col.project == s.selectedProjectId),
-      };
+  const state = get();
+  const columns = state.columns;
+  const fromColumn = columns[fromColumnIndex];
+  const toColumn = columns[toColumnIndex];
+  const cardId = cardToMove._id || cardToMove.id;
+
+  set((s) => {
+    const newColumns = [...s.columns];
+    newColumns[fromColumnIndex] = {
+      ...fromColumn,
+      cards: fromColumn.cards.filter((c) => c.id !== cardId && c._id !== cardId),
+    };
+    newColumns[toColumnIndex] = {
+      ...toColumn,
+      cards: [...toColumn.cards, { ...cardToMove }],
+    };
+    return { columns: newColumns };
+  });
+
+  try {
+    await API.patch(`/cards/${cardId}/move`, {
+      fromColumnId: fromColumn.id,
+      toColumnId: toColumn.id,
     });
-    try {
-      if (cardId) {
-        await get().deleteCard(fromColumn.id || fromColumn._id, cardId);
-        await get().addCard(toColumn.id || toColumn._id, { ...cardToMove });
-      }
-    } catch (err) {
-      await get().fetchColumns(get().selectedProjectId);
-    }
-  },
+  } catch (err) {
+    console.error("Move card failed", err);
+    await get().fetchColumns(get().selectedProjectId);
+  }
+},
+
 }));

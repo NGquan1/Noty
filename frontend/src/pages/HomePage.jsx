@@ -19,9 +19,9 @@ const HomePage = () => {
         <div className="grid md:grid-cols-3 gap-6">
           <Link
             to="/tasks"
-            className="p-6 rounded-lg border hover:border-primary transition-colors flex flex-col items-center gap-4"
+            className="p-6 rounded-lg border hover:border-gray-700 transition-colors flex flex-col items-center gap-4"
           >
-            <ListTodo className="w-12 h-12 text-primary" />
+            <ListTodo className="w-12 h-12 bg-color-gray" />
             <div className="text-center">
               <h2 className="text-xl font-semibold mb-2">Tasks</h2>
               <p className="text-gray-600">
@@ -32,9 +32,9 @@ const HomePage = () => {
 
           <Link
             to="/calendar"
-            className="p-6 rounded-lg border hover:border-primary transition-colors flex flex-col items-center gap-4"
+            className="p-6 rounded-lg border hover:border-gray-700 transition-colors flex flex-col items-center gap-4"
           >
-            <Calendar className="w-12 h-12 text-primary" />
+            <Calendar className="w-12 h-12 bg-color-gray" />
             <div className="text-center">
               <h2 className="text-xl font-semibold mb-2">Calendar</h2>
               <p className="text-gray-600">
@@ -45,9 +45,9 @@ const HomePage = () => {
 
           <Link
             to="/notes"
-            className="p-6 rounded-lg border hover:border-primary transition-colors flex flex-col items-center gap-4"
+            className="p-6 rounded-lg border hover:border-gray-700 transition-colors flex flex-col items-center gap-4"
           >
-            <StickyNote className="w-12 h-12 text-primary" />
+            <StickyNote className="w-12 h-12 bg-color-gray" />
             <div className="text-center">
               <h2 className="text-xl font-semibold mb-2">Notes</h2>
               <p className="text-gray-600">

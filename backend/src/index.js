@@ -10,6 +10,7 @@ import noteRouter from "./routes/note.route.js";
 import columnRouter from "./routes/column.route.js";
 import projectRouter from "./routes/project.route.js";
 import calendarRouter from "./routes/calendar.route.js";
+import cardRoutes from "./routes/card.route.js";
 
 dotenv.config();
 const app = express();
@@ -25,6 +26,7 @@ app.use(cors({
 
 app.use("/api/auth", authRouter);
 app.use("/api/notes", noteRouter);
+app.use("/api/cards", cardRoutes); 
 app.use("/api/columns", columnRouter);
 app.use("/api/projects", projectRouter);
 app.use("/api/events", calendarRouter); 

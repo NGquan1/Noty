@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { useCalendarStore } from "../store/useCalendarStore";
-import { useProjectStore } from "../store/useProjectStore";
 import { AnimatePresence, motion } from "framer-motion";
 import EventModalForm from "../components/EventModal";
 import toast from "react-hot-toast";
@@ -28,7 +27,6 @@ const CalendarPage = ({ projectId }) => {
     setCurrentProject,
   } = useCalendarStore();
 
-  // Nếu projectId không truyền qua props, lấy từ store (ví dụ khi click sidebar sẽ set projectId vào store)
   const activeProjectId = projectId || currentProjectId;
 
   useEffect(() => {
@@ -66,9 +64,8 @@ const CalendarPage = ({ projectId }) => {
   const events = tasks[selectedKey] || [];
 
   return (
-    <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-8 mt-5 border border-gray-200">
+    <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-8 mt-5 border border-gray-200 overflow-y-scroll scrollbar-hide">
       <h2 className="text-3xl font-bold mb-6 text-center">Event Calendar</h2>
-      {/* Đã bỏ dropdown chọn project, chỉ hiển thị calendar cho projectId hiện tại */}
       <div className="flex flex-col md:flex-row gap-8">
         <div className="flex-1 min-w-[700px]">
           <Calendar
