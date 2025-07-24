@@ -18,21 +18,21 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="h-screen grid lg:grid-cols-2">
+    <div className="min-h-screen grid lg:grid-cols-2">
       {/* Left Side - Form */}
-      <div className="flex flex-col justify-center items-center p-6 sm:p-12">
-        <div className="w-full max-w-md space-y-8">
+      <div className="flex flex-col justify-center items-center p-6 sm:p-12 bg-white">
+        <div className="w-full max-w-md space-y-6">
           {/* Logo */}
-          <div className="text-center mb-8">
-            <div className="flex flex-col items-center gap-2 group">
+          <div className="text-center">
+            <div className="flex flex-col items-center gap-3 group">
               <div
-                className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20
-              transition-colors"
+                className="size-14 rounded-2xl bg-gray-800/5 flex items-center justify-center 
+              group-hover:bg-gray-800/10 transition-all duration-300 shadow-sm"
               >
-                <StickyNote className="w-8 h-8 text-gray" />
+                <StickyNote className="size-8 text-gray-800" />
               </div>
-              <h1 className="text-2xl font-bold mt-2">Welcome Back</h1>
-              <p className="text-base-content/60">Sign in to your account</p>
+              <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
+              <p className="text-gray-500 text-lg">Sign in to your account</p>
             </div>
           </div>
 
@@ -40,15 +40,17 @@ const LoginPage = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="form-control">
               <label className="label">
-                <span className="label-text font-medium">Email</span>
+                <span className="text-gray-700 font-medium">
+                  Email
+                </span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-base-content/40" />
+                  <Mail className="size-5 text-gray-400" />
                 </div>
                 <input
                   type="email"
-                  className={`input input-bordered w-full pl-10`}
+                  className="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all duration-300"
                   placeholder="you@example.com"
                   value={formData.email}
                   onChange={(e) =>
@@ -60,15 +62,17 @@ const LoginPage = () => {
 
             <div className="form-control">
               <label className="label">
-                <span className="label-text font-medium">Password</span>
+                <span className="text-gray-700 font-medium">
+                  Password
+                </span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-base-content/40" />
+                  <Lock className="size-5 text-gray-400" />
                 </div>
                 <input
                   type={showPassword ? "text" : "password"}
-                  className={`input input-bordered w-full pl-10`}
+                  className="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all duration-300"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={(e) =>
@@ -77,13 +81,13 @@ const LoginPage = () => {
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-gray-700 transition-colors"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-base-content/40" />
+                    <EyeOff className="size-5 text-gray-400" />
                   ) : (
-                    <Eye className="h-5 w-5 text-base-content/40" />
+                    <Eye className="size-5 text-gray-400" />
                   )}
                 </button>
               </div>
@@ -91,14 +95,14 @@ const LoginPage = () => {
 
             <button
               type="submit"
-              className="bg-gray-800 btn btn-primary w-full"
+              className="w-full bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoggingIn}
             >
               {isLoggingIn ? (
-                <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  Loading...
-                </>
+                <div className="flex items-center justify-center gap-2">
+                  <Loader2 className="size-5 animate-spin" />
+                  <span>Signing in...</span>
+                </div>
               ) : (
                 "Sign in"
               )}
