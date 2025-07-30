@@ -34,4 +34,9 @@ export const useProjectStore = create((set, get) => ({
     await API.delete(`/projects/${projectId}`);
     await get().fetchProjects();
   },
+
+  shareProjectByLink: async (projectId, role) => {
+    const res = await API.post(`/projects/${projectId}/share`, { role });
+    return res.data;
+  },
 }));

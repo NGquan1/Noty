@@ -1,4 +1,4 @@
-import React, { use, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import HomePage from "./pages/HomePage";
@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import ProjectSettingsPage from "./pages/ProjectSettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 import NotePage from "./pages/NotePage";
+import JoinProjectPage from "./pages/JoinProjectPage"; // ✅ Thêm dòng này
 
 import { Loader } from "lucide-react";
 import { useAuthStore } from "./store/useAuthStore";
@@ -21,8 +22,6 @@ const App = () => {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-
-  console.log({ authUser });
 
   if (isCheckingAuth && !authUser)
     return (
@@ -53,7 +52,12 @@ const App = () => {
           path="/login"
           element={!authUser ? <LoginPage /> : <Navigate to="/" />}
         />
-        <Route path="/settings" element={<ProjectSettingsPage />} />
+        <Route
+          path="/settings"
+          element={
+            authUser ? <ProjectSettingsPage /> : <Navigate to="/login" />
+          }
+        />
         <Route
           path="/profile"
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
@@ -61,6 +65,10 @@ const App = () => {
         <Route
           path="/notes"
           element={authUser ? <NotePage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/join/:token"
+          element={authUser ? <JoinProjectPage /> : <Navigate to="/login" />}
         />
       </Routes>
     </div>

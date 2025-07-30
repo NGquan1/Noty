@@ -39,14 +39,14 @@ const Card = ({ card, columnIndex, moveCard, onEdit, onDelete }) => {
         <button
           onClick={() => onEdit(card, columnIndex)}
           className="text-gray-500 hover:text-blue-600 p-1 rounded-full hover:bg-blue-100 transition-colors"
-          aria-label="Chỉnh sửa thẻ"
+          aria-label="Edit card"
         >
           <Pencil size={16} />
         </button>
         <button
           onClick={() => onDelete(card.id, columnIndex)}
           className="text-gray-500 hover:text-red-600 p-1 rounded-full hover:bg-red-100 transition-colors"
-          aria-label="Xóa thẻ"
+          aria-label="Delete card"
         >
           <Trash2 size={16} />
         </button>

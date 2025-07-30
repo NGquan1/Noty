@@ -1,18 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useProjectStore } from "../store/useProjectStore";
-import { Trash } from "lucide-react";
+import { Trash, Copy } from "lucide-react";
 
 const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
-  const { projects, renameProject, deleteProject } = useProjectStore();
-    const [newName, setNewName] = useState("");
+  const {
+    projects,
+    renameProject,
+    deleteProject,
+    shareProjectByLink, // ✅ thêm dòng này
+  } = useProjectStore();
+
+  const [newName, setNewName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [shareRole, setShareRole] = useState("editor");
+  const [shareLink, setShareLink] = useState("");
+  const [copySuccess, setCopySuccess] = useState("");
 
   const project = projects.find(
     (p) => p._id === selectedProjectId || p.id === selectedProjectId
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (project) setNewName(project.name);
   }, [project]);
 
@@ -45,11 +55,35 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
     setLoading(false);
   };
 
+  const handleGenerateShareLink = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await shareProjectByLink(selectedProjectId, shareRole); // ✅ dùng store API
+      setShareLink(`${window.location.origin}/join/${data.token}`);
+    } catch (err) {
+      setError("Could not generate share link");
+    }
+    setLoading(false);
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(shareLink);
+      setCopySuccess("Copied!");
+      setTimeout(() => setCopySuccess(""), 2000);
+    } catch {
+      setCopySuccess("Failed to copy");
+    }
+  };
+
   if (!project) return <div className="text-gray-400">No project selected</div>;
 
   return (
     <div className="max mx-10 bg-white rounded shadow p-6 mt-10">
       <h2 className="text-2xl font-bold mb-4">Project Settings</h2>
+
+      {/* Rename */}
       <div className="mb-6">
         <label className="block font-semibold mb-2">Project Name</label>
         <div className="flex flex-col items-start gap-3 w-full max-w-xs">
@@ -68,9 +102,11 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
           </button>
         </div>
       </div>
+
+      {/* Delete */}
       <div className="mb-6">
         <button
-          className="flex bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
           onClick={handleDelete}
           disabled={loading}
         >
@@ -78,6 +114,51 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
           Delete Project
         </button>
       </div>
+
+      {/* Share */}
+      <div className="mb-6">
+        <label className="block font-semibold mb-2">Share Project Link</label>
+        <div className="flex items-center gap-4 mb-3">
+          <select
+            value={shareRole}
+            onChange={(e) => setShareRole(e.target.value)}
+            className="border px-3 py-2 rounded bg-white text-sm"
+            disabled={loading}
+          >
+            <option value="editor">Editor</option>
+            <option value="viewer">Viewer</option>
+          </select>
+          <button
+            onClick={handleGenerateShareLink}
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded disabled:opacity-60"
+            disabled={loading}
+          >
+            Generate Link
+          </button>
+        </div>
+
+        {shareLink && (
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              readOnly
+              value={shareLink}
+              className="border px-3 py-2 rounded w-full text-sm"
+            />
+            <button
+              onClick={handleCopy}
+              className="bg-gray-200 hover:bg-gray-300 p-2 rounded"
+            >
+              <Copy size={16} />
+            </button>
+            {copySuccess && (
+              <span className="text-green-600 text-sm">{copySuccess}</span>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Error */}
       {error && <div className="text-red-500">{error}</div>}
     </div>
   );
