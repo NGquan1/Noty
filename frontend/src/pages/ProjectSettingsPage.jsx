@@ -7,7 +7,7 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
     projects,
     renameProject,
     deleteProject,
-    shareProjectByLink, // ✅ thêm dòng này
+    shareProjectByLink,
   } = useProjectStore();
 
   const [newName, setNewName] = useState("");

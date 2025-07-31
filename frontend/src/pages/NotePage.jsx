@@ -22,6 +22,7 @@ import CalendarPage from "./CalendarPage";
 import { useColumnStore } from "../store/useColumnStore";
 import { useProjectStore } from "../store/useProjectStore";
 import { useCalendarStore } from "../store/useCalendarStore";
+import MemberPage from "./MemberPage";
 
 const App = () => {
   const {
@@ -241,11 +242,8 @@ const App = () => {
               {activePage === "notes" && (
                 <NotesPage selectedProjectId={selectedProjectId} />
               )}
-              {activePage === "members" && (
-                <div className="text-center text-gray-400 text-2xl mt-20 w-full">
-                  Members page (coming soon)
-                </div>
-              )}
+              {activePage === "members" && <MemberPage />}
+
               {activePage === "settings" && (
                 <ProjectSettingsPage
                   selectedProjectId={selectedProjectId}

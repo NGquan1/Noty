@@ -1,9 +1,14 @@
-import { useProjectStore } from "../store/useProjectStore"; // đường dẫn chính xác tùy file bạn
+import React, { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { useProjectStore } from "../store/useProjectStore";
 
 const JoinProjectPage = () => {
   const { token } = useParams();
   const navigate = useNavigate();
-  const setCurrentProjectId = useProjectStore((state) => state.setCurrentProjectId);
+  const setCurrentProjectId = useProjectStore(
+    (state) => state.setCurrentProjectId
+  );
 
   useEffect(() => {
     const joinProject = async () => {
@@ -15,11 +20,10 @@ const JoinProjectPage = () => {
         );
         alert("Project joined successfully!");
         setCurrentProjectId(res.data.projectId); // set vào store
-        navigate("/"); 
+        navigate("/");
       } catch (err) {
         alert(
-          "Can't join project : " +
-            (err.response?.data?.error || err.message)
+          "Can't join project: " + (err.response?.data?.error || err.message)
         );
         navigate("/");
       }
@@ -30,3 +34,5 @@ const JoinProjectPage = () => {
 
   return <p className="p-4">Joining project ...</p>;
 };
+
+export default JoinProjectPage;
