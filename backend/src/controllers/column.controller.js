@@ -62,14 +62,16 @@ export const deleteColumn = async (req, res) => {
 export const addCard = async (req, res) => {
   try {
     const { id } = req.params;
-    const { member, tasks } = req.body;
+    const { member, tasks, status } = req.body; // Thêm status
+
     const column = await Column.findOneAndUpdate(
       { _id: id, user: req.user._id },
-      { $push: { cards: { member, tasks } } },
+      { $push: { cards: { member, tasks, status } } }, // Lưu cả status
       { new: true }
     );
+
     if (!column) {
-      return res.status(404).json({ error: 'Column not found' });
+      return res.status(404).json({ error: "Column not found" });
     }
     res.status(200).json(column);
   } catch (error) {
@@ -77,23 +79,33 @@ export const addCard = async (req, res) => {
   }
 };
 
+
 export const updateCard = async (req, res) => {
   try {
     const { id, cardId } = req.params;
-    const { member, tasks } = req.body;
+    const { member, tasks, status } = req.body; // Thêm status
+
     const column = await Column.findOneAndUpdate(
-      { _id: id, user: req.user._id, 'cards._id': cardId },
-      { $set: { 'cards.$.member': member, 'cards.$.tasks': tasks } },
+      { _id: id, user: req.user._id, "cards._id": cardId },
+      {
+        $set: {
+          "cards.$.member": member,
+          "cards.$.tasks": tasks,
+          "cards.$.status": status, // Cập nhật status
+        },
+      },
       { new: true }
     );
+
     if (!column) {
-      return res.status(404).json({ error: 'Card not found' });
+      return res.status(404).json({ error: "Card not found" });
     }
     res.status(200).json(column);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 export const deleteCard = async (req, res) => {
   try {

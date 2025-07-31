@@ -13,10 +13,12 @@ const CardModal = ({
   const [tasks, setTasks] = useState(
     initialCardData?.tasks ? initialCardData.tasks.join("\n") : ""
   );
+  const [status, setStatus] = useState(initialCardData?.status || "to-do");
 
   useEffect(() => {
     setMember(initialCardData?.member || "");
     setTasks(initialCardData?.tasks ? initialCardData.tasks.join("\n") : "");
+    setStatus(initialCardData?.status || "to-do");
   }, [initialCardData]);
 
   const handleSubmit = (e) => {
@@ -30,11 +32,13 @@ const CardModal = ({
         .split("\n")
         .map((t) => t.trim())
         .filter((t) => t),
+      status,
     };
     onSave(newCard, columnIndex, initialCardData?.id);
 
     setMember("");
     setTasks("");
+    setStatus("to-do");
     onClose();
   };
 
@@ -59,7 +63,7 @@ const CardModal = ({
             <form
               onSubmit={handleSubmit}
               className="bg-white p-6 rounded-lg shadow-xl flex flex-col gap-4 w-full max-w-md relative z-50"
-              onClick={(e) => e.stopPropagation()} 
+              onClick={(e) => e.stopPropagation()}
             >
               <button
                 type="button"
@@ -72,19 +76,47 @@ const CardModal = ({
               <h2 className="text-2xl font-bold mb-4 text-gray-800">
                 {initialCardData ? "Edit card" : "Add card"}
               </h2>
-              <input
-                className="border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                value={member}
-                onChange={(e) => setMember(e.target.value)}
-                placeholder="Member's name (ex: John Doe)"
-                autoFocus
-              />
-              <textarea
-                className="border border-gray-300 px-4 py-2 rounded-md min-h-[120px] focus:outline-none focus:ring-2 focus:ring-blue-400"
-                value={tasks}
-                onChange={(e) => setTasks(e.target.value)}
-                placeholder="Tasks"
-              />
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  Title
+                </label>
+                <input
+                  className="border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                  value={member}
+                  onChange={(e) => setMember(e.target.value)}
+                  placeholder="Member's name (ex: John Doe)"
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  Description
+                </label>
+                <textarea
+                  className="border border-gray-300 px-4 py-2 rounded-md min-h-[120px] focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                  value={tasks}
+                  onChange={(e) => setTasks(e.target.value)}
+                  placeholder="Tasks"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  Progression
+                </label>
+                <select
+                  className="border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                >
+                  <option value="to-do">To-Do</option>
+                  <option value="ongoing">Ongoing</option>
+                  <option value="finished">Finished</option>
+                </select>
+              </div>
+
               <div className="flex gap-3 mt-4 justify-end">
                 <button
                   type="submit"

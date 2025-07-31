@@ -18,10 +18,25 @@ const Card = ({ card, columnIndex, moveCard, onEdit, onDelete }) => {
   const opacity = isDragging ? 0.4 : 1;
   const maxTasksToShow = 3;
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "to-do":
+        return "bg-gray-200 border-l-4 border-gray-400";
+      case "ongoing":
+        return "bg-yellow-100 border-l-4 border-yellow-400";
+      case "finished":
+        return "bg-green-100 border-l-4 border-green-400";
+      default:
+        return "bg-white border-l-4 border-gray-300";
+    }
+  };
+
   return (
     <div
       ref={drag}
-      className="bg-white p-4 rounded-lg shadow-md mb-3 cursor-grab active:cursor-grabbing relative"
+      className={`p-4 rounded-lg shadow-md mb-3 cursor-grab active:cursor-grabbing relative ${getStatusColor(
+        card.status
+      )}`}
       style={{ opacity }}
     >
       <h4 className="font-semibold text-gray-800 mb-1">{card.member}</h4>
@@ -35,6 +50,9 @@ const Card = ({ card, columnIndex, moveCard, onEdit, onDelete }) => {
           </li>
         )}
       </ul>
+      <div className="text-xs text-right text-gray-500 italic mt-2 capitalize">
+        {card.status}
+      </div>
       <div className="absolute top-2 right-2 flex gap-1">
         <button
           onClick={() => onEdit(card, columnIndex)}
