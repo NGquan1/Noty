@@ -15,7 +15,7 @@ const Card = ({ card, columnIndex, moveCard, onEdit, onDelete }) => {
     }),
   });
 
-  const opacity = isDragging ? 0.4 : 1;
+  const opacity = isDragging ? 0.3 : 1;
   const maxTasksToShow = 3;
 
   const getStatusColor = (status) => {
@@ -23,11 +23,11 @@ const Card = ({ card, columnIndex, moveCard, onEdit, onDelete }) => {
       case "to-do":
         return "bg-gray-200 border-l-4 border-gray-400";
       case "ongoing":
-        return "bg-yellow-100 border-l-4 border-yellow-400";
+        return "bg-yellow-100 border-l-4 border-yellow-300";
       case "finished":
-        return "bg-green-100 border-l-4 border-green-400";
+        return "bg-green-100 border-l-4 border-green-300";
       default:
-        return "bg-white border-l-4 border-gray-300";
+        return "bg-white border-l-2 border-gray-300";
     }
   };
 

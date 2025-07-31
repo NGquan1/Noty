@@ -96,7 +96,7 @@ const EventModalForm = ({ eventForm, handleFormChange, onClose, onSave }) => {
                 Close
               </button>
               <button
-                className="px-5 py-2 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600"
+                className="px-5 py-2 rounded bg-gray-600 text-white font-semibold hover:bg-gray-800"
                 onClick={onSave}
               >
                 Save

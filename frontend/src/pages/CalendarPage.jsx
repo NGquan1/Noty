@@ -104,8 +104,8 @@ const CalendarPage = ({ projectId }) => {
                 "!min-h-[60px] !rounded-lg !p-1",
                 view === "month" &&
                 formatDate(date) === formatDate(selectedDate)
-                  ? "bg-blue-100 border-2 border-blue-400"
-                  : "hover:bg-blue-50 hover:text-blue-700 focus:bg-blue-100 focus:text-blue-700",
+                  ? "bg-black-100 border-2 border-black-400"
+                  : "hover:bg-gray-50 hover:text-gray-700 focus:bg-gray-100 focus:text-gray-700",
               ]
                 .filter(Boolean)
                 .join(" ")
