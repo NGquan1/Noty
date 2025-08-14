@@ -1,9 +1,15 @@
 import Column from '../models/column.model.js';
+import Project from '../models/project.model.js';
 
 export const createColumn = async (req, res) => {
   try {
     const { title, projectId } = req.body;
     if (!projectId) return res.status(400).json({ error: 'Missing projectId' });
+    // Kiểm tra quyền thành viên hoặc owner
+    const project = await Project.findById(projectId);
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    const isMember = project.owner.equals(req.user._id) || project.members.some(m => m.equals(req.user._id));
+    if (!isMember) return res.status(403).json({ error: 'No permission' });
     const column = await Column.create({
       title,
       user: req.user._id,
@@ -19,7 +25,7 @@ export const createColumn = async (req, res) => {
 export const getColumns = async (req, res) => {
   try {
     const { projectId } = req.query;
-    const filter = { user: req.user._id };
+    const filter = {};
     if (projectId) filter.project = projectId;
     const columns = await Column.find(filter);
     res.status(200).json(columns);
@@ -32,14 +38,14 @@ export const updateColumn = async (req, res) => {
   try {
     const { id } = req.params;
     const { title } = req.body;
-    const column = await Column.findOneAndUpdate(
-      { _id: id, user: req.user._id },
-      { title },
-      { new: true }
-    );
-    if (!column) {
-      return res.status(404).json({ error: 'Column not found' });
-    }
+    const column = await Column.findById(id);
+    if (!column) return res.status(404).json({ error: 'Column not found' });
+    const project = await Project.findById(column.project);
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    const isMember = project.owner.equals(req.user._id) || project.members.some(m => m.equals(req.user._id));
+    if (!isMember) return res.status(403).json({ error: 'No permission' });
+    column.title = title;
+    await column.save();
     res.status(200).json(column);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -49,10 +55,13 @@ export const updateColumn = async (req, res) => {
 export const deleteColumn = async (req, res) => {
   try {
     const { id } = req.params;
-    const column = await Column.findOneAndDelete({ _id: id, user: req.user._id });
-    if (!column) {
-      return res.status(404).json({ error: 'Column not found' });
-    }
+    const column = await Column.findById(id);
+    if (!column) return res.status(404).json({ error: 'Column not found' });
+    const project = await Project.findById(column.project);
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    const isMember = project.owner.equals(req.user._id) || project.members.some(m => m.equals(req.user._id));
+    if (!isMember) return res.status(403).json({ error: 'No permission' });
+    await column.deleteOne();
     res.status(200).json({ message: 'Column deleted successfully' });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -62,17 +71,15 @@ export const deleteColumn = async (req, res) => {
 export const addCard = async (req, res) => {
   try {
     const { id } = req.params;
-    const { member, tasks, status } = req.body; // Thêm status
-
-    const column = await Column.findOneAndUpdate(
-      { _id: id, user: req.user._id },
-      { $push: { cards: { member, tasks, status } } }, // Lưu cả status
-      { new: true }
-    );
-
-    if (!column) {
-      return res.status(404).json({ error: "Column not found" });
-    }
+    const { member, tasks, status } = req.body;
+    const column = await Column.findById(id);
+    if (!column) return res.status(404).json({ error: 'Column not found' });
+    const project = await Project.findById(column.project);
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    const isMember = project.owner.equals(req.user._id) || project.members.some(m => m.equals(req.user._id));
+    if (!isMember) return res.status(403).json({ error: 'No permission' });
+    column.cards.push({ member, tasks, status });
+    await column.save();
     res.status(200).json(column);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -83,23 +90,19 @@ export const addCard = async (req, res) => {
 export const updateCard = async (req, res) => {
   try {
     const { id, cardId } = req.params;
-    const { member, tasks, status } = req.body; // Thêm status
-
-    const column = await Column.findOneAndUpdate(
-      { _id: id, user: req.user._id, "cards._id": cardId },
-      {
-        $set: {
-          "cards.$.member": member,
-          "cards.$.tasks": tasks,
-          "cards.$.status": status, // Cập nhật status
-        },
-      },
-      { new: true }
-    );
-
-    if (!column) {
-      return res.status(404).json({ error: "Card not found" });
-    }
+    const { member, tasks, status } = req.body;
+    const column = await Column.findById(id);
+    if (!column) return res.status(404).json({ error: 'Column not found' });
+    const project = await Project.findById(column.project);
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    const isMember = project.owner.equals(req.user._id) || project.members.some(m => m.equals(req.user._id));
+    if (!isMember) return res.status(403).json({ error: 'No permission' });
+    const card = column.cards.id(cardId);
+    if (!card) return res.status(404).json({ error: 'Card not found' });
+    card.member = member;
+    card.tasks = tasks;
+    card.status = status;
+    await column.save();
     res.status(200).json(column);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -110,14 +113,14 @@ export const updateCard = async (req, res) => {
 export const deleteCard = async (req, res) => {
   try {
     const { id, cardId } = req.params;
-    const column = await Column.findOneAndUpdate(
-      { _id: id, user: req.user._id },
-      { $pull: { cards: { _id: cardId } } },
-      { new: true }
-    );
-    if (!column) {
-      return res.status(404).json({ error: 'Card not found' });
-    }
+    const column = await Column.findById(id);
+    if (!column) return res.status(404).json({ error: 'Column not found' });
+    const project = await Project.findById(column.project);
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+    const isMember = project.owner.equals(req.user._id) || project.members.some(m => m.equals(req.user._id));
+    if (!isMember) return res.status(403).json({ error: 'No permission' });
+    column.cards = column.cards.filter(card => card._id.toString() !== cardId);
+    await column.save();
     res.status(200).json(column);
   } catch (error) {
     res.status(400).json({ error: error.message });

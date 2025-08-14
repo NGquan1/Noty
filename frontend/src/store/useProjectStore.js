@@ -9,6 +9,7 @@ const API = axios.create({
 export const useProjectStore = create((set, get) => ({
   projects: [],
   isLoading: false,
+  currentProjectId: null,
 
   fetchProjects: async () => {
     set({ isLoading: true });
@@ -39,4 +40,6 @@ export const useProjectStore = create((set, get) => ({
     const res = await API.post(`/projects/${projectId}/share`, { role });
     return res.data;
   },
+
+  setCurrentProjectId: (projectId) => set({ currentProjectId: projectId }),
 }));

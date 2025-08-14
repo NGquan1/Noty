@@ -19,10 +19,10 @@ import ProjectSettingsPage from "./ProjectSettingsPage";
 import NotesPage from "./NotesPage";
 import CalendarPage from "./CalendarPage";
 
+
 import { useColumnStore } from "../store/useColumnStore";
 import { useProjectStore } from "../store/useProjectStore";
 import { useCalendarStore } from "../store/useCalendarStore";
-import MemberPage from "./MemberPage";
 
 const App = () => {
   const {
@@ -40,16 +40,25 @@ const App = () => {
   const { projects, fetchProjects, createProject } = useProjectStore();
   const { setCurrentProject } = useCalendarStore();
 
-  const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const { currentProjectId, setCurrentProjectId } = useProjectStore();
+  const [selectedProjectId, setSelectedProjectId] = useState(currentProjectId);
   const [activePage, setActivePage] = useState("tasks");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentColumnIndex, setCurrentColumnIndex] = useState(null);
   const [editingCard, setEditingCard] = useState(null);
   const [projectModalOpen, setProjectModalOpen] = useState(false);
 
+
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);
+
+  useEffect(() => {
+    // Ưu tiên lấy projectId từ store nếu có
+    if (currentProjectId && currentProjectId !== selectedProjectId) {
+      setSelectedProjectId(currentProjectId);
+    }
+  }, [currentProjectId]);
 
   useEffect(() => {
     if (selectedProjectId) fetchColumns(selectedProjectId);
@@ -242,8 +251,11 @@ const App = () => {
               {activePage === "notes" && (
                 <NotesPage selectedProjectId={selectedProjectId} />
               )}
-              {activePage === "members" && <MemberPage />}
-
+              {activePage === "members" && (
+                <div className="text-center text-gray-400 text-2xl mt-20 w-full">
+                  Members page (coming soon)
+                </div>
+              )}
               {activePage === "settings" && (
                 <ProjectSettingsPage
                   selectedProjectId={selectedProjectId}

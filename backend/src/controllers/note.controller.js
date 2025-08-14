@@ -23,7 +23,7 @@ export const createNote = async (req, res) => {
 export const getNotes = async (req, res) => {
   try {
     const { projectId } = req.query;
-    const filter = { user: req.user._id };
+    const filter = {};
     if (projectId) filter.projectId = projectId;
     const notes = await Note.find(filter).sort({ createdAt: -1 });
     res.status(200).json(notes);
