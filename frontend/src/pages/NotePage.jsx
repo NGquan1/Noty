@@ -18,6 +18,7 @@ import ProjectModal from "../components/ProjectModal";
 import ProjectSettingsPage from "./ProjectSettingsPage";
 import NotesPage from "./NotesPage";
 import CalendarPage from "./CalendarPage";
+import MembersPage from "./MembersPage";
 
 
 import { useColumnStore } from "../store/useColumnStore";
@@ -252,9 +253,7 @@ const App = () => {
                 <NotesPage selectedProjectId={selectedProjectId} />
               )}
               {activePage === "members" && (
-                <div className="text-center text-gray-400 text-2xl mt-20 w-full">
-                  Members page (coming soon)
-                </div>
+                <MembersPage projectId={selectedProjectId} />
               )}
               {activePage === "settings" && (
                 <ProjectSettingsPage

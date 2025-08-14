@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useProjectStore } from "../store/useProjectStore";
+import toast from "react-hot-toast";
 
 const JoinProjectPage = () => {
   const { token } = useParams();
@@ -10,7 +11,11 @@ const JoinProjectPage = () => {
     (state) => state.setCurrentProjectId
   );
 
+  // Đảm bảo chỉ join 1 lần khi mount
+  const hasJoined = useRef(false);
   useEffect(() => {
+    if (hasJoined.current) return;
+    hasJoined.current = true;
     const joinProject = async () => {
       try {
         const res = await axios.post(
@@ -18,17 +23,16 @@ const JoinProjectPage = () => {
           {},
           { withCredentials: true }
         );
-        alert("Project joined successfully!");
+        toast.success("Project joined successfully!");
         setCurrentProjectId(res.data.projectId); // set vào store
         navigate("/");
       } catch (err) {
-        alert(
+        toast.error(
           "Can't join project: " + (err.response?.data?.error || err.message)
         );
         navigate("/");
       }
     };
-
     joinProject();
   }, [token, navigate, setCurrentProjectId]);
 

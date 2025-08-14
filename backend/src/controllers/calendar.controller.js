@@ -3,7 +3,7 @@ import Calendar from "../models/calendar.model.js";
 export const getEvents = async (req, res) => {
   try {
     const { projectId } = req.query;
-    const filter = { user: req.user._id };
+    const filter = {};
     if (projectId) filter.project = projectId;
 
     const events = await Calendar.find(filter);
