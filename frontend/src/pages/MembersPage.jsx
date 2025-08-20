@@ -72,26 +72,26 @@ const MembersPage = ({ projectId }) => {
   }
 
   return (
-    <div className="max-w-xl mx-auto bg-white rounded-lg shadow p-8 mt-8">
-      <h2 className="text-2xl font-bold mb-6 text-gray-700 text-center">Project Members</h2>
-      <ul className="divide-y divide-gray-200">
+    <div className="max-w-2xl mx-auto bg-gradient-to-br from-gray-100 to-white rounded-3xl shadow-xl p-10 mt-10">
+      <h2 className="text-3xl font-extrabold mb-8 text-center text-primary drop-shadow">Project Members</h2>
+      <ul className="flex flex-col gap-5">
         {members.map((user, idx) => (
-          <li key={user._id + (user.isOwner ? "-owner" : "-member") + idx} className="flex items-center gap-4 py-4">
+          <li key={user._id + (user.isOwner ? "-owner" : "-member") + idx} className="flex items-center gap-5 py-4 px-4 bg-white rounded-2xl shadow-md border-2 border-gray-100 hover:shadow-lg transition-all">
             <img
               src={user.profilePic || "/default-avatar.png"}
               alt={user.fullName}
-              className="w-12 h-12 rounded-full object-cover border"
+              className="w-14 h-14 rounded-full object-cover border-2 border-primary/30 shadow"
             />
-            <div>
-              <div className="font-semibold text-gray-800">{user.fullName}</div>
-              <div className="text-gray-500 text-sm">{user.email}</div>
+            <div className="flex-1 min-w-0">
+              <div className="font-bold text-lg text-gray-800 truncate">{user.fullName}</div>
+              <div className="text-gray-500 text-sm truncate">{user.email}</div>
             </div>
             {user.isOwner && (
-              <span className="ml-auto px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium">Owner</span>
+              <span className="ml-auto px-4 py-1 bg-yellow-200 text-yellow-800 rounded-full text-xs font-bold shadow border border-yellow-300">Owner</span>
             )}
             {!user.isOwner && members[0] && authUser && authUser._id === members[0]._id && (
               <button
-                className="ml-auto px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium hover:bg-red-200 transition"
+                className="ml-auto px-4 py-1 bg-red-500 text-white rounded-full text-xs font-semibold hover:bg-red-600 shadow transition-all border border-red-400"
                 onClick={() => handleRemove(user._id)}
               >
                 Remove

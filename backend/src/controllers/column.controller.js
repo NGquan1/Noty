@@ -16,7 +16,7 @@ export const createColumn = async (req, res) => {
       project: projectId,
       cards: [],
     });
-    column.cards.push({ member, tasks, status, user: req.user._id });
+  // Không push card khi tạo column mới
     res.status(201).json(column);
   } catch (error) {
     res.status(400).json({ error: error.message });

@@ -18,9 +18,7 @@ const NotesPage = ({ selectedProjectId }) => {
     if (selectedProjectId) fetchNotes(selectedProjectId);
   }, [selectedProjectId, fetchNotes]);
 
-  useEffect(() => {
-    setSelectedNote(notes[0] || null);
-  }, [notes]);
+  // Không tự động chọn note đầu tiên, để user tự chọn
 
   useEffect(() => {
     if (selectedNote) {
@@ -54,64 +52,68 @@ const NotesPage = ({ selectedProjectId }) => {
 
   return (
     <div className="flex h-auto min-h-[500px]">
-      <div className="w-64 bg-gray-300 p-4 flex flex-col gap-2 border-r rounded-lg">
-        <div className="font-bold mb-2">Notes</div>
+      <div className="w-72 bg-white/80 p-4 flex flex-col gap-2 border-r rounded-2xl shadow-xl mr-4">
+        <div className="font-extrabold text-lg mb-3 text-primary tracking-wide">Notes</div>
         {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
-        {notes.map((note) => (
-          <div
-            key={note._id}
-            className={`group relative rounded px-3 py-2 mb-1 cursor-pointer ${
-              selectedNote?._id === note._id
-                ? "bg-white shadow font-semibold"
-                : "bg-gray-200 hover:bg-gray-100"
-            }`}
-            onClick={() => setSelectedNote(note)}
-          >
-            <div className="flex items-center justify-between">
-              <div className="truncate">{note.title}</div>
-              <button
-                className="p-1 rounded hover:bg-gray-200"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setOpenMenuId(openMenuId === note._id ? null : note._id);
-                }}
-              >
-                <MoreVertical size={18} />
-              </button>
-            </div>
-            <div className="text-xs text-gray-500 truncate">
-              {note.content.replace(/<[^>]+>/g, "").slice(0, 30)}
-            </div>
-            <div className="text-xs text-gray-400 mt-1">
-              {note.user?.fullName ? `By: ${note.user.fullName}` : ''}
-            </div>
-            {openMenuId === note._id && (
-              <div className="absolute right-2 top-8 z-10 bg-white border rounded shadow p-2">
+        {notes.length === 0 ? (
+          <div className="text-gray-400 italic text-center py-8 select-none">No notes yet. Click + to add!</div>
+        ) : (
+          notes.map((note) => (
+            <div
+              key={note._id}
+              className={`group relative rounded-2xl px-4 py-3 mb-2 cursor-pointer transition-all duration-150 border-2 ${
+                selectedNote?._id === note._id
+                  ? "bg-primary/10 border-primary shadow-lg font-semibold scale-[1.03]"
+                  : "bg-gray-100 border-transparent hover:bg-primary/5 hover:border-primary/40"
+              }`}
+              onClick={() => setSelectedNote(note)}
+            >
+              <div className="flex items-center justify-between">
+                <div className="truncate text-base font-semibold">{note.title}</div>
                 <button
-                  className="text-red-600 hover:text-white hover:bg-red-600 px-2 py-1 rounded-sm"
+                  className="p-1 rounded-full hover:bg-gray-200"
                   onClick={(e) => {
                     e.stopPropagation();
-                    useNoteStore
-                      .getState()
-                      .deleteNote(note._id, selectedProjectId);
-                    setOpenMenuId(null);
+                    setOpenMenuId(openMenuId === note._id ? null : note._id);
                   }}
                 >
-                  Delete
+                  <MoreVertical size={18} />
                 </button>
               </div>
-            )}
-          </div>
-        ))}
+              <div className="text-xs text-gray-500 truncate">
+                {note.content.replace(/<[^>]+>/g, "").slice(0, 40)}
+              </div>
+              <div className="text-xs text-gray-400 mt-1">
+                {note.user?.fullName ? `By: ${note.user.fullName}` : ''}
+              </div>
+              {openMenuId === note._id && (
+                <div className="absolute right-2 top-8 z-10 bg-white border rounded shadow p-2">
+                  <button
+                    className="text-red-600 hover:text-white hover:bg-red-600 px-2 py-1 rounded-sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      useNoteStore
+                        .getState()
+                        .deleteNote(note._id, selectedProjectId);
+                      setOpenMenuId(null);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
+            </div>
+          ))
+        )}
         <button
           onClick={handleAddNote}
-          className="mt-2 flex items-center justify-center bg-gray-100 hover:bg-gray-400 transition-all duration-200 ease-in-out transform hover:scale-110 rounded-md w-10 h-10 mx-auto text-2xl"
+          className="mt-2 flex items-center justify-center bg-primary/10 hover:bg-primary/20 transition-all duration-200 ease-in-out transform hover:scale-110 rounded-full w-12 h-12 mx-auto text-2xl text-primary shadow"
         >
-          <Plus size={24} />
+          <Plus size={28} />
         </button>
       </div>
       <div className="flex-1 flex flex-col">
-        <div className="bg-gray-200 rounded-b-lg px-8 py-2 flex justify-center mb-4 mt-0 mx-4">
+        <div className="bg-primary/10 rounded-b-2xl px-8 py-2 flex justify-center mb-4 mt-0 mx-4 shadow">
           <div
             id="custom-quill-toolbar"
             className="rounded-md shadow bg-white px-4 py-2"
@@ -133,7 +135,7 @@ const NotesPage = ({ selectedProjectId }) => {
             <button className="ql-image" />
           </div>
         </div>
-        <div className="flex-1 bg-white rounded-lg shadow p-8 mx-4">
+        <div className="flex-1 bg-white rounded-lg shadow-xl p-8 mx-4">
           <input
             className="text-2xl font-bold mb-2 w-full border-b outline-none"
             value={titleValue}

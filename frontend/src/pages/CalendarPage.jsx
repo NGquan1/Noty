@@ -64,9 +64,9 @@ const CalendarPage = ({ projectId }) => {
   const events = tasks[selectedKey] || [];
 
   return (
-    <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-8 mt-5 border border-gray-200 overflow-y-scroll scrollbar-hide">
-      <h2 className="text-3xl font-bold mb-6 text-center">Event Calendar</h2>
-      <div className="flex flex-col md:flex-row gap-8">
+    <div className="max-w-6xl mx-auto bg-gradient-to-br from-gray-100 to-white rounded-3xl shadow-2xl p-10 mt-8 border border-gray-200 overflow-y-scroll scrollbar-hide">
+      <h2 className="text-4xl font-extrabold mb-8 text-center text-primary drop-shadow">Event Calendar</h2>
+      <div className="flex flex-col md:flex-row gap-10">
         <div className="flex-1 min-w-[700px]">
           <Calendar
             value={selectedDate}
@@ -118,29 +118,27 @@ const CalendarPage = ({ projectId }) => {
         </div>
 
         <div className="flex-1 max-w-xs mx-auto">
-          <h3 className="font-semibold mb-2 text-gray-700">
-            Events for {formatDate(selectedDate)}:
-          </h3>
-          <ul className="space-y-1">
+          <h3 className="font-bold mb-4 text-lg text-primary">Events for {formatDate(selectedDate)}:</h3>
+          <ul className="space-y-3">
             {events.length === 0 && (
-              <li className="text-gray-400">No events for this day.</li>
+              <li className="text-gray-400 italic text-center py-6 select-none bg-gray-100 rounded-xl shadow-inner">No events for this day.</li>
             )}
             {events.map((event, idx) => (
               <li
                 key={event._id}
-                className={`rounded px-2 py-1 text-sm font-medium cursor-pointer ${
+                className={`rounded-2xl px-5 py-4 text-base font-medium cursor-pointer shadow-lg border-2 transition-all duration-150 group ${
                   COLORS[idx % COLORS.length]
-                }`}
+                } hover:scale-[1.03] hover:shadow-2xl`}
                 onClick={() => setSelectedEvent(event)}
               >
-                <div className="font-bold ">{event.title}</div>
-                <div className="text-xs text-gray-300">{event.description}</div>
-                <div className="text-xs text-gray-200">
-                  {event.startDate} {event.startTime} - {event.endDate}{" "}
-                  {event.endTime}
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-bold text-lg truncate">{event.title}</span>
+                  <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-semibold bg-white/80 text-primary border border-primary/30 shadow-sm">{event.labels || 'Event'}</span>
                 </div>
-                <div className="text-xs text-gray-400 mt-1">
-                  {event.user?.fullName ? `By: ${event.user.fullName}` : ''}
+                <div className="text-sm text-gray-600 mb-1 truncate">{event.description}</div>
+                <div className="text-xs text-gray-500 flex gap-2 items-center">
+                  <span>🗓 {event.startDate} {event.startTime} - {event.endDate} {event.endTime}</span>
+                  {event.user?.fullName && <span className="ml-2">👤 {event.user.fullName}</span>}
                 </div>
               </li>
             ))}

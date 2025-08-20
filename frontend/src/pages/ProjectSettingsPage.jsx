@@ -80,21 +80,21 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
   if (!project) return <div className="text-gray-400">No project selected</div>;
 
   return (
-    <div className="max mx-10 bg-white rounded shadow p-6 mt-10">
-      <h2 className="text-2xl font-bold mb-4">Project Settings</h2>
+    <div className="max-w-2xl mx-auto bg-gradient-to-br from-gray-100 to-white rounded-3xl shadow-xl p-10 mt-10">
+      <h2 className="text-3xl font-extrabold mb-8 text-primary drop-shadow text-center">Project Settings</h2>
 
       {/* Rename */}
-      <div className="mb-6">
-        <label className="block font-semibold mb-2">Project Name</label>
-        <div className="flex flex-col items-start gap-3 w-full max-w-xs">
+      <div className="mb-8">
+        <label className="block font-semibold mb-2 text-lg">Project Name</label>
+        <div className="flex flex-col items-start gap-4 w-full max-w-md">
           <input
-            className="border border-gray-200 px-3 py-2 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-200 text-base bg-white"
+            className="border-2 border-gray-200 px-4 py-3 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-primary/30 text-base bg-white shadow-sm"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             disabled={loading}
           />
           <button
-            className="bg-blue-400 text-white px-5 py-2 rounded-lg font-semibold transition-colors duration-150 hover:bg-blue-500 disabled:opacity-60"
+            className="bg-gray-700/90 text-white px-6 py-2 rounded-xl font-bold transition-all duration-150 hover:bg-primary scale-105 disabled:opacity-60 shadow-md"
             onClick={handleRename}
             disabled={loading || !newName.trim()}
           >
@@ -104,9 +104,9 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
       </div>
 
       {/* Delete */}
-      <div className="mb-6">
+      <div className="mb-8">
         <button
-          className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          className="flex items-center gap-2 bg-red-500 text-white px-5 py-2 rounded-xl font-semibold hover:bg-red-600 transition-all shadow-md"
           onClick={handleDelete}
           disabled={loading}
         >
@@ -116,13 +116,13 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
       </div>
 
       {/* Share */}
-      <div className="mb-6">
-        <label className="block font-semibold mb-2">Share Project Link</label>
-        <div className="flex items-center gap-4 mb-3">
+      <div className="mb-8">
+        <label className="block font-semibold mb-2 text-lg">Share Project Link</label>
+        <div className="flex items-center gap-4 mb-4">
           <select
             value={shareRole}
             onChange={(e) => setShareRole(e.target.value)}
-            className="border px-3 py-2 rounded bg-white text-sm"
+            className="border-2 px-4 py-2 rounded-xl bg-white text-base shadow-sm focus:ring-2 focus:ring-primary/30"
             disabled={loading}
           >
             <option value="editor">Editor</option>
@@ -130,7 +130,7 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
           </select>
           <button
             onClick={handleGenerateShareLink}
-            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded disabled:opacity-60"
+            className="bg-gray-700 hover:bg-primary text-white px-5 py-2 rounded-xl font-semibold transition-all shadow-md disabled:opacity-60"
             disabled={loading}
           >
             Generate Link
@@ -143,23 +143,23 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
               type="text"
               readOnly
               value={shareLink}
-              className="border px-3 py-2 rounded w-full text-sm"
+              className="border-2 px-4 py-2 rounded-xl w-full text-base shadow-sm bg-gray-50"
             />
             <button
               onClick={handleCopy}
-              className="bg-gray-200 hover:bg-gray-300 p-2 rounded"
+              className="bg-gray-200 hover:bg-primary/10 p-2 rounded-xl transition-all shadow"
             >
               <Copy size={16} />
             </button>
             {copySuccess && (
-              <span className="text-green-600 text-sm">{copySuccess}</span>
+              <span className="text-green-600 text-sm font-semibold">{copySuccess}</span>
             )}
           </div>
         )}
       </div>
 
       {/* Error */}
-      {error && <div className="text-red-500">{error}</div>}
+      {error && <div className="text-red-500 font-semibold text-center mt-2">{error}</div>}
     </div>
   );
 };

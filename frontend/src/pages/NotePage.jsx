@@ -19,6 +19,7 @@ import ProjectSettingsPage from "./ProjectSettingsPage";
 import NotesPage from "./NotesPage";
 import CalendarPage from "./CalendarPage";
 import MembersPage from "./MembersPage";
+import AnimatedPageTransition from "../components/AnimatedPageTransition";
 
 
 import { useColumnStore } from "../store/useColumnStore";
@@ -168,7 +169,7 @@ const App = () => {
           onClose={() => setProjectModalOpen(false)}
           onSave={handleAddProject}
         />
-        <div className="flex-1 p-8 pt-20">
+        <div className="flex-1 p-8 pt-20 mt-5">
           <style>
             {`
               @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -198,69 +199,72 @@ const App = () => {
             </div>
           ) : (
             <>
-              <div className="flex gap-4 mb-6 justify-center items-center">
+              <div className="flex gap-4 mb-8 justify-center items-center">
                 {pageList.map((page) => (
                   <button
                     key={page.key}
-                    className={`capitalize px-6 py-2 rounded-lg text-lg font-medium shadow transition-colors duration-150 ${
+                    className={`capitalize flex items-center gap-2 px-7 py-3 rounded-2xl text-lg font-semibold shadow-lg border-2 transition-all duration-00 focus:outline-none focus:ring-2 focus:ring-violet-300/60  ${
                       activePage === page.key
-                        ? "bg-gray-500 text-white"
-                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        ? "bg-gray-700/90 border-black-500 text-white scale-[1.07] drop-shadow-lg"
+                        : "bg-white border-gray-200 text-gray-700 hover:bg-violet-50 hover:border-violet-400 hover:text-violet-700"
                     }`}
+                    style={{ minWidth: 130 }}
                     onClick={() => setActivePage(page.key)}
                   >
-                    {page.icon} {page.label}
+                    <span className="text-xl">{page.icon}</span> {page.label}
                   </button>
                 ))}
               </div>
 
-              {activePage === "tasks" && (
-                <div className="flex flex-col md:flex-row gap-6 justify-center items-start">
-                  {isLoading ? (
-                    <div className="text-center text-gray-400 text-2xl mt-20 w-full">
-                      Loading...
-                    </div>
-                  ) : (
-                    <>
-                      {columns.map((column, index) => (
-                        <Column
-                          key={column.id || column._id}
-                          column={column}
-                          columnIndex={index}
-                          moveCard={moveCard}
-                          onAddCard={handleAddCard}
-                          onEditCard={handleEditCard}
-                          updateColumnTitle={handleUpdateColumnTitle}
-                          onDeleteColumn={handleDeleteColumn}
-                          onDeleteCard={handleDeleteCard}
-                        />
-                      ))}
-                      <button
-                        onClick={handleAddColumn}
-                        className="bg-gray-500 hover:bg-gray-600 text-white rounded-full w-12 h-12 flex items-center justify-center text-xl shadow-lg transition-all duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75"
-                        aria-label="Add new column"
-                      >
-                        <Plus size={24} />
-                      </button>
-                    </>
-                  )}
-                </div>
-              )}
-              {activePage === "calendar" && (
-                <CalendarPage projectId={selectedProjectId} />
-              )}
-              {activePage === "notes" && (
-                <NotesPage selectedProjectId={selectedProjectId} />
-              )}
-              {activePage === "members" && (
-                <MembersPage projectId={selectedProjectId} />
-              )}
-              {activePage === "settings" && (
-                <ProjectSettingsPage
-                  selectedProjectId={selectedProjectId}
-                  onProjectDeleted={handleProjectDeleted}
-                />
-              )}
+              <AnimatedPageTransition pageKey={activePage}>
+                {activePage === "tasks" && (
+                  <div className="flex flex-col md:flex-row gap-6 justify-center items-start">
+                    {isLoading ? (
+                      <div className="text-center text-gray-400 text-2xl mt-20 w-full">
+                        Loading...
+                      </div>
+                    ) : (
+                      <>
+                        {columns.map((column, index) => (
+                          <Column
+                            key={column.id || column._id}
+                            column={column}
+                            columnIndex={index}
+                            moveCard={moveCard}
+                            onAddCard={handleAddCard}
+                            onEditCard={handleEditCard}
+                            updateColumnTitle={handleUpdateColumnTitle}
+                            onDeleteColumn={handleDeleteColumn}
+                            onDeleteCard={handleDeleteCard}
+                          />
+                        ))}
+                        <button
+                          onClick={handleAddColumn}
+                          className="bg-gray-500 hover:bg-gray-600 text-white rounded-full w-12 h-12 flex items-center justify-center text-xl shadow-lg transition-all duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75"
+                          aria-label="Add new column"
+                        >
+                          <Plus size={24} />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+                {activePage === "calendar" && (
+                  <CalendarPage projectId={selectedProjectId} />
+                )}
+                {activePage === "notes" && (
+                  <NotesPage selectedProjectId={selectedProjectId} />
+                )}
+                {activePage === "members" && (
+                  <MembersPage projectId={selectedProjectId} />
+                )}
+                {activePage === "settings" && (
+                  <ProjectSettingsPage
+                    selectedProjectId={selectedProjectId}
+                    onProjectDeleted={handleProjectDeleted}
+                  />
+                )}
+              </AnimatedPageTransition>
             </>
           )}
           <CardModal
