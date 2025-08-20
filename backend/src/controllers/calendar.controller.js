@@ -6,8 +6,8 @@ export const getEvents = async (req, res) => {
     const filter = {};
     if (projectId) filter.project = projectId;
 
-    const events = await Calendar.find(filter);
-    res.status(200).json(events);
+  const events = await Calendar.find(filter).populate('user', 'fullName email profilePic');
+  res.status(200).json(events);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

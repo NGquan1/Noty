@@ -82,6 +82,9 @@ const NotesPage = ({ selectedProjectId }) => {
             <div className="text-xs text-gray-500 truncate">
               {note.content.replace(/<[^>]+>/g, "").slice(0, 30)}
             </div>
+            <div className="text-xs text-gray-400 mt-1">
+              {note.user?.fullName ? `By: ${note.user.fullName}` : ''}
+            </div>
             {openMenuId === note._id && (
               <div className="absolute right-2 top-8 z-10 bg-white border rounded shadow p-2">
                 <button

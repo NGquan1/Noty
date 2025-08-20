@@ -25,7 +25,9 @@ export const getNotes = async (req, res) => {
     const { projectId } = req.query;
     const filter = {};
     if (projectId) filter.projectId = projectId;
-    const notes = await Note.find(filter).sort({ createdAt: -1 });
+    const notes = await Note.find(filter)
+      .sort({ createdAt: -1 })
+      .populate('user', 'fullName email profilePic');
     res.status(200).json(notes);
   } catch (error) {
     res.status(400).json({ error: error.message });

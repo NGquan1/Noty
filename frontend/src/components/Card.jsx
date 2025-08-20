@@ -39,7 +39,12 @@ const Card = ({ card, columnIndex, moveCard, onEdit, onDelete }) => {
       )}`}
       style={{ opacity }}
     >
-      <h4 className="font-semibold text-gray-800 mb-1">{card.member}</h4>
+      <h4 className="font-semibold text-gray-800 mb-1">
+        {card.member}
+        {card.user && card.user.fullName && (
+          <span className="ml-2 text-xs text-gray-500">({card.user.fullName})</span>
+        )}
+      </h4>
       <ul className="list-disc list-inside text-gray-700">
         {card.tasks.slice(0, maxTasksToShow).map((task, index) => (
           <li key={index}>{task}</li>

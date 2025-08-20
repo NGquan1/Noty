@@ -139,6 +139,9 @@ const CalendarPage = ({ projectId }) => {
                   {event.startDate} {event.startTime} - {event.endDate}{" "}
                   {event.endTime}
                 </div>
+                <div className="text-xs text-gray-400 mt-1">
+                  {event.user?.fullName ? `By: ${event.user.fullName}` : ''}
+                </div>
               </li>
             ))}
           </ul>
@@ -169,6 +172,9 @@ const CalendarPage = ({ projectId }) => {
                       {selectedEvent.description}
                     </p>
                     <div className="text-sm text-gray-700 space-y-1">
+                      <div>
+                        👤 <strong>Created by:</strong> {selectedEvent.user?.fullName || 'Unknown'}
+                      </div>
                       <div>
                         📅 <strong>Date:</strong> {selectedEvent.startDate} →{" "}
                         {selectedEvent.endDate}

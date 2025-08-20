@@ -16,6 +16,7 @@ export const createColumn = async (req, res) => {
       project: projectId,
       cards: [],
     });
+    column.cards.push({ member, tasks, status, user: req.user._id });
     res.status(201).json(column);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -28,6 +29,20 @@ export const getColumns = async (req, res) => {
     const filter = {};
     if (projectId) filter.project = projectId;
     const columns = await Column.find(filter);
+    const User = (await import('../models/user.model.js')).default;
+    for (const col of columns) {
+      for (const card of col.cards) {
+        if (card.user) {
+          const user = await User.findById(card.user).select('fullName email profilePic');
+          card.user = user ? {
+            _id: user._id,
+            fullName: user.fullName,
+            email: user.email,
+            profilePic: user.profilePic
+          } : null;
+        }
+      }
+    }
     res.status(200).json(columns);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -78,7 +93,7 @@ export const addCard = async (req, res) => {
     if (!project) return res.status(404).json({ error: 'Project not found' });
     const isMember = project.owner.equals(req.user._id) || project.members.some(m => m.equals(req.user._id));
     if (!isMember) return res.status(403).json({ error: 'No permission' });
-    column.cards.push({ member, tasks, status });
+  column.cards.push({ member, tasks, status, user: req.user._id });
     await column.save();
     res.status(200).json(column);
   } catch (error) {

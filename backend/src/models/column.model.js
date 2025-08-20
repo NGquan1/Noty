@@ -8,6 +8,7 @@ const cardSchema = new mongoose.Schema({
     enum: ["to-do", "ongoing", "finished"],
     default: "to-do",
   },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
 const columnSchema = new mongoose.Schema(
