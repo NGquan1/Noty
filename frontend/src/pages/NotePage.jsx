@@ -180,19 +180,15 @@ const App = () => {
           </style>
           {!selectedProjectId ? (
             <div className="flex flex-col items-center justify-center h-[calc(100vh-100px)]">
-              <div className="w-96 text-center bg-white p-8 rounded-lg shadow-lg">
-                <FolderGit2 className="w-16 h-16 text-gray-400 mb-4 mx-auto" />
-                <h2 className="text-2xl font-semibold text-gray-700 mb-2">
-                  Welcome to Noty
-                </h2>
-                <p className="text-gray-500 mb-8">
-                  Get started by creating your first project
-                </p>
+              <div className="w-[420px] max-w-full text-center bg-gradient-to-br from-primary/5 to-white p-12 rounded-3xl shadow-xl border border-gray-100 flex flex-col items-center gap-6 animate-fade-in">
+                <FolderGit2 className="w-20 h-20 text-primary/70 mb-2 mx-auto drop-shadow-lg" />
+                <h2 className="text-3xl font-extrabold text-primary drop-shadow mb-2 tracking-wide">Welcome to Noty</h2>
+                <p className="text-lg text-gray-500 mb-4 font-medium">Get started by creating your first project</p>
                 <button
                   onClick={() => setProjectModalOpen(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-primary/90 transition-colors mx-auto"
+                  className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-800/90 text-white rounded-2xl text-lg font-bold shadow-lg hover:bg-primary transition-all duration-150 mx-auto focus:outline-none focus:ring-2 focus:ring-primary/40"
                 >
-                  <Plus className="w-5 h-5" />
+                  <Plus className="w-6 h-6" />
                   Create New Project
                 </button>
               </div>

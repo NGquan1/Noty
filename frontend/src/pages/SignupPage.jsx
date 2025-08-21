@@ -37,18 +37,18 @@ const SignUpPage = () => {
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       {/* left side */}
-      <div className="flex flex-col justify-center items-center p-6 sm:p-12 bg-white">
-        <div className="w-full max-w-md space-y-6">
+      <div className="flex flex-col justify-center items-center p-6 sm:p-12 bg-gradient-to-br from-white to-gray-50">
+        <div className="w-full max-w-md space-y-8 bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-gray-100 animate-fadeIn">
           {/* LOGO */}
           <div className="text-center">
-            <div className="flex flex-col items-center gap-3 group">
+            <div className="flex flex-col items-center gap-4 group">
               <div
-                className="size-14 rounded-2xl bg-gray-800/5 flex items-center justify-center 
-              group-hover:bg-gray-800/10 transition-all duration-300 shadow-sm"
+                className="size-16 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-700 flex items-center justify-center 
+              group-hover:scale-110 transition-all duration-300 shadow-lg"
               >
-                <StickyNote className="size-8 text-gray-800" />
+                <StickyNote className="size-8 text-white" />
               </div>
-              <h1 className="text-3xl font-bold text-gray-800">Create Account</h1>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Create Account</h1>
               <p className="text-gray-500 text-lg">
                 Get started with your free account
               </p>
@@ -66,7 +66,7 @@ const SignUpPage = () => {
                 </div>
                 <input
                   type="text"
-                  className="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all duration-300"
+                  className="w-full pl-10 px-4 py-3 border border-gray-200 rounded-xl bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all duration-300 hover:border-gray-300"
                   placeholder="John Doe"
                   value={formData.fullName}
                   onChange={(e) =>
@@ -86,7 +86,7 @@ const SignUpPage = () => {
                 </div>
                 <input
                   type="email"
-                  className="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all duration-300"
+                  className="w-full pl-10 px-4 py-3 border border-gray-200 rounded-xl bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all duration-300 hover:border-gray-300"
                   placeholder="you@example.com"
                   value={formData.email}
                   onChange={(e) =>
@@ -106,7 +106,7 @@ const SignUpPage = () => {
                 </div>
                 <input
                   type={showPassword ? "text" : "password"}
-                  className="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all duration-300"
+                  className="w-full pl-10 px-4 py-3 border border-gray-200 rounded-xl bg-gray-50/50 focus:bg-white focus:ring-2 focus:ring-gray-800 focus:border-transparent transition-all duration-300 hover:border-gray-300"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={(e) =>
@@ -129,14 +129,14 @@ const SignUpPage = () => {
 
             <button
               type="submit"
-              className="w-full bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               disabled={isSigningUp}
             >
               {isSigningUp ? (
-                <>
+                <div className="flex items-center justify-center gap-2">
                   <Loader2 className="size-5 animate-spin" />
-                  Loading...
-                </>
+                  <span>Creating account...</span>
+                </div>
               ) : (
                 "Create Account"
               )}
@@ -144,9 +144,9 @@ const SignUpPage = () => {
           </form>
 
           <div className="text-center">
-            <p className="text-base-content/60">
+            <p className="text-gray-500">
               Already have an account?{" "}
-              <Link to="/login" className="link link-primary">
+              <Link to="/login" className="text-gray-800 hover:text-gray-600 font-medium underline underline-offset-4 transition-colors">
                 Sign in
               </Link>
             </p>
@@ -157,8 +157,8 @@ const SignUpPage = () => {
       {/* right side */}
 
       <AuthImagePattern
-        title="Use Noty now"
-        subtitle="User-friendly platform designed to help teams and individuals track, manage, and collaborate on projects efficiently"
+        title="Join Noty Today"
+        subtitle="Start your journey with our powerful project management tool"
       />
     </div>
   );
