@@ -14,7 +14,7 @@ const AuthImagePattern = ({ title, subtitle }) => {
               #808080 100%
             )`,
           backgroundSize: '200% 200%',
-          animation: 'gradient 15s ease infinite'
+          animation: 'gradient 10s ease infinite'
         }}
       />
 
