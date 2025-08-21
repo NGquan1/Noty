@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignupPage";
@@ -18,6 +18,7 @@ import { Toaster } from "react-hot-toast";
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
   const { theme } = useThemeStore();
+  const location = useLocation();
 
   useEffect(() => {
     checkAuth();
@@ -30,9 +31,11 @@ const App = () => {
       </div>
     );
 
+  const hideNavbar = location.pathname === "/login" || location.pathname === "/signup";
+
   return (
     <div data-theme={theme}>
-      <Navbar />
+      {!hideNavbar && <Navbar />}
       <Toaster position="top-center" />
 
       <Routes>
