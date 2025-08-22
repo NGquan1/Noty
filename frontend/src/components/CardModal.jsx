@@ -114,6 +114,10 @@ const CardModal = ({
                   <option value="to-do">To-Do</option>
                   <option value="ongoing">Ongoing</option>
                   <option value="finished">Finished</option>
+                  <option value="normal">Neutral</option>
+                  <option value="urgent">Urgent</option>
+                  <option value="important">Important</option>
+                  <option value="low">Low Priority</option>
                 </select>
               </div>
 

@@ -56,7 +56,7 @@ const Column = ({
   return (
     <div
       ref={drop}
-      className="bg-gray-100 p-4 rounded-lg shadow-inner w-full md:w-1/3 flex flex-col min-h-[300px]"
+      className="bg-gray-200/90 p-4 rounded-lg shadow-inner w-full md:w-1/3 flex flex-col min-h-[300px]"
     >
       <div className="flex items-center justify-between mb-4">
         <div className="flex-grow flex items-center gap-2">
@@ -88,7 +88,7 @@ const Column = ({
         </div>
         <button
           onClick={() => onAddCard(columnIndex)}
-          className="bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center text-gray-700 shadow transition-all duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75"
+          className="bg-gray-300 hover:bg-gray-400/50 rounded-full w-8 h-8 flex items-center justify-center text-gray-700 shadow transition-all duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75"
           aria-label={`Add to column ${column.title}`}
         >
           <Plus size={18} />

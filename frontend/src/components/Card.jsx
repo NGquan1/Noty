@@ -9,7 +9,7 @@ const ItemTypes = {
 
 const statusBadge = {
   "to-do": {
-    label: "To Do",
+    label: "To-Do",
     color: "bg-blue-100 text-blue-700 border-blue-300",
     bg: "bg-blue-400/70"
   },
@@ -22,6 +22,26 @@ const statusBadge = {
     label: "Finished",
     color: "bg-emerald-100 text-emerald-800 border-emerald-300",
     bg: "bg-emerald-300"
+  },
+  "urgent": {
+    label: "Urgent",
+    color: "bg-red-100 text-red-700 border-red-300",
+    bg: "bg-red-400/80"
+  },
+  "important": {
+    label: "Important",
+    color: "bg-orange-100 text-orange-700 border-orange-300",
+    bg: "bg-orange-400/80"
+  },
+  "normal": {
+    label: "Neutral",
+    color: "bg-gray-100 text-gray-700 border-gray-300",
+    bg: "bg-gray-500/50"
+  },
+  "low": {
+    label: "Lơw Priority",
+    color: "bg-zinc-100 text-zinc-500 border-zinc-300",
+    bg: "bg-zinc-300/70"
   },
 };
 

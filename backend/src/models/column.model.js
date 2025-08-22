@@ -5,7 +5,10 @@ const cardSchema = new mongoose.Schema({
   tasks: [{ type: String, required: true }],
   status: {
     type: String,
-    enum: ["to-do", "ongoing", "finished"],
+    enum: [
+      "to-do", "ongoing", "finished",
+      "urgent", "important", "normal", "low"
+    ],
     default: "to-do",
   },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
