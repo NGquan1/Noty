@@ -9,6 +9,7 @@ import {
   StickyNote,
   Users,
   LayoutList,
+  MessageSquare, // Đã thêm
 } from "lucide-react";
 
 import Column from "../components/Column";
@@ -20,7 +21,7 @@ import NotesPage from "./NotesPage";
 import CalendarPage from "./CalendarPage";
 import MembersPage from "./MembersPage";
 import AnimatedPageTransition from "../components/AnimatedPageTransition";
-
+import ChatWindow from "../components/ChatWindow"; // Đã thêm
 
 import { useColumnStore } from "../store/useColumnStore";
 import { useProjectStore } from "../store/useProjectStore";
@@ -49,14 +50,13 @@ const App = () => {
   const [currentColumnIndex, setCurrentColumnIndex] = useState(null);
   const [editingCard, setEditingCard] = useState(null);
   const [projectModalOpen, setProjectModalOpen] = useState(false);
-
+  const [isChatOpen, setIsChatOpen] = useState(false); // Đã thêm
 
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);
 
   useEffect(() => {
-    // Ưu tiên lấy projectId từ store nếu có
     if (currentProjectId && currentProjectId !== selectedProjectId) {
       setSelectedProjectId(currentProjectId);
     }
@@ -124,6 +124,7 @@ const App = () => {
     setActivePage("tasks");
   };
 
+  // Đây là toàn bộ pageList
   const pageList = [
     {
       key: "tasks",
@@ -182,8 +183,12 @@ const App = () => {
             <div className="flex flex-col items-center justify-center h-[calc(100vh-100px)]">
               <div className="w-[420px] max-w-full text-center bg-gradient-to-br from-primary/5 to-white p-12 rounded-3xl shadow-xl border border-gray-100 flex flex-col items-center gap-6 animate-fade-in">
                 <FolderGit2 className="w-20 h-20 text-primary/70 mb-2 mx-auto drop-shadow-lg" />
-                <h2 className="text-3xl font-extrabold text-primary drop-shadow mb-2 tracking-wide">Welcome to Noty</h2>
-                <p className="text-lg text-gray-500 mb-4 font-medium">Get started by creating your first project</p>
+                <h2 className="text-3xl font-extrabold text-primary drop-shadow mb-2 tracking-wide">
+                  Welcome to Noty
+                </h2>
+                <p className="text-lg text-gray-500 mb-4 font-medium">
+                  Get started by creating your first project
+                </p>
                 <button
                   onClick={() => setProjectModalOpen(true)}
                   className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-800/90 text-white rounded-2xl text-lg font-bold shadow-lg hover:bg-primary transition-all duration-150 mx-auto focus:outline-none focus:ring-2 focus:ring-primary/40"
@@ -263,14 +268,35 @@ const App = () => {
               </AnimatedPageTransition>
             </>
           )}
-          <CardModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            onSave={handleSaveCard}
-            initialCardData={editingCard}
-            columnIndex={currentColumnIndex}
-          />
         </div>
+
+        {/* Phần code mới cho Chat */}
+        {selectedProjectId && (
+          <>
+            {!isChatOpen && (
+              <button
+                onClick={() => setIsChatOpen(true)}
+                className="fixed bottom-8 right-8 bg-gray-800/90 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg transition-all duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary/40 z-50"
+                aria-label="Open chat"
+              >
+                <MessageSquare size={28} />
+              </button>
+            )}
+            <ChatWindow
+              isOpen={isChatOpen}
+              onClose={() => setIsChatOpen(false)}
+              projectId={selectedProjectId} 
+            />
+          </>
+        )}
+
+        <CardModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleSaveCard}
+          initialCardData={editingCard}
+          columnIndex={currentColumnIndex}
+        />
       </div>
     </DndProvider>
   );
