@@ -12,6 +12,8 @@ import projectRouter from "./routes/project.route.js";
 import calendarRouter from "./routes/calendar.route.js";
 import cardRoutes from "./routes/card.route.js";
 
+import aiRouter from "./routes/ai.route.js";
+
 dotenv.config();
 const app = express();
 
@@ -32,6 +34,7 @@ app.use("/api/columns", columnRouter);
 app.use("/api/projects", projectRouter);
 app.use("/api/events", calendarRouter); 
 app.use("/api/calendar", calendarRouter);
+app.use("/api/ai", aiRouter);
 app.get('/api/test', (req, res) => res.json({ ok: true }));
 
 app.listen(5001, () => {
