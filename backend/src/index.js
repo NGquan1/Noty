@@ -16,6 +16,7 @@ import columnRouter from "./routes/column.route.js";
 import projectRouter from "./routes/project.route.js";
 import calendarRouter from "./routes/calendar.route.js";
 import cardRoutes from "./routes/card.route.js";
+import aiRouter from "./routes/ai.route.js";
 import messageRouter from "./routes/message.route.js";
 
 dotenv.config();
@@ -45,9 +46,9 @@ app.use("/api/columns", columnRouter);
 app.use("/api/projects", projectRouter);
 app.use("/api/events", calendarRouter);
 app.use("/api/calendar", calendarRouter);
+app.get('/api/test', (req, res) => res.json({ ok: true }));
 app.use("/api/messages", messageRouter);
-app.get("/api/test", (req, res) => res.json({ ok: true }));
-
+app.use("/api/ai", aiRouter);
 
 httpServer.listen(PORT, () => {
   console.log("Server is running on PORT:" + PORT);

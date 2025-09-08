@@ -7,8 +7,17 @@ const Navbar = () => {
   const { logout, authUser } = useAuthStore();
   const navigate = useNavigate();
 
+  const [isDark, setIsDark] = React.useState(false);
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsDark(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="bg-base-100 border-b border-base-300 fixed w-full top-0 z-40 backdrop-blur-lg bg-base-100/80 shadow-md">
+    <header className="bg-base-100 border-b border-base-300 fixed w-full top-0 z-40 backdrop-blur-md bg-base-100/80 shadow-md">
       <div className="container mx-auto px-4 h-16">
         <div className="flex items-center justify-between h-full">
           <div className="flex items-center gap-8">
@@ -16,10 +25,10 @@ const Navbar = () => {
               to="/"
               className="flex items-center gap-2.5 hover:opacity-90 transition-all"
             >
-              <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center shadow-md">
-                <StickyNote className="w-6 h-6 text-primary" />
+              <div className={`size-10 rounded-xl flex items-center justify-center shadow-md transition-colors duration-200 ${isDark ? "bg-gray-800" : "bg-primary/10"}`}>
+                <StickyNote className={`w-6 h-6 transition-colors duration-200 ${isDark ? "text-white" : "text-primary"}`} />
               </div>
-              <h1 className="text-2xl font-extrabold tracking-tight text-primary drop-shadow-sm">Noty</h1>
+              <h1 className={`text-2xl font-extrabold tracking-tight drop-shadow-sm transition-colors duration-200 ${isDark ? "text-white" : "text-primary"}`}>Noty</h1>
             </Link>
           </div>
 
@@ -57,3 +66,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+import React from "react";
