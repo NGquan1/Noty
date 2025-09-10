@@ -69,7 +69,7 @@ export const useChatStore = create((set, get) => ({
     try {
       await axiosInstance.delete(`/messages/${messageId}`);
     } catch (error) {
-      toast.error("Can't delete message");
+      toast.error("Can't delete messsages");
       set({ messages: originalMessages });
     }
   },
