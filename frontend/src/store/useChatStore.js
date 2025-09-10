@@ -14,7 +14,7 @@ export const useChatStore = create((set, get) => ({
     const newSocket = io("http://localhost:5001");
 
     newSocket.on("connect", () => {
-      console.log("✅ Connected to Socket.IO server with ID:", newSocket.id);
+      console.log("Connected to Socket.IO server with ID:", newSocket.id);
       set({ socket: newSocket, isConnected: true });
     });
 
@@ -31,14 +31,14 @@ export const useChatStore = create((set, get) => ({
     });
 
     newSocket.on("disconnect", () => {
-      console.log("❌ Disconnected from Socket.IO server");
+      console.log("Disconnected from Socket.IO server");
       set({ socket: null, isConnected: false });
     });
   },
 
   disconnectSocket: () => {
     get().socket?.disconnect();
-    set({ socket: null, isConnected: false, messages: [] }); // Reset state
+    set({ socket: null, isConnected: false, messages: [] }); 
   },
 
   fetchMessages: async (projectId) => {
@@ -69,7 +69,7 @@ export const useChatStore = create((set, get) => ({
     try {
       await axiosInstance.delete(`/messages/${messageId}`);
     } catch (error) {
-      toast.error("Không thể xóa tin nhắn");
+      toast.error("Can't delete message");
       set({ messages: originalMessages });
     }
   },
