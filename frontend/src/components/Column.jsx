@@ -11,6 +11,7 @@ const Column = ({
   column,
   columnIndex,
   moveCard,
+  moveCardOnServer,
   onAddCard,
   onEditCard,
   updateColumnTitle,
@@ -43,14 +44,20 @@ const Column = ({
     }
   };
 
-  const [, drop] = useDrop({
+  const [{ isOver }, drop] = useDrop({
     accept: ItemTypes.CARD,
     drop: (item) => {
-      if (item.columnIndex !== columnIndex) {
-        moveCard(item.card, item.columnIndex, columnIndex);
-        item.columnIndex = columnIndex;
+      const { card, fromColumnIndex } = item;
+      // If dropping on a new column (that is empty), move to the top of that column
+      if (fromColumnIndex !== columnIndex && column.cards.length === 0) {
+        moveCard(fromColumnIndex, item.fromCardIndex, columnIndex, 0);
       }
+      // The server call is now handled in the Card's drop handler
+      // to consolidate logic and prevent duplicate calls.
     },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
   });
 
   return (
@@ -95,10 +102,11 @@ const Column = ({
         </button>
       </div>
       <div className="flex-grow">
-        {column.cards.map((card) => (
+        {column.cards.map((card, index) => (
           <Card
             key={card.id}
             card={card}
+            cardIndex={index}
             columnIndex={columnIndex}
             moveCard={moveCard}
             onEdit={onEditCard}

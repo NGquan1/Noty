@@ -9,7 +9,7 @@ import {
   StickyNote,
   Users,
   LayoutList,
-  MessageSquare, // Đã thêm
+  MessageSquare, 
 } from "lucide-react";
 
 import Column from "../components/Column";
@@ -21,7 +21,7 @@ import NotesPage from "./NotesPage";
 import CalendarPage from "./CalendarPage";
 import MembersPage from "./MembersPage";
 import AnimatedPageTransition from "../components/AnimatedPageTransition";
-import ChatWindow from "../components/ChatWindow"; // Đã thêm
+import ChatWindow from "../components/ChatWindow"; 
 
 import { useColumnStore } from "../store/useColumnStore";
 import { useProjectStore } from "../store/useProjectStore";
@@ -38,7 +38,8 @@ const App = () => {
     updateCard,
     deleteCard,
     columns,
-    moveCard,
+    moveCardInClient,
+    moveCardOnServer,
   } = useColumnStore();
   const { projects, fetchProjects, createProject } = useProjectStore();
   const { setCurrentProject } = useCalendarStore();
@@ -124,7 +125,6 @@ const App = () => {
     setActivePage("tasks");
   };
 
-  // Đây là toàn bộ pageList
   const pageList = [
     {
       key: "tasks",
@@ -231,7 +231,8 @@ const App = () => {
                             key={column.id || column._id}
                             column={column}
                             columnIndex={index}
-                            moveCard={moveCard}
+                            moveCard={moveCardInClient}
+                            moveCardOnServer={moveCardOnServer}
                             onAddCard={handleAddCard}
                             onEditCard={handleEditCard}
                             updateColumnTitle={handleUpdateColumnTitle}

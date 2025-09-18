@@ -1,7 +1,7 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { LogOut, StickyNote, User } from "lucide-react";
+import React from "react";
 
 const Navbar = () => {
   const { logout, authUser } = useAuthStore();
@@ -25,10 +25,24 @@ const Navbar = () => {
               to="/"
               className="flex items-center gap-2.5 hover:opacity-90 transition-all"
             >
-              <div className={`size-10 rounded-xl flex items-center justify-center shadow-md transition-colors duration-200 ${isDark ? "bg-gray-800" : "bg-primary/10"}`}>
-                <StickyNote className={`w-6 h-6 transition-colors duration-200 ${isDark ? "text-white" : "text-primary"}`} />
+              <div
+                className={`size-10 rounded-xl flex items-center justify-center shadow-md transition-colors duration-200 ${
+                  isDark ? "bg-gray-800" : "bg-primary/10"
+                }`}
+              >
+                <StickyNote
+                  className={`w-6 h-6 transition-colors duration-200 ${
+                    isDark ? "text-white" : "text-primary"
+                  }`}
+                />
               </div>
-              <h1 className={`text-2xl font-extrabold tracking-tight drop-shadow-sm transition-colors duration-200 ${isDark ? "text-white" : "text-primary"}`}>Noty</h1>
+              <span
+                className={`text-2xl font-extrabold tracking-tight drop-shadow-sm transition-colors duration-200 ${
+                  isDark ? "text-white" : "text-primary"
+                }`}
+              >
+                Noty
+              </span>
             </Link>
           </div>
 
@@ -47,7 +61,9 @@ const Navbar = () => {
                 ) : (
                   <User className="w-6 h-6 text-gray-400" />
                 )}
-                <span className="font-semibold text-base-content">{authUser.fullName || "Profile"}</span>
+                <span className="font-semibold text-base-content">
+                  {authUser.fullName || "Profile"}
+                </span>
               </button>
 
               <button
@@ -66,4 +82,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-import React from "react";

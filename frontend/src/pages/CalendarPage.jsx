@@ -39,7 +39,7 @@ const CalendarPage = ({ projectId }) => {
   const handleDayClick = (date) => {
     setSelectedDate(date);
     setSelectedEvent(null);
-    setModalOpen(true);
+    //setModalOpen(true);
     setEventForm({ ...eventForm, startDate: formatDate(date), project: activeProjectId });
   };
 
@@ -65,7 +65,22 @@ const CalendarPage = ({ projectId }) => {
 
   return (
     <div className="max-w-6xl mx-auto bg-gradient-to-br from-gray-100 to-white rounded-3xl shadow-2xl p-10 mt-8 border border-gray-200 overflow-y-scroll scrollbar-hide">
-      <h2 className="text-4xl font-extrabold mb-8 text-center text-primary drop-shadow">Event Calendar</h2>
+      <div className="flex items-center justify-between mb-8">
+        <h2 className="text-4xl font-extrabold text-primary drop-shadow text-center w-full">Event Calendar</h2>
+        <button
+          onClick={() => {
+            setSelectedEvent(null);
+            setModalOpen(true);
+            setEventForm({ startDate: formatDate(selectedDate), project: activeProjectId });
+          }}
+          className="px-3 py-1 bg-gray-700 text-white rounded-md hover:bg-gray-500/90 transition-all duration-200 flex items-center gap-1 shadow-md"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+          </svg>
+          <span className="text-sm font-medium">Add Event</span>
+        </button>
+      </div>
       <div className="flex flex-col md:flex-row gap-10">
         <div className="flex-1 min-w-[700px]">
           <Calendar
@@ -118,31 +133,64 @@ const CalendarPage = ({ projectId }) => {
         </div>
 
         <div className="flex-1 max-w-xs mx-auto">
-          <h3 className="font-bold mb-4 text-lg text-primary">Events for {formatDate(selectedDate)}:</h3>
-          <ul className="space-y-3">
-            {events.length === 0 && (
-              <li className="text-gray-400 italic text-center py-6 select-none bg-gray-100 rounded-xl shadow-inner">No events for this day.</li>
-            )}
-            {events.map((event, idx) => (
-              <li
-                key={event._id}
-                className={`rounded-2xl px-5 py-4 text-base font-medium cursor-pointer shadow-lg border-2 transition-all duration-150 group ${
-                  COLORS[idx % COLORS.length]
-                } hover:scale-[1.03] hover:shadow-2xl`}
-                onClick={() => setSelectedEvent(event)}
-              >
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-bold text-lg truncate">{event.title}</span>
-                  <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-semibold bg-white/80 text-primary border border-primary/30 shadow-sm">{event.labels || 'Event'}</span>
+          <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-4" style={{ maxHeight: '500px', overflowY: 'auto' }}>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-bold text-xl text-gray-800">
+                Events for {formatDate(selectedDate)}
+              </h3>
+            </div>
+            <div className="space-y-4">
+              {events.length === 0 ? (
+                <div className="text-center py-8 bg-gray-50 rounded-xl border border-gray-100">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto mb-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <p className="text-gray-500 font-medium">No events scheduled</p>
+                  <p className="text-sm text-gray-400 mt-1">Click the Add Event button to create one</p>
                 </div>
-                <div className="text-sm text-gray-600 mb-1 truncate">{event.description}</div>
-                <div className="text-xs text-gray-500 flex gap-2 items-center">
-                  <span>🗓 {event.startDate} {event.startTime} - {event.endDate} {event.endTime}</span>
-                  {event.user?.fullName && <span className="ml-2">👤 {event.user.fullName}</span>}
-                </div>
-              </li>
-            ))}
-          </ul>
+              ) : (
+                events.map((event, idx) => (
+                  <div
+                    key={event._id}
+                    onClick={() => setSelectedEvent(event)}
+                    className={`rounded-xl p-4 cursor-pointer transition-all duration-200 ${
+                      COLORS[idx % COLORS.length]
+                    } hover:shadow-lg border border-black/5 hover:scale-[1.02]`}
+                    style={{ maxWidth: '100%' }}
+                  >
+                    <div className="flex items-center justify-between gap-3 mb-2">
+                      <h4 className="font-semibold text-gray-800 line-clamp-1">{event.title}</h4>
+                      {event.labels && (
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-white/80 text-gray-600 border border-gray-200/50">
+                          {event.labels}
+                        </span>
+                      )}
+                    </div>
+                    {event.description && (
+                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">{event.description}</p>
+                    )}
+                    <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                      <div className="flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {event.startTime} - {event.endTime}
+                      </div>
+                      {event.location && (
+                        <div className="flex items-center gap-1">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          {event.location}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
 
           <AnimatePresence>
             {selectedEvent && (
@@ -163,39 +211,66 @@ const CalendarPage = ({ projectId }) => {
                   transition={{ duration: 0.2 }}
                 >
                   <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative z-50">
-                    <h3 className="text-xl font-bold mb-2">
-                      {selectedEvent.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-2">
-                      {selectedEvent.description}
-                    </p>
-                    <div className="text-sm text-gray-700 space-y-1">
-                      <div>
-                        👤 <strong>Created by:</strong> {selectedEvent.user?.fullName || 'Unknown'}
-                      </div>
-                      <div>
-                        📅 <strong>Date:</strong> {selectedEvent.startDate} →{" "}
-                        {selectedEvent.endDate}
-                      </div>
-                      <div>
-                        🕒 <strong>Time:</strong> {selectedEvent.startTime} -{" "}
-                        {selectedEvent.endTime}
-                      </div>
-                      {selectedEvent.location && (
-                        <div>
-                          📍 <strong>Location:</strong> {selectedEvent.location}
-                        </div>
-                      )}
-                      {selectedEvent.client && (
-                        <div>
-                          👤 <strong>Client:</strong> {selectedEvent.client}
-                        </div>
-                      )}
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-2xl font-bold text-gray-800">
+                        {selectedEvent.title}
+                      </h3>
                       {selectedEvent.labels && (
-                        <div>
-                          🏷 <strong>Labels:</strong> {selectedEvent.labels}
+                        <span className="px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary">
+                          {selectedEvent.labels}
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {selectedEvent.description && (
+                        <div className="bg-gray-50 rounded-lg p-4 text-gray-600">
+                          {selectedEvent.description}
                         </div>
                       )}
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-gray-50 rounded-lg p-3">
+                          <div className="text-sm font-medium text-gray-500 mb-1">Start</div>
+                          <div className="text-gray-800">{selectedEvent.startDate}</div>
+                          <div className="text-gray-600">{selectedEvent.startTime}</div>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-3">
+                          <div className="text-sm font-medium text-gray-500 mb-1">End</div>
+                          <div className="text-gray-800">{selectedEvent.endDate}</div>
+                          <div className="text-gray-600">{selectedEvent.endTime}</div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        {selectedEvent.location && (
+                          <div className="flex items-center gap-2 text-gray-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            {selectedEvent.location}
+                          </div>
+                        )}
+                        
+                        {selectedEvent.user?.fullName && (
+                          <div className="flex items-center gap-2 text-gray-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            {selectedEvent.user.fullName}
+                          </div>
+                        )}
+
+                        {selectedEvent.client && (
+                          <div className="flex items-center gap-2 text-gray-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                            {selectedEvent.client}
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div className="flex justify-end gap-2 mt-4">
                       <button
@@ -269,8 +344,9 @@ const CalendarPage = ({ projectId }) => {
           onSave={handleSaveEvent}
         />
       )}
-    </div>
+      </div>
   );
 };
+
 
 export default CalendarPage;

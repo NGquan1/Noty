@@ -19,14 +19,33 @@ export const useChatStore = create((set, get) => ({
     });
 
     newSocket.on("receive_message", (newMessage) => {
-      if (!get().messages.some(msg => msg._id === newMessage._id)) {
-        set((state) => ({ messages: [...state.messages, newMessage] }));
-      }
+      set((state) => {
+        const optimisticMsg = state.messages.find(
+          (msg) =>
+            msg._id.startsWith("temp_") &&
+            msg.content === newMessage.content &&
+            msg.sender === newMessage.sender
+        );
+
+        if (optimisticMsg) {
+          return {
+            messages: state.messages.map((msg) =>
+              msg._id === optimisticMsg._id ? newMessage : msg
+            ),
+          };
+        }
+
+        if (!state.messages.some((msg) => msg._id === newMessage._id)) {
+          return { messages: [...state.messages, newMessage] };
+        }
+
+        return state;
+      });
     });
 
-    newSocket.on('message_deleted', ({ messageId }) => {
-      set(state => ({
-        messages: state.messages.filter(msg => msg._id !== messageId)
+    newSocket.on("message_deleted", ({ messageId }) => {
+      set((state) => ({
+        messages: state.messages.filter((msg) => msg._id !== messageId),
       }));
     });
 
@@ -38,7 +57,7 @@ export const useChatStore = create((set, get) => ({
 
   disconnectSocket: () => {
     get().socket?.disconnect();
-    set({ socket: null, isConnected: false, messages: [] }); 
+    set({ socket: null, isConnected: false, messages: [] });
   },
 
   fetchMessages: async (projectId) => {
@@ -47,29 +66,34 @@ export const useChatStore = create((set, get) => ({
       set({ messages: res.data });
     } catch (error) {
       console.error("Failed to fetch messages:", error);
-      set({ messages: [] }); 
+      set({ messages: [] });
     }
   },
 
   sendMessage: (data) => {
     get().socket?.emit("send_message", data);
   },
-  
+
   addOptimisticMessage: (message) => {
-    set(state => ({ messages: [...state.messages, message] }));
+    set((state) => ({ messages: [...state.messages, message] }));
   },
 
   deleteMessage: async (messageId) => {
+    if (messageId.startsWith("temp_")) {
+      toast.error("Message chưa được lưu, không thể xóa.");
+      return;
+    }
+
     const originalMessages = get().messages;
-    
-    set(state => ({
-      messages: state.messages.filter(msg => msg._id !== messageId)
+
+    set((state) => ({
+      messages: state.messages.filter((msg) => msg._id !== messageId),
     }));
 
     try {
       await axiosInstance.delete(`/messages/${messageId}`);
     } catch (error) {
-      toast.error("Can't delete messsages");
+      toast.error("Can't delete messages");
       set({ messages: originalMessages });
     }
   },

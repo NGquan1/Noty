@@ -77,35 +77,38 @@ export const useColumnStore = create((set, get) => ({
     await get().fetchColumns(get().selectedProjectId);
   },
 
-  moveCard: async (cardToMove, fromColumnIndex, toColumnIndex) => {
-    const state = get();
-    const columns = state.columns;
-    const fromColumn = columns[fromColumnIndex];
-    const toColumn = columns[toColumnIndex];
-    const cardId = cardToMove._id || cardToMove.id;
+  // Chỉ cập nhật state ở client để giao diện mượt mà
+  moveCardInClient: (
+    fromColumnIndex,
+    fromCardIndex,
+    toColumnIndex,
+    toCardIndex
+  ) => {
+    set((state) => {
+      const newColumns = [...state.columns];
+      const sourceCol = newColumns[fromColumnIndex];
+      const [movedCard] = sourceCol.cards.splice(fromCardIndex, 1);
 
-    set((s) => {
-      const newColumns = [...s.columns];
-      newColumns[fromColumnIndex] = {
-        ...fromColumn,
-        cards: fromColumn.cards.filter(
-          (c) => c.id !== cardId && c._id !== cardId
-        ),
-      };
-      newColumns[toColumnIndex] = {
-        ...toColumn,
-        cards: [...toColumn.cards, { ...cardToMove }],
-      };
+      if (!movedCard) return { columns: state.columns };
+
+      const destCol = newColumns[toColumnIndex];
+      destCol.cards.splice(toCardIndex, 0, movedCard);
+
       return { columns: newColumns };
     });
+  },
 
+  // Chỉ gọi API để lưu thay đổi vào server
+  moveCardOnServer: async (cardId, fromColumnId, toColumnId, toCardIndex) => {
     try {
       await API.patch(`/cards/${cardId}/move`, {
-        fromColumnId: fromColumn.id,
-        toColumnId: toColumn.id,
+        fromColumnId,
+        toColumnId,
+        toCardIndex,
       });
     } catch (err) {
-      console.error("Move card failed", err);
+      console.error("Move card failed on server", err);
+      // Nếu lỗi, fetch lại để đồng bộ state
       await get().fetchColumns(get().selectedProjectId);
     }
   },

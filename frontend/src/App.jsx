@@ -87,11 +87,6 @@ const App = () => {
         />
                {" "}
         <Route
-          path="/notes"
-          element={authUser ? <NotePage /> : <Navigate to="/login" />}
-        />
-               {" "}
-        <Route
           path="/join/:token"
           element={authUser ? <JoinProjectPage /> : <Navigate to="/login" />}
         />
