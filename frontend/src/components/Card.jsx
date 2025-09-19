@@ -77,10 +77,8 @@ const Card = ({ card, columnIndex, moveCard, moveCardOnServer, onEdit, onDelete,
     drop(item) {
       const { card, fromColumnIndex, fromCardIndex } = item;
       const toColumnIndex = columnIndex;
-      // The final card index is the one we are hovering over
       const toCardIndex = cardIndex; 
       
-      // Only call server if the card actually moved to a new position
       if (fromColumnIndex !== toColumnIndex || fromCardIndex !== toCardIndex) {
         moveCardOnServer(card.id, fromColumnIndex, toColumnIndex, toCardIndex);
       }
@@ -88,7 +86,7 @@ const Card = ({ card, columnIndex, moveCard, moveCardOnServer, onEdit, onDelete,
   });
 
   drag(drop(ref));
-  const opacity = isDragging ? 0 : 1; // Ẩn card gốc khi đang kéo
+  const opacity = isDragging ? 0 : 1; 
   const maxTasksToShow = 3;
 
   return (

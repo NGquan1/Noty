@@ -51,7 +51,7 @@ const App = () => {
   const [currentColumnIndex, setCurrentColumnIndex] = useState(null);
   const [editingCard, setEditingCard] = useState(null);
   const [projectModalOpen, setProjectModalOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false); // Đã thêm
+  const [isChatOpen, setIsChatOpen] = useState(false); 
 
   useEffect(() => {
     fetchProjects();

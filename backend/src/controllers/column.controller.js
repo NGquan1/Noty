@@ -5,7 +5,6 @@ export const createColumn = async (req, res) => {
   try {
     const { title, projectId } = req.body;
     if (!projectId) return res.status(400).json({ error: 'Missing projectId' });
-    // Kiểm tra quyền thành viên hoặc owner
     const project = await Project.findById(projectId);
     if (!project) return res.status(404).json({ error: 'Project not found' });
     const isMember = project.owner.equals(req.user._id) || project.members.some(m => m.equals(req.user._id));
@@ -16,7 +15,6 @@ export const createColumn = async (req, res) => {
       project: projectId,
       cards: [],
     });
-  // Không push card khi tạo column mới
     res.status(201).json(column);
   } catch (error) {
     res.status(400).json({ error: error.message });

@@ -23,8 +23,9 @@ export const useChatStore = create((set, get) => ({
         const optimisticMsg = state.messages.find(
           (msg) =>
             msg._id.startsWith("temp_") &&
-            msg.content === newMessage.content &&
-            msg.sender === newMessage.sender
+            msg.text === newMessage.text &&
+            msg.sender._id === newMessage.sender &&
+            msg.project === newMessage.project
         );
 
         if (optimisticMsg) {
@@ -79,16 +80,14 @@ export const useChatStore = create((set, get) => ({
   },
 
   deleteMessage: async (messageId) => {
-    if (messageId.startsWith("temp_")) {
-      toast.error("Message chưa được lưu, không thể xóa.");
-      return;
-    }
-
     const originalMessages = get().messages;
-
     set((state) => ({
       messages: state.messages.filter((msg) => msg._id !== messageId),
     }));
+
+    if (messageId.startsWith("temp_")) {
+      return;
+    }
 
     try {
       await axiosInstance.delete(`/messages/${messageId}`);

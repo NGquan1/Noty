@@ -18,8 +18,6 @@ const NotesPage = ({ selectedProjectId }) => {
     if (selectedProjectId) fetchNotes(selectedProjectId);
   }, [selectedProjectId, fetchNotes]);
 
-  // Không tự động chọn note đầu tiên, để user tự chọn
-
   useEffect(() => {
     if (selectedNote) {
       setEditorValue(selectedNote.content);

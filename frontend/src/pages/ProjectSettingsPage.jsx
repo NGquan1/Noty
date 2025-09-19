@@ -59,7 +59,7 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
     setLoading(true);
     setError("");
     try {
-      const data = await shareProjectByLink(selectedProjectId, shareRole); // ✅ dùng store API
+      const data = await shareProjectByLink(selectedProjectId, shareRole); 
       setShareLink(`${window.location.origin}/join/${data.token}`);
     } catch (err) {
       setError("Could not generate share link");

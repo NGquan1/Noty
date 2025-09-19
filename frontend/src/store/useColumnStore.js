@@ -77,7 +77,6 @@ export const useColumnStore = create((set, get) => ({
     await get().fetchColumns(get().selectedProjectId);
   },
 
-  // Chỉ cập nhật state ở client để giao diện mượt mà
   moveCardInClient: (
     fromColumnIndex,
     fromCardIndex,
@@ -98,7 +97,6 @@ export const useColumnStore = create((set, get) => ({
     });
   },
 
-  // Chỉ gọi API để lưu thay đổi vào server
   moveCardOnServer: async (cardId, fromColumnId, toColumnId, toCardIndex) => {
     try {
       await API.patch(`/cards/${cardId}/move`, {
@@ -108,7 +106,6 @@ export const useColumnStore = create((set, get) => ({
       });
     } catch (err) {
       console.error("Move card failed on server", err);
-      // Nếu lỗi, fetch lại để đồng bộ state
       await get().fetchColumns(get().selectedProjectId);
     }
   },

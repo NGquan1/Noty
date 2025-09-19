@@ -91,7 +91,7 @@ const Sidebar = ({
               ({ axiosInstance }) =>
                 axiosInstance.post("/ai/generate-project", data)
             );
-            // Sau khi tạo thành công, reload lại danh sách project
+            
             if (res.data.project) {
               if (typeof onAddProject === "function") {
                 onAddProject(res.data.project);

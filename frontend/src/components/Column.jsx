@@ -48,12 +48,10 @@ const Column = ({
     accept: ItemTypes.CARD,
     drop: (item) => {
       const { card, fromColumnIndex } = item;
-      // If dropping on a new column (that is empty), move to the top of that column
       if (fromColumnIndex !== columnIndex && column.cards.length === 0) {
         moveCard(fromColumnIndex, item.fromCardIndex, columnIndex, 0);
       }
-      // The server call is now handled in the Card's drop handler
-      // to consolidate logic and prevent duplicate calls.
+
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
