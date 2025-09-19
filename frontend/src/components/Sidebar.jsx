@@ -76,9 +76,11 @@ const Sidebar = ({
       </div>
       <ProjectModal
         isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSave={(data) => {
-          onAddProject(data);
+        onClose={() => {
+          setModalOpen(false);
+        }}
+        onSave={async (data) => {
+          await onAddProject(data);
           setModalOpen(false);
         }}
       />
@@ -91,7 +93,7 @@ const Sidebar = ({
               ({ axiosInstance }) =>
                 axiosInstance.post("/ai/generate-project", data)
             );
-            
+
             if (res.data.project) {
               if (typeof onAddProject === "function") {
                 onAddProject(res.data.project);
