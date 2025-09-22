@@ -24,8 +24,12 @@ const ProfilePage = () => {
       <div className="max-w-2xl mx-auto p-4 py-10">
         <div className="bg-white rounded-2xl p-8 shadow-xl space-y-10 border-2 border-primary/10">
           <div className="text-center">
-            <h1 className="text-3xl font-extrabold text-primary mb-2 drop-shadow">Profile</h1>
-            <p className="mt-2 text-gray-500 font-medium">Your profile information</p>
+            <h1 className="text-3xl font-extrabold text-primary mb-2 drop-shadow">
+              Profile
+            </h1>
+            <p className="mt-2 text-gray-500 font-medium">
+              Your profile information
+            </p>
           </div>
 
           {/* avatar upload section */}
@@ -71,7 +75,9 @@ const ProfilePage = () => {
               <div className="text-sm text-gray-500 flex items-center gap-2 font-semibold">
                 <User className="w-5 h-5 text-primary" />
                 Full Name
-                <span className="ml-2 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-bold">Verified</span>
+                <span className="ml-2 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-bold">
+                  Verified
+                </span>
               </div>
               <p className="px-4 py-3 bg-base-200 rounded-lg border font-medium text-lg">
                 {authUser?.fullName}

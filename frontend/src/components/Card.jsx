@@ -1,55 +1,67 @@
-
 import React, { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
-import { Pencil, Trash2, UserCircle2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 
 const ItemTypes = {
   CARD: "card",
 };
 
-const statusBadge = {
+export const statusBadge = {
   "to-do": {
     label: "To-Do",
     color: "bg-blue-100 text-blue-700 border-blue-300",
-    bg: "bg-blue-400/70"
+    bg: "bg-blue-400/70",
   },
-  "ongoing": {
+  ongoing: {
     label: "Ongoing",
     color: "bg-amber-100 text-amber-800 border-amber-300",
-    bg: "bg-amber-300"
+    bg: "bg-amber-300",
   },
-  "finished": {
+  finished: {
     label: "Finished",
     color: "bg-emerald-100 text-emerald-800 border-emerald-300",
-    bg: "bg-emerald-300"
+    bg: "bg-emerald-300",
   },
-  "urgent": {
+  urgent: {
     label: "Urgent",
     color: "bg-red-100 text-red-700 border-red-300",
-    bg: "bg-red-400/80"
+    bg: "bg-red-400/80",
   },
-  "important": {
+  important: {
     label: "Important",
     color: "bg-orange-100 text-orange-700 border-orange-300",
-    bg: "bg-orange-400/80"
+    bg: "bg-orange-400/80",
   },
-  "normal": {
+  normal: {
     label: "Neutral",
     color: "bg-gray-100 text-gray-700 border-gray-300",
-    bg: "bg-gray-500/50"
+    bg: "bg-gray-500/50",
   },
-  "low": {
-    label: "Lơw Priority",
+  low: {
+    label: "Low Priority",
     color: "bg-zinc-100 text-zinc-500 border-zinc-300",
-    bg: "bg-zinc-300/70"
+    bg: "bg-zinc-300/70",
   },
 };
 
-const Card = ({ card, columnIndex, moveCard, moveCardOnServer, onEdit, onDelete, cardIndex }) => {
+const Card = ({
+  card,
+  columnIndex,
+  moveCard,
+  moveCardOnServer,
+  onEdit,
+  onDelete,
+  cardIndex,
+}) => {
   const ref = useRef(null);
   const [{ isDragging }, drag] = useDrag({
     type: ItemTypes.CARD,
-    item: { id: card.id, fromColumnIndex: columnIndex, fromCardIndex: cardIndex, card },
+    item: {
+      id: card.id,
+      fromColumnIndex: columnIndex,
+      fromCardIndex: cardIndex,
+      card,
+    },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
@@ -68,25 +80,25 @@ const Card = ({ card, columnIndex, moveCard, moveCardOnServer, onEdit, onDelete,
       if (fromCardIndex === toCardIndex && fromColumnIndex === toColumnIndex) {
         return;
       }
-      
+
       moveCard(fromColumnIndex, fromCardIndex, toColumnIndex, toCardIndex);
-      
+
       item.fromCardIndex = toCardIndex;
       item.fromColumnIndex = toColumnIndex;
     },
     drop(item) {
       const { card, fromColumnIndex, fromCardIndex } = item;
       const toColumnIndex = columnIndex;
-      const toCardIndex = cardIndex; 
-      
+      const toCardIndex = cardIndex;
+
       if (fromColumnIndex !== toColumnIndex || fromCardIndex !== toCardIndex) {
         moveCardOnServer(card.id, fromColumnIndex, toColumnIndex, toCardIndex);
       }
-    }
+    },
   });
 
   drag(drop(ref));
-  const opacity = isDragging ? 0 : 1; 
+  const opacity = isDragging ? 0 : 1;
   const maxTasksToShow = 3;
 
   return (
@@ -98,11 +110,11 @@ const Card = ({ card, columnIndex, moveCard, moveCardOnServer, onEdit, onDelete,
       } hover:scale-[1.025] hover:shadow-2xl`}
     >
       <div className="mb-2">
-        <h4 className="font-semibold text-gray-800 truncate">
-          {card.member}
-        </h4>
+        <h4 className="font-semibold text-gray-800 truncate">{card.member}</h4>
         {card.user && card.user.fullName && (
-          <span className="text-xs text-gray-500 block truncate">By: {card.user.fullName}</span>
+          <span className="text-xs text-gray-500 block truncate">
+            By: {card.user.fullName}
+          </span>
         )}
       </div>
       <ul className="list-disc list-inside text-gray-700 mb-2">
@@ -120,7 +132,8 @@ const Card = ({ card, columnIndex, moveCard, moveCardOnServer, onEdit, onDelete,
         <div className="flex items-center gap-2">
           <span
             className={`px-2 py-0.5 rounded-full text-xs font-semibold border ${
-              statusBadge[card.status]?.color || "bg-gray-100 text-gray-500 border-gray-300"
+              statusBadge[card.status]?.color ||
+              "bg-gray-100 text-gray-500 border-gray-300"
             }`}
           >
             {statusBadge[card.status]?.label || card.status}

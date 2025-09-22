@@ -9,7 +9,7 @@ import {
   StickyNote,
   Users,
   LayoutList,
-  MessageSquare, 
+  MessageSquare,
 } from "lucide-react";
 
 import Column from "../components/Column";
@@ -21,7 +21,7 @@ import NotesPage from "./NotesPage";
 import CalendarPage from "./CalendarPage";
 import MembersPage from "./MembersPage";
 import AnimatedPageTransition from "../components/AnimatedPageTransition";
-import ChatWindow from "../components/ChatWindow"; 
+import ChatWindow from "../components/ChatWindow";
 
 import { useColumnStore } from "../store/useColumnStore";
 import { useProjectStore } from "../store/useProjectStore";
@@ -51,7 +51,7 @@ const App = () => {
   const [currentColumnIndex, setCurrentColumnIndex] = useState(null);
   const [editingCard, setEditingCard] = useState(null);
   const [projectModalOpen, setProjectModalOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false); 
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     fetchProjects();
@@ -292,7 +292,7 @@ const App = () => {
             <ChatWindow
               isOpen={isChatOpen}
               onClose={() => setIsChatOpen(false)}
-              projectId={selectedProjectId} 
+              projectId={selectedProjectId}
             />
           </>
         )}

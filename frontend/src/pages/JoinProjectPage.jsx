@@ -23,7 +23,7 @@ const JoinProjectPage = () => {
           { withCredentials: true }
         );
         toast.success("Project joined successfully!");
-        setCurrentProjectId(res.data.projectId); 
+        setCurrentProjectId(res.data.projectId);
         navigate("/");
       } catch (err) {
         toast.error(

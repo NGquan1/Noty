@@ -1,4 +1,3 @@
-
 import Project from "../models/project.model.js";
 import Column from "../models/column.model.js";
 import Note from "../models/note.model.js";
@@ -8,7 +7,7 @@ export const aiGenerateProject = async (req, res) => {
   try {
     const { name, description, deadline, members, goals } = req.body;
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
 
     const prompt = `Generate a project plan for: ${name}\nDescription: ${description}\nDeadline: ${deadline}\nMembers: ${members}\nSpecial goals: ${goals}\nReturn a JSON with tasks (array of string), meetings (array of string), and notes (array of string).`;
     const result = await model.generateContent(prompt);
@@ -20,7 +19,7 @@ export const aiGenerateProject = async (req, res) => {
       aiData = {
         tasks: ["Task 1", "Task 2"],
         meetings: ["Kickoff meeting"],
-        notes: ["Project created by AI"]
+        notes: ["Project created by AI"],
       };
     }
 

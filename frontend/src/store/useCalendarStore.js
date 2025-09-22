@@ -7,17 +7,15 @@ const API = axios.create({
 });
 
 const COLORS = [
-  "bg-sky-500 text-white",     
-  "bg-rose-300 text-white",     
-  "bg-amber-300 text-white",    
-  "bg-emerald-400 text-white",  
-  "bg-indigo-400 text-white",   
-  "bg-cyan-400 text-white",     
-  "bg-lime-400 text-white",     
-  "bg-fuchsia-300 text-white",  
+  "bg-sky-500 text-white",
+  "bg-rose-300 text-white",
+  "bg-amber-300 text-white",
+  "bg-emerald-400 text-white",
+  "bg-indigo-400 text-white",
+  "bg-cyan-400 text-white",
+  "bg-lime-400 text-white",
+  "bg-fuchsia-300 text-white",
 ];
-
-
 
 const formatDate = (date) => {
   if (!date) return "";

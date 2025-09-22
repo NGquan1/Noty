@@ -6,8 +6,11 @@ export const getEvents = async (req, res) => {
     const filter = {};
     if (projectId) filter.project = projectId;
 
-  const events = await Calendar.find(filter).populate('user', 'fullName email profilePic');
-  res.status(200).json(events);
+    const events = await Calendar.find(filter).populate(
+      "user",
+      "fullName email profilePic"
+    );
+    res.status(200).json(events);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -16,7 +19,7 @@ export const getEvents = async (req, res) => {
 export const createEvent = async (req, res) => {
   try {
     if (!req.body.project) {
-      return res.status(400).json({ error: 'Missing project id' });
+      return res.status(400).json({ error: "Missing project id" });
     }
     const event = await Calendar.create({
       ...req.body,

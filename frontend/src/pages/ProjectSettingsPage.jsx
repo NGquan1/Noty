@@ -4,12 +4,8 @@ import { useProjectStore } from "../store/useProjectStore";
 import { Trash, Copy } from "lucide-react";
 
 const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
-  const {
-    projects,
-    renameProject,
-    deleteProject,
-    shareProjectByLink,
-  } = useProjectStore();
+  const { projects, renameProject, deleteProject, shareProjectByLink } =
+    useProjectStore();
 
   const [newName, setNewName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -57,7 +53,7 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
     setLoading(true);
     setError("");
     try {
-      const data = await shareProjectByLink(selectedProjectId, shareRole); 
+      const data = await shareProjectByLink(selectedProjectId, shareRole);
       setShareLink(`${window.location.origin}/join/${data.token}`);
     } catch (err) {
       setError("Could not generate share link");
@@ -78,8 +74,10 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
   if (!project) return <div className="text-gray-400">No project selected</div>;
 
   return (
-    <div className="max-w-2xl mx-auto bg-gradient-to-br from-gray-100 to-white rounded-3xl shadow-xl p-10 mt-10">
-      <h2 className="text-3xl font-extrabold mb-8 text-primary drop-shadow text-center">Project Settings</h2>
+    <div className="max-w-2xl mx-auto border border-primary bg-gradient-to-br from-gray-100 to-white rounded-3xl shadow-xl p-10 mt-10">
+      <h2 className="text-3xl font-extrabold mb-8 text-primary drop-shadow text-center">
+        Project Settings
+      </h2>
 
       {/* Rename */}
       <div className="mb-8">
@@ -92,7 +90,7 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
             disabled={loading}
           />
           <button
-            className="bg-gray-700/90 text-white px-6 py-2 rounded-xl font-bold transition-all duration-150 hover:bg-primary scale-105 disabled:opacity-60 shadow-md"
+            className="bg-gray-700/90 text-white px-6 py-2 rounded-xl font-bold transition-all duration-150 hover:bg-primary disabled:opacity-60 shadow-md hover:scale-105"
             onClick={handleRename}
             disabled={loading || !newName.trim()}
           >
@@ -104,7 +102,7 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
       {/* Delete */}
       <div className="mb-8">
         <button
-          className="flex items-center gap-2 bg-red-500 text-white px-5 py-2 rounded-xl font-semibold hover:bg-red-600 transition-all shadow-md"
+          className="flex items-center gap-2 bg-red-500 text-white px-5 py-2 rounded-xl font-semibold hover:bg-red-600 transition-all shadow-md hover:scale-105"
           onClick={() => setShowDeleteModal(true)}
           disabled={loading}
         >
@@ -118,20 +116,26 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 transition-opacity duration-300 animate-fade-in">
           <div
             className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 w-full max-w-md border border-gray-200 dark:border-gray-700 transform transition-all duration-300 scale-95 opacity-0 animate-modal-in"
-            style={{ animation: 'modal-in 0.25s cubic-bezier(0.4,0,0.2,1) forwards' }}
+            style={{
+              animation: "modal-in 0.25s cubic-bezier(0.4,0,0.2,1) forwards",
+            }}
           >
-            <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-white text-center">Confirm Delete</h3>
-            <p className="mb-6 text-gray-600 dark:text-gray-300 text-center">Are you sure you want to delete this project and all its data?</p>
+            <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-white text-center">
+              Confirm Delete
+            </h3>
+            <p className="mb-6 text-gray-600 dark:text-gray-300 text-center">
+              Are you sure you want to delete this project and all its data?
+            </p>
             <div className="flex justify-center gap-4">
               <button
-                className="px-5 py-2 rounded-xl font-semibold bg-red-500 text-white hover:bg-red-600 transition-all shadow-md"
+                className="px-5 py-2 rounded-xl font-semibold bg-red-500 text-white hover:bg-red-600 transition-all shadow-md hover:scale-105"
                 onClick={handleDelete}
                 disabled={loading}
               >
                 Delete
               </button>
               <button
-                className="px-5 py-2 rounded-xl font-semibold bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 transition-all shadow-md"
+                className="px-5 py-2 rounded-xl font-semibold bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 transition-all shadow-md hover:scale-105"
                 onClick={() => setShowDeleteModal(false)}
                 disabled={loading}
               >
@@ -151,12 +155,14 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
 
       {/* Share */}
       <div className="mb-8">
-        <label className="block font-semibold mb-2 text-lg">Share Project Link</label>
+        <label className="block font-semibold mb-2 text-lg">
+          Share Project Link
+        </label>
         <div className="flex items-center gap-4 mb-4">
           <select
             value={shareRole}
             onChange={(e) => setShareRole(e.target.value)}
-            className="border-2 px-4 py-2 rounded-xl bg-white text-base shadow-sm focus:ring-2 focus:ring-primary/30"
+            className="border-2 px-4 py-2 rounded-xl bg-white text-base shadow-sm"
             disabled={loading}
           >
             <option value="editor">Editor</option>
@@ -164,7 +170,7 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
           </select>
           <button
             onClick={handleGenerateShareLink}
-            className="bg-gray-700 hover:bg-primary text-white px-5 py-2 rounded-xl font-semibold transition-all shadow-md disabled:opacity-60"
+            className="bg-gray-700 hover:bg-primary text-white px-5 py-2 rounded-xl font-semibold transition-all shadow-md disabled:opacity-60 hover:scale-105"
             disabled={loading}
           >
             Generate Link
@@ -181,19 +187,25 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
             />
             <button
               onClick={handleCopy}
-              className="bg-gray-200 hover:bg-primary/10 p-2 rounded-xl transition-all shadow"
+              className="bg-gray-200 hover:bg-primary/10 p-2 rounded-xl transition-all shadow hover:scale-105"
             >
               <Copy size={16} />
             </button>
             {copySuccess && (
-              <span className="text-green-600 text-sm font-semibold">{copySuccess}</span>
+              <span className="text-green-600 text-sm font-semibold hover:scale-105">
+                {copySuccess}
+              </span>
             )}
           </div>
         )}
       </div>
 
       {/* Error */}
-      {error && <div className="text-red-500 font-semibold text-center mt-2">{error}</div>}
+      {error && (
+        <div className="text-red-500 font-semibold text-center mt-2">
+          {error}
+        </div>
+      )}
     </div>
   );
 };
