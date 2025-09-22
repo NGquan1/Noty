@@ -11,7 +11,6 @@ const JoinProjectPage = () => {
     (state) => state.setCurrentProjectId
   );
 
-  // Đảm bảo chỉ join 1 lần khi mount
   const hasJoined = useRef(false);
   useEffect(() => {
     if (hasJoined.current) return;
@@ -24,7 +23,7 @@ const JoinProjectPage = () => {
           { withCredentials: true }
         );
         toast.success("Project joined successfully!");
-        setCurrentProjectId(res.data.projectId); // set vào store
+        setCurrentProjectId(res.data.projectId); 
         navigate("/");
       } catch (err) {
         toast.error(

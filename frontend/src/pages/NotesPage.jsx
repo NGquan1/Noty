@@ -18,8 +18,6 @@ const NotesPage = ({ selectedProjectId }) => {
     if (selectedProjectId) fetchNotes(selectedProjectId);
   }, [selectedProjectId, fetchNotes]);
 
-  // Không tự động chọn note đầu tiên, để user tự chọn
-
   useEffect(() => {
     if (selectedNote) {
       setEditorValue(selectedNote.content);
@@ -64,7 +62,7 @@ const NotesPage = ({ selectedProjectId }) => {
               className={`group relative rounded-2xl px-4 py-3 mb-2 cursor-pointer transition-all duration-150 border-2 ${
                 selectedNote?._id === note._id
                   ? "bg-primary/10 border-primary shadow-lg font-semibold scale-[1.03]"
-                  : "bg-gray-100 border-transparent hover:bg-primary/5 hover:border-primary/40"
+                  : "bg-gray-200 border-transparent hover:bg-primary/5 hover:border-primary/40"
               }`}
               onClick={() => setSelectedNote(note)}
             >

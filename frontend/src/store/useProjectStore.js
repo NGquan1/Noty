@@ -22,8 +22,8 @@ export const useProjectStore = create((set, get) => ({
   },
 
   createProject: async (projectData) => {
-    const res = await API.post("/projects", projectData);
-    set((state) => ({ projects: [...state.projects, res.data] }));
+    await API.post("/projects", projectData);
+    await get().fetchProjects();
   },
 
   renameProject: async (projectId, newName) => {

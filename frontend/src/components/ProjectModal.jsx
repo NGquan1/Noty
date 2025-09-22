@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 const ProjectModal = ({ isOpen, onClose, onSave }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+
+  useEffect(() => {
+    if (isOpen) {
+      setName("");
+      setDescription("");
+    }
+  }, [isOpen]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -42,7 +49,7 @@ const ProjectModal = ({ isOpen, onClose, onSave }) => {
                     Project's title
                   </label>
                   <input
-                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
+                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring text-gray-800"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
@@ -54,7 +61,7 @@ const ProjectModal = ({ isOpen, onClose, onSave }) => {
                     Description
                   </label>
                   <textarea
-                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring"
+                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring text-gray-800"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={3}

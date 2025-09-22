@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { useProjectStore } from "../store/useProjectStore";
 import { Trash, Copy } from "lucide-react";
 
@@ -17,6 +18,7 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
   const [shareRole, setShareRole] = useState("editor");
   const [shareLink, setShareLink] = useState("");
   const [copySuccess, setCopySuccess] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const project = projects.find(
     (p) => p._id === selectedProjectId || p.id === selectedProjectId
@@ -38,16 +40,12 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
   };
 
   const handleDelete = async () => {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this project and all its data?"
-      )
-    )
-      return;
     setLoading(true);
     setError("");
     try {
       await deleteProject(selectedProjectId);
+      toast.success("Project deleted successfully");
+      setShowDeleteModal(false);
       if (onProjectDeleted) onProjectDeleted();
     } catch (err) {
       setError("Delete failed");
@@ -59,7 +57,7 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
     setLoading(true);
     setError("");
     try {
-      const data = await shareProjectByLink(selectedProjectId, shareRole); // ✅ dùng store API
+      const data = await shareProjectByLink(selectedProjectId, shareRole); 
       setShareLink(`${window.location.origin}/join/${data.token}`);
     } catch (err) {
       setError("Could not generate share link");
@@ -107,13 +105,49 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
       <div className="mb-8">
         <button
           className="flex items-center gap-2 bg-red-500 text-white px-5 py-2 rounded-xl font-semibold hover:bg-red-600 transition-all shadow-md"
-          onClick={handleDelete}
+          onClick={() => setShowDeleteModal(true)}
           disabled={loading}
         >
           <Trash size={20} />
           Delete Project
         </button>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 transition-opacity duration-300 animate-fade-in">
+          <div
+            className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 w-full max-w-md border border-gray-200 dark:border-gray-700 transform transition-all duration-300 scale-95 opacity-0 animate-modal-in"
+            style={{ animation: 'modal-in 0.25s cubic-bezier(0.4,0,0.2,1) forwards' }}
+          >
+            <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-white text-center">Confirm Delete</h3>
+            <p className="mb-6 text-gray-600 dark:text-gray-300 text-center">Are you sure you want to delete this project and all its data?</p>
+            <div className="flex justify-center gap-4">
+              <button
+                className="px-5 py-2 rounded-xl font-semibold bg-red-500 text-white hover:bg-red-600 transition-all shadow-md"
+                onClick={handleDelete}
+                disabled={loading}
+              >
+                Delete
+              </button>
+              <button
+                className="px-5 py-2 rounded-xl font-semibold bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 transition-all shadow-md"
+                onClick={() => setShowDeleteModal(false)}
+                disabled={loading}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+          {/* Inline keyframes for modal animation */}
+          <style>{`
+            @keyframes modal-in {
+              0% { opacity: 0; transform: scale(0.95); }
+              100% { opacity: 1; transform: scale(1); }
+            }
+          `}</style>
+        </div>
+      )}
 
       {/* Share */}
       <div className="mb-8">

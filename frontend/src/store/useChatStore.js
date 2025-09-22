@@ -14,31 +14,51 @@ export const useChatStore = create((set, get) => ({
     const newSocket = io("http://localhost:5001");
 
     newSocket.on("connect", () => {
-      console.log("✅ Connected to Socket.IO server with ID:", newSocket.id);
+      console.log("Connected to Socket.IO server with ID:", newSocket.id);
       set({ socket: newSocket, isConnected: true });
     });
 
     newSocket.on("receive_message", (newMessage) => {
-      if (!get().messages.some(msg => msg._id === newMessage._id)) {
-        set((state) => ({ messages: [...state.messages, newMessage] }));
-      }
+      set((state) => {
+        const optimisticMsg = state.messages.find(
+          (msg) =>
+            msg._id.startsWith("temp_") &&
+            msg.text === newMessage.text &&
+            msg.sender._id === newMessage.sender &&
+            msg.project === newMessage.project
+        );
+
+        if (optimisticMsg) {
+          return {
+            messages: state.messages.map((msg) =>
+              msg._id === optimisticMsg._id ? newMessage : msg
+            ),
+          };
+        }
+
+        if (!state.messages.some((msg) => msg._id === newMessage._id)) {
+          return { messages: [...state.messages, newMessage] };
+        }
+
+        return state;
+      });
     });
 
-    newSocket.on('message_deleted', ({ messageId }) => {
-      set(state => ({
-        messages: state.messages.filter(msg => msg._id !== messageId)
+    newSocket.on("message_deleted", ({ messageId }) => {
+      set((state) => ({
+        messages: state.messages.filter((msg) => msg._id !== messageId),
       }));
     });
 
     newSocket.on("disconnect", () => {
-      console.log("❌ Disconnected from Socket.IO server");
+      console.log("Disconnected from Socket.IO server");
       set({ socket: null, isConnected: false });
     });
   },
 
   disconnectSocket: () => {
     get().socket?.disconnect();
-    set({ socket: null, isConnected: false, messages: [] }); // Reset state
+    set({ socket: null, isConnected: false, messages: [] });
   },
 
   fetchMessages: async (projectId) => {
@@ -47,29 +67,32 @@ export const useChatStore = create((set, get) => ({
       set({ messages: res.data });
     } catch (error) {
       console.error("Failed to fetch messages:", error);
-      set({ messages: [] }); 
+      set({ messages: [] });
     }
   },
 
   sendMessage: (data) => {
     get().socket?.emit("send_message", data);
   },
-  
+
   addOptimisticMessage: (message) => {
-    set(state => ({ messages: [...state.messages, message] }));
+    set((state) => ({ messages: [...state.messages, message] }));
   },
 
   deleteMessage: async (messageId) => {
     const originalMessages = get().messages;
-    
-    set(state => ({
-      messages: state.messages.filter(msg => msg._id !== messageId)
+    set((state) => ({
+      messages: state.messages.filter((msg) => msg._id !== messageId),
     }));
+
+    if (messageId.startsWith("temp_")) {
+      return;
+    }
 
     try {
       await axiosInstance.delete(`/messages/${messageId}`);
     } catch (error) {
-      toast.error("Can't delete message.");
+      toast.error("Can't delete messages");
       set({ messages: originalMessages });
     }
   },

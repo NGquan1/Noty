@@ -24,11 +24,11 @@ export const deleteMessage = async (req, res) => {
     const message = await Message.findById(messageId);
 
     if (!message) {
-      return res.status(404).json({ message: "Không tìm thấy tin nhắn" });
+      return res.status(404).json({ message: "Can't find messages" });
     }
 
     if (message.sender.toString() !== userId.toString()) {
-      return res.status(403).json({ message: "Bạn không có quyền xóa tin nhắn này" });
+      return res.status(403).json({ message: "Don't have permission to delete message" });
     }
 
     await Message.findByIdAndDelete(messageId);
@@ -36,9 +36,9 @@ export const deleteMessage = async (req, res) => {
     const io = req.app.get('socketio');
     io.to(message.project.toString()).emit('message_deleted', { messageId });
 
-    res.status(200).json({ message: "Đã xóa tin nhắn thành công" });
+    res.status(200).json({ message: "Message deleted successfully" });
   } catch (error) {
-    console.error("Lỗi khi xóa tin nhắn:", error);
-    res.status(500).json({ message: "Xóa tin nhắn thất bại" });
+    console.error("Error deleting message:", error);
+    res.status(500).json({ message: "Message deleted unsuccessfully" });
   }
 };

@@ -45,49 +45,57 @@ const statusBadge = {
   },
 };
 
-const Card = ({ card, columnIndex, moveCard, onEdit, onDelete, cardIndex }) => {
+const Card = ({ card, columnIndex, moveCard, moveCardOnServer, onEdit, onDelete, cardIndex }) => {
   const ref = useRef(null);
   const [{ isDragging }, drag] = useDrag({
     type: ItemTypes.CARD,
-    item: { id: card.id, columnIndex, card, cardIndex },
+    item: { id: card.id, fromColumnIndex: columnIndex, fromCardIndex: cardIndex, card },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
   });
 
-  const [{ isOver, canDrop }, drop] = useDrop({
+  const [, drop] = useDrop({
     accept: ItemTypes.CARD,
     hover(item, monitor) {
       if (!ref.current) return;
-      const dragIndex = item.cardIndex;
-      const hoverIndex = cardIndex;
-      const sourceCol = item.columnIndex;
-      const targetCol = columnIndex;
-      if (dragIndex === hoverIndex && sourceCol === targetCol) return;
-      const targetPos = dragIndex < hoverIndex ? hoverIndex + 1 : hoverIndex;
-      moveCard(item.card, sourceCol, targetCol, dragIndex, targetPos);
-      item.cardIndex = targetPos;
-      item.columnIndex = targetCol;
+
+      const fromColumnIndex = item.fromColumnIndex;
+      const fromCardIndex = item.fromCardIndex;
+      const toColumnIndex = columnIndex;
+      const toCardIndex = cardIndex;
+
+      if (fromCardIndex === toCardIndex && fromColumnIndex === toColumnIndex) {
+        return;
+      }
+      
+      moveCard(fromColumnIndex, fromCardIndex, toColumnIndex, toCardIndex);
+      
+      item.fromCardIndex = toCardIndex;
+      item.fromColumnIndex = toColumnIndex;
     },
-    collect: (monitor) => ({
-      isOver: monitor.isOver({ shallow: true }),
-      canDrop: monitor.canDrop(),
-    }),
+    drop(item) {
+      const { card, fromColumnIndex, fromCardIndex } = item;
+      const toColumnIndex = columnIndex;
+      const toCardIndex = cardIndex; 
+      
+      if (fromColumnIndex !== toColumnIndex || fromCardIndex !== toCardIndex) {
+        moveCardOnServer(card.id, fromColumnIndex, toColumnIndex, toCardIndex);
+      }
+    }
   });
 
   drag(drop(ref));
-  const opacity = isDragging ? 0.2 : 1;
+  const opacity = isDragging ? 0 : 1; 
   const maxTasksToShow = 3;
 
   return (
     <div
       ref={ref}
-      className={`group p-5 rounded-2xl shadow-xl mb-4 cursor-grab active:cursor-grabbing relative  transition-all duration-200 ${
-        statusBadge[card.status]?.bg || "bg-white"
-      } hover:scale-[1.025] hover:shadow-2xl
-        ${isDragging ? 'ring-4 ring-primary/30 z-20' : ''}
-        ${isOver && canDrop ? 'ring-4 ring-primary/60 z-30 scale-[1.03]' : ''}`}
       style={{ opacity }}
+      className={`group p-5 rounded-2xl shadow-xl mb-4 cursor-grab active:cursor-grabbing relative transition-all duration-200 ${
+        statusBadge[card.status]?.bg || "bg-white"
+      } hover:scale-[1.025] hover:shadow-2xl`}
     >
       <div className="mb-2">
         <h4 className="font-semibold text-gray-800 truncate">

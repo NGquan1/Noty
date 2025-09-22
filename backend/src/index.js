@@ -1,5 +1,3 @@
-// File server chính của bạn (index.js hoặc app.js)
-
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
@@ -46,9 +44,10 @@ app.use("/api/columns", columnRouter);
 app.use("/api/projects", projectRouter);
 app.use("/api/events", calendarRouter);
 app.use("/api/calendar", calendarRouter);
-app.get('/api/test', (req, res) => res.json({ ok: true }));
 app.use("/api/messages", messageRouter);
 app.use("/api/ai", aiRouter);
+app.get('/api/test', (req, res) => res.json({ ok: true }));
+
 
 httpServer.listen(PORT, () => {
   console.log("Server is running on PORT:" + PORT);
