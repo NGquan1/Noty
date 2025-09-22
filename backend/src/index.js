@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import http from "http"; 
 
-import { initializeSocket } from "./lib/socket.js"; // 
+import { initializeSocket } from "./lib/socket.js"; 
 
 import { connectDB } from "./lib/db.js";
 
