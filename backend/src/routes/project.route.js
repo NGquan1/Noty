@@ -9,7 +9,10 @@ import {
   createShareLink,
   joinProjectByToken,
 } from "../controllers/project.controller.js";
-import { getProjectMembers, removeProjectMember } from "../controllers/projectMembers.controller.js";
+import {
+  getProjectMembers,
+  removeProjectMember,
+} from "../controllers/projectMembers.controller.js";
 
 const router = express.Router();
 
@@ -19,7 +22,6 @@ router.get("/", getProjects);
 router.post("/", createProject);
 router.put("/:id", updateProject);
 router.delete("/:id", deleteProject);
-
 
 router.get("/:id/members", getProjectMembers);
 router.delete("/:id/members/:userId", removeProjectMember);

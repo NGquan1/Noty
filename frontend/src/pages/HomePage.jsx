@@ -1,7 +1,7 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useAuthStore } from '../store/useAuthStore';
-import { ListTodo, Calendar, StickyNote } from 'lucide-react';
+import React from "react";
+import { Link } from "react-router-dom";
+import { useAuthStore } from "../store/useAuthStore";
+import { ListTodo, Calendar, StickyNote } from "lucide-react";
 
 const HomePage = () => {
   const { authUser } = useAuthStore();
@@ -11,9 +11,14 @@ const HomePage = () => {
       <div className="container mx-auto px-4 pt-28 pb-12">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
-            <h1 className="text-5xl font-extrabold mb-4 text-primary drop-shadow-lg">Welcome to Noty</h1>
+            <h1 className="text-5xl font-extrabold mb-4 text-primary drop-shadow-lg">
+              Welcome to Noty
+            </h1>
             <p className="text-2xl text-gray-600 font-medium">
-              Your personal workspace for <span className='text-primary font-bold'>tasks</span>, <span className='text-primary font-bold'>calendar</span> and <span className='text-primary font-bold'>notes</span>
+              Your personal workspace for{" "}
+              <span className="text-primary font-bold">tasks</span>,{" "}
+              <span className="text-primary font-bold">calendar</span> and{" "}
+              <span className="text-primary font-bold">notes</span>
             </p>
           </div>
 
@@ -37,7 +42,9 @@ const HomePage = () => {
             >
               <Calendar className="w-16 h-16 text-primary drop-shadow-md group-hover:scale-110 transition-transform" />
               <div className="text-center">
-                <h2 className="text-2xl font-bold mb-2 text-primary">Calendar</h2>
+                <h2 className="text-2xl font-bold mb-2 text-primary">
+                  Calendar
+                </h2>
                 <p className="text-gray-500 font-medium">
                   Manage your schedule and events
                 </p>
@@ -61,7 +68,8 @@ const HomePage = () => {
           {authUser && (
             <div className="text-center mt-12">
               <p className="text-gray-600">
-                Welcome back, <span className="font-semibold">{authUser.fullName}</span>!
+                Welcome back,{" "}
+                <span className="font-semibold">{authUser.fullName}</span>!
               </p>
             </div>
           )}

@@ -51,7 +51,6 @@ const Column = ({
       if (fromColumnIndex !== columnIndex && column.cards.length === 0) {
         moveCard(fromColumnIndex, item.fromCardIndex, columnIndex, 0);
       }
-
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),

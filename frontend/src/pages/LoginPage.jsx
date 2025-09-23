@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import AuthImagePattern from "../components/AuthImagePattern";
@@ -32,7 +31,9 @@ const LoginPage = () => {
               >
                 <StickyNote className="size-8 text-white" />
               </div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">Welcome Back</h1>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                Welcome Back
+              </h1>
               <p className="text-gray-500 text-lg">Sign in to your account</p>
             </div>
           </div>
@@ -41,9 +42,7 @@ const LoginPage = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="form-control">
               <label className="label">
-                <span className="text-gray-700 font-medium">
-                  Email
-                </span>
+                <span className="text-gray-700 font-medium">Email</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -63,9 +62,7 @@ const LoginPage = () => {
 
             <div className="form-control">
               <label className="label">
-                <span className="text-gray-700 font-medium">
-                  Password
-                </span>
+                <span className="text-gray-700 font-medium">Password</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -113,7 +110,10 @@ const LoginPage = () => {
           <div className="text-center">
             <p className="text-gray-500">
               Don&apos;t have an account?{" "}
-              <Link to="/signup" className="text-gray-800 hover:text-gray-600 font-medium underline underline-offset-4 transition-colors">
+              <Link
+                to="/signup"
+                className="text-gray-800 hover:text-gray-600 font-medium underline underline-offset-4 transition-colors"
+              >
                 Create account
               </Link>
             </p>

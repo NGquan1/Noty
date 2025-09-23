@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+// 1. Import đối tượng statusBadge từ file Card.js
+import { statusBadge } from "./Card";
 
 const CardModal = ({
   isOpen,
@@ -23,7 +25,7 @@ const CardModal = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!member.trim() || !tasks.trim()) return;
+    if (!member.trim()) return;
 
     const newCard = {
       id: initialCardData?.id || (Math.random() * 100000).toFixed(0),
@@ -35,10 +37,6 @@ const CardModal = ({
       status,
     };
     onSave(newCard, columnIndex, initialCardData?.id);
-
-    setMember("");
-    setTasks("");
-    setStatus("to-do");
     onClose();
   };
 
@@ -53,16 +51,15 @@ const CardModal = ({
             exit={{ opacity: 0 }}
             onClick={onClose}
           />
-
           <motion.div
             className="fixed inset-0 z-50 flex items-center justify-center"
             initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
           >
             <form
               onSubmit={handleSubmit}
-              className="bg-white p-6 rounded-lg shadow-xl flex flex-col gap-4 w-full max-w-md relative z-50"
+              className="bg-white p-6 rounded-lg shadow-xl flex flex-col gap-4 w-full max-w-md relative"
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -85,7 +82,7 @@ const CardModal = ({
                   className="border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
                   value={member}
                   onChange={(e) => setMember(e.target.value)}
-                  placeholder="Member's name (ex: John Doe)"
+                  placeholder="Card title"
                   autoFocus
                 />
               </div>
@@ -98,7 +95,7 @@ const CardModal = ({
                   className="border border-gray-300 px-4 py-2 rounded-md min-h-[120px] focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
                   value={tasks}
                   onChange={(e) => setTasks(e.target.value)}
-                  placeholder="Tasks"
+                  placeholder="Add a more detailed description..."
                 />
               </div>
 
@@ -106,18 +103,24 @@ const CardModal = ({
                 <label className="block text-sm font-medium text-gray-600 mb-1">
                   Progression
                 </label>
+                {/* 2. Cập nhật thẻ Select để hiển thị màu */}
                 <select
-                  className="border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
+                  className={`border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full font-semibold transition-colors duration-200 ${
+                    statusBadge[status]?.color || "bg-gray-100 text-gray-700"
+                  }`}
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
                 >
-                  <option value="to-do">To-Do</option>
-                  <option value="ongoing">Ongoing</option>
-                  <option value="finished">Finished</option>
-                  <option value="normal">Neutral</option>
-                  <option value="urgent">Urgent</option>
-                  <option value="important">Important</option>
-                  <option value="low">Low Priority</option>
+                  {/* 3. Tự động tạo các <option> từ statusBadge */}
+                  {Object.entries(statusBadge).map(([key, value]) => (
+                    <option
+                      key={key}
+                      value={key}
+                      className="font-semibold bg-white text-black"
+                    >
+                      {value.label}
+                    </option>
+                  ))}
                 </select>
               </div>
 

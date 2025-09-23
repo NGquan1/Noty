@@ -29,7 +29,6 @@ export const useNoteStore = create((set, get) => ({
     await API.put(`/notes/${noteId}`, updateData);
     await get().fetchNotes(updateData.projectId);
   },
-
   deleteNote: async (noteId, projectId) => {
     await API.delete(`/notes/${noteId}`);
     await get().fetchNotes(projectId);

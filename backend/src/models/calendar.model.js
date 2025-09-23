@@ -13,7 +13,7 @@ const eventSchema = new mongoose.Schema(
     client: String,
     shareWith: [String],
     file: String,
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     project: { type: String, required: true },
   },
   { timestamps: true }

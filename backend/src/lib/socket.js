@@ -4,7 +4,7 @@ import Message from "../models/message.model.js";
 export const initializeSocket = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: "http://localhost:5173", 
+      origin: "http://localhost:5173",
       methods: ["GET", "POST"],
       credentials: true,
     },
@@ -22,16 +22,18 @@ export const initializeSocket = (httpServer) => {
       try {
         const newMessage = new Message({
           text: data.text,
-          sender: data.senderId, 
+          sender: data.senderId,
           project: data.projectId,
         });
 
         let savedMessage = await newMessage.save();
-        
-        savedMessage = await savedMessage.populate("sender", "fullName profilePic");
+
+        savedMessage = await savedMessage.populate(
+          "sender",
+          "fullName profilePic"
+        );
 
         socket.to(data.projectId).emit("receive_message", savedMessage);
-
       } catch (error) {
         console.error("Error saving message:", error);
       }

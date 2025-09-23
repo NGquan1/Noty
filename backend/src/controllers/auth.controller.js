@@ -1,4 +1,3 @@
-
 import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
@@ -7,7 +6,6 @@ import cloudinary from "../lib/cloudinary.js";
 export const signup = async (req, res) => {
   const { email, fullName, password } = req.body;
   try {
-
     if (!email || !fullName || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -41,13 +39,12 @@ export const signup = async (req, res) => {
         fullName: newUser.fullName,
         profilePic: newUser.profilePic,
       });
-
     } else {
       return res.status(500).json({ message: "Invalid user data" });
     }
   } catch (error) {
     console.error("Error during signup:", error);
-    res.status(500).json({ message: "Internal server error" }); 
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 

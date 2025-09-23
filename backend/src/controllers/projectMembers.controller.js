@@ -13,8 +13,8 @@ export const getProjectMembers = async (req, res) => {
     const allUsers = [
       { ...project.owner.toObject(), isOwner: true },
       ...project.members
-        .filter(m => m._id.toString() !== project.owner._id.toString())
-        .map(m => ({ ...m.toObject(), isOwner: false }))
+        .filter((m) => m._id.toString() !== project.owner._id.toString())
+        .map((m) => ({ ...m.toObject(), isOwner: false })),
     ];
     res.json(allUsers);
   } catch (err) {
@@ -32,11 +32,11 @@ export const removeProjectMember = async (req, res) => {
       return res.status(403).json({ error: "Only owner can remove members" });
     }
     if (userId === project.owner.toString()) {
-      return res.status(400).json({ error: "Cannot remove owner from project" });
+      return res
+        .status(400)
+        .json({ error: "Cannot remove owner from project" });
     }
-    project.members = project.members.filter(
-      (m) => m.toString() !== userId
-    );
+    project.members = project.members.filter((m) => m.toString() !== userId);
     await project.save();
     res.json({ message: "Member removed" });
   } catch (err) {

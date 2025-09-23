@@ -6,7 +6,7 @@ const AIGenerateProjectModal = ({ isOpen, onClose, onSubmit }) => {
     description: "",
     deadline: "",
     members: 1,
-    goals: ""
+    goals: "",
   });
 
   const handleChange = (e) => {
@@ -31,10 +31,14 @@ const AIGenerateProjectModal = ({ isOpen, onClose, onSubmit }) => {
         >
           &times;
         </button>
-  <h2 className="text-2xl font-bold mb-4 text-gray-800">AI Project Generator</h2>
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">
+          AI Project Generator
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block font-medium mb-1 text-gray-700">Project Name</label>
+            <label className="block font-medium mb-1 text-gray-700">
+              Project Name
+            </label>
             <input
               type="text"
               name="name"
@@ -46,7 +50,9 @@ const AIGenerateProjectModal = ({ isOpen, onClose, onSubmit }) => {
             />
           </div>
           <div>
-            <label className="block font-medium mb-1 text-gray-700">Project Description</label>
+            <label className="block font-medium mb-1 text-gray-700">
+              Project Description
+            </label>
             <textarea
               name="description"
               value={form.description}
@@ -58,7 +64,9 @@ const AIGenerateProjectModal = ({ isOpen, onClose, onSubmit }) => {
             />
           </div>
           <div>
-            <label className="block font-medium mb-1 text-gray-700">Deadline</label>
+            <label className="block font-medium mb-1 text-gray-700">
+              Deadline
+            </label>
             <input
               type="date"
               name="deadline"
@@ -70,7 +78,9 @@ const AIGenerateProjectModal = ({ isOpen, onClose, onSubmit }) => {
             />
           </div>
           <div>
-            <label className="block font-medium mb-1 text-gray-700">Number of Members</label>
+            <label className="block font-medium mb-1 text-gray-700">
+              Number of Members
+            </label>
             <input
               type="number"
               name="members"
@@ -83,7 +93,9 @@ const AIGenerateProjectModal = ({ isOpen, onClose, onSubmit }) => {
             />
           </div>
           <div>
-            <label className="block font-medium mb-1 text-blue-700">Goals / Special Requirements</label>
+            <label className="block font-medium mb-1 text-blue-700">
+              Goals / Special Requirements
+            </label>
             <textarea
               name="goals"
               value={form.goals}
