@@ -18,7 +18,7 @@ const JoinProjectPage = () => {
     const joinProject = async () => {
       try {
         const res = await axios.post(
-          `http://localhost:5001/api/projects/join/${token}`,
+          `http://import.meta.env.VITE_API_URL/api/projects/join/${token}`,
           {},
           { withCredentials: true }
         );
