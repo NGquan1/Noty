@@ -11,7 +11,7 @@ export const useChatStore = create((set, get) => ({
   connectSocket: (userId) => {
     if (get().socket) return;
 
-    const newSocket = io("http://import.meta.env.VITE_API_URL");
+    const newSocket = io(import.meta.env.VITE_API_URL);
 
     newSocket.on("connect", () => {
       console.log("Connected to Socket.IO server with ID:", newSocket.id);
