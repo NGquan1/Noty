@@ -15,12 +15,12 @@ import Navbar from "./components/Navbar";
 import { useThemeStore } from "./store/useThemeStore";
 import { Toaster } from "react-hot-toast";
 
-import { useChatStore } from "./store/useChatStore"; 
+import { useChatStore } from "./store/useChatStore";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
   const { theme } = useThemeStore();
-  const location = useLocation(); 
+  const location = useLocation();
 
   const { connectSocket, disconnectSocket } = useChatStore();
 
@@ -50,49 +50,41 @@ const App = () => {
 
   return (
     <div data-theme={theme}>
-            {!hideNavbar && <Navbar />}
-            <Toaster position="top-center" />     {" "}
+      {!hideNavbar && <Navbar />}
+      <Toaster position="top-center" />{" "}
       <Routes>
-               {" "}
+        {" "}
         <Route
           path="/"
           element={authUser ? <HomePage /> : <Navigate to="/login" />}
-        />
-               {" "}
+        />{" "}
         <Route
           path="/tasks"
           element={authUser ? <NotePage /> : <Navigate to="/login" />}
-        />
-               {" "}
+        />{" "}
         <Route
           path="/signup"
           element={!authUser ? <SignUpPage /> : <Navigate to="/" />}
-        />
-               {" "}
+        />{" "}
         <Route
           path="/login"
           element={!authUser ? <LoginPage /> : <Navigate to="/" />}
-        />
-               {" "}
+        />{" "}
         <Route
           path="/settings"
           element={
             authUser ? <ProjectSettingsPage /> : <Navigate to="/login" />
           }
-        />
-               {" "}
+        />{" "}
         <Route
           path="/profile"
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
-        />
-               {" "}
+        />{" "}
         <Route
           path="/join/:token"
           element={authUser ? <JoinProjectPage /> : <Navigate to="/login" />}
-        />
-             {" "}
-      </Routes>
-         {" "}
+        />{" "}
+      </Routes>{" "}
     </div>
   );
 };
