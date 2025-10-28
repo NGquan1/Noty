@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 
 const BASE_URL =
   import.meta.env.MODE === "development"
-    ? "http://import.meta.env.VITE_API_URL"
+    ? "http://import.meta.env.VITE_API_URL/api"
     : "/";
 
 export const useAuthStore = create((set, get) => ({
