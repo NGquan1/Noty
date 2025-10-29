@@ -18,7 +18,6 @@ import { Toaster } from "react-hot-toast";
 import { useChatStore } from "./store/useChatStore";
 
 const App = () => {
-  console.log("🌍 VITE_API_URL =", import.meta.env.VITE_API_URL); // ✅ Thêm dòng này
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
   const { theme } = useThemeStore();
   const location = useLocation();
