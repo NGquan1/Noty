@@ -2,7 +2,7 @@ import { create } from "zustand";
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://import.meta.env.VITE_API_URL/api",
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 

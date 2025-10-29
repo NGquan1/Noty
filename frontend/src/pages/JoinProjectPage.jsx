@@ -12,16 +12,19 @@ const JoinProjectPage = () => {
   );
 
   const hasJoined = useRef(false);
+
   useEffect(() => {
     if (hasJoined.current) return;
     hasJoined.current = true;
+
     const joinProject = async () => {
       try {
         const res = await axios.post(
-          `http://import.meta.env.VITE_API_URL/api/projects/join/${token}`,
+          `${import.meta.env.VITE_API_URL}/projects/join/${token}`,
           {},
           { withCredentials: true }
         );
+
         toast.success("Project joined successfully!");
         setCurrentProjectId(res.data.projectId);
         navigate("/");
@@ -32,6 +35,7 @@ const JoinProjectPage = () => {
         navigate("/");
       }
     };
+
     joinProject();
   }, [token, navigate, setCurrentProjectId]);
 
