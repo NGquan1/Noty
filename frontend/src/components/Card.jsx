@@ -54,6 +54,7 @@ const Card = ({
   cardIndex,
 }) => {
   const ref = useRef(null);
+
   const [{ isDragging }, drag] = useDrag({
     type: ItemTypes.CARD,
     item: {
@@ -65,6 +66,13 @@ const Card = ({
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
+    end: (item, monitor) => {
+      if (monitor.didDrop()) {
+        console.log("[DND][end] ✅ Drag finished successfully for:", item.id);
+      } else {
+        console.log("[DND][end] ❌ Drag cancelled for:", item?.id);
+      }
+    },
   });
 
   const [, drop] = useDrop({
@@ -77,28 +85,64 @@ const Card = ({
       const toColumnIndex = columnIndex;
       const toCardIndex = cardIndex;
 
+      console.log("[DND][hover]", {
+        cardId: item.id,
+        fromColumnIndex,
+        fromCardIndex,
+        toColumnIndex,
+        toCardIndex,
+      });
+
       if (fromCardIndex === toCardIndex && fromColumnIndex === toColumnIndex) {
         return;
       }
+
+      console.log(
+        "[DND][hover] Moving card locally:",
+        `${fromColumnIndex}:${fromCardIndex} → ${toColumnIndex}:${toCardIndex}`
+      );
 
       moveCard(fromColumnIndex, fromCardIndex, toColumnIndex, toCardIndex);
 
       item.fromCardIndex = toCardIndex;
       item.fromColumnIndex = toColumnIndex;
     },
+
     drop(item) {
       const { card, fromColumnIndex, fromCardIndex } = item;
       const toColumnIndex = columnIndex;
       const toCardIndex = cardIndex;
 
+      console.log("[DND][drop] 🟢 Dropped card:", {
+        cardId: card.id,
+        fromColumnIndex,
+        fromCardIndex,
+        toColumnIndex,
+        toCardIndex,
+      });
+
       if (fromColumnIndex !== toColumnIndex || fromCardIndex !== toCardIndex) {
-        moveCardOnServer(card.id, fromColumnIndex, toColumnIndex, toCardIndex);
+        console.log("[DND][drop] 🔄 Syncing with server...");
+        moveCardOnServer(card.id, fromColumnIndex, toColumnIndex, toCardIndex)
+          .then((res) => {
+            console.log("[DND][drop] ✅ Server update success:", res);
+          })
+          .catch((err) => {
+            console.error(
+              "[DND][drop] ❌ Server update failed:",
+              err?.response?.data || err.message || err
+            );
+          });
+      } else {
+        console.log(
+          "[DND][drop] ⚠️ No movement detected, skipping server call."
+        );
       }
     },
   });
 
   drag(drop(ref));
-  const opacity = isDragging ? 0 : 1;
+  const opacity = isDragging ? 0.5 : 1;
   const maxTasksToShow = 3;
 
   return (
@@ -139,14 +183,20 @@ const Card = ({
             {statusBadge[card.status]?.label || card.status}
           </span>
           <button
-            onClick={() => onEdit(card, columnIndex)}
+            onClick={() => {
+              console.log("[CARD][Edit] Editing card:", card.id);
+              onEdit(card, columnIndex);
+            }}
             className="text-gray-500 hover:text-blue-600 p-1 rounded-full hover:bg-blue-100 transition-colors"
             aria-label="Edit card"
           >
             <Pencil size={18} />
           </button>
           <button
-            onClick={() => onDelete(card.id, columnIndex)}
+            onClick={() => {
+              console.log("[CARD][Delete] Deleting card:", card.id);
+              onDelete(card.id, columnIndex);
+            }}
             className="text-gray-500 hover:text-red-600 p-1 rounded-full hover:bg-red-100 transition-colors"
             aria-label="Delete card"
           >
