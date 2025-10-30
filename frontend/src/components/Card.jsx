@@ -52,6 +52,7 @@ const Card = ({
   onEdit,
   onDelete,
   cardIndex,
+  columns, // 👈 thêm prop này
 }) => {
   const ref = useRef(null);
 
@@ -77,11 +78,9 @@ const Card = ({
 
   const [, drop] = useDrop({
     accept: ItemTypes.CARD,
-    hover(item, monitor) {
+    hover(item) {
       if (!ref.current) return;
-
-      const fromColumnIndex = item.fromColumnIndex;
-      const fromCardIndex = item.fromCardIndex;
+      const { fromColumnIndex, fromCardIndex } = item;
       const toColumnIndex = columnIndex;
       const toCardIndex = cardIndex;
 
@@ -93,17 +92,10 @@ const Card = ({
         toCardIndex,
       });
 
-      if (fromCardIndex === toCardIndex && fromColumnIndex === toColumnIndex) {
+      if (fromColumnIndex === toColumnIndex && fromCardIndex === toCardIndex)
         return;
-      }
-
-      console.log(
-        "[DND][hover] Moving card locally:",
-        `${fromColumnIndex}:${fromCardIndex} → ${toColumnIndex}:${toCardIndex}`
-      );
 
       moveCard(fromColumnIndex, fromCardIndex, toColumnIndex, toCardIndex);
-
       item.fromCardIndex = toCardIndex;
       item.fromColumnIndex = toColumnIndex;
     },
@@ -113,25 +105,33 @@ const Card = ({
       const toColumnIndex = columnIndex;
       const toCardIndex = cardIndex;
 
+      const fromColumnId = columns?.[fromColumnIndex]?._id;
+      const toColumnId = columns?.[toColumnIndex]?._id;
+
       console.log("[DND][drop] 🟢 Dropped card:", {
         cardId: card.id,
         fromColumnIndex,
         fromCardIndex,
         toColumnIndex,
         toCardIndex,
+        fromColumnId,
+        toColumnId,
       });
+
+      if (!fromColumnId || !toColumnId) {
+        console.error("[DND][drop] ❌ Missing column IDs!", {
+          fromColumnId,
+          toColumnId,
+        });
+        return;
+      }
 
       if (fromColumnIndex !== toColumnIndex || fromCardIndex !== toCardIndex) {
         console.log("[DND][drop] 🔄 Syncing with server...");
-        moveCardOnServer(
-          card.id,
-          getColumnId(fromColumnIndex),
-          getColumnId(toColumnIndex),
-          toCardIndex
-        )
-          .then((res) => {
-            console.log("[DND][drop] ✅ Server update success:", res);
-          })
+        moveCardOnServer(card.id, fromColumnId, toColumnId, toCardIndex)
+          .then((res) =>
+            console.log("[DND][drop] ✅ Server update success:", res)
+          )
           .catch((err) => {
             console.error(
               "[DND][drop] ❌ Server update failed:",
@@ -193,7 +193,6 @@ const Card = ({
               onEdit(card, columnIndex);
             }}
             className="text-gray-500 hover:text-blue-600 p-1 rounded-full hover:bg-blue-100 transition-colors"
-            aria-label="Edit card"
           >
             <Pencil size={18} />
           </button>
@@ -203,7 +202,6 @@ const Card = ({
               onDelete(card.id, columnIndex);
             }}
             className="text-gray-500 hover:text-red-600 p-1 rounded-full hover:bg-red-100 transition-colors"
-            aria-label="Delete card"
           >
             <Trash2 size={18} />
           </button>
