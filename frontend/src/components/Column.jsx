@@ -41,7 +41,6 @@ const Column = ({
     if (e.key === "Enter") e.target.blur();
   };
 
-  // 🎯 useDrop cho phép thả card vào vùng trống của column
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: ItemTypes.CARD,
     drop: (item, monitor) => {
@@ -54,11 +53,13 @@ const Column = ({
         cardsInTarget: column.cards.length,
       });
 
-      // ✅ Nếu thả vào column khác (và column này trống)
-      if (fromColumnIndex !== columnIndex && column.cards.length === 0) {
-        console.log("[DND][column-drop] 🚀 Moving to empty column...");
-        moveCard(fromColumnIndex, fromCardIndex, columnIndex, 0);
-        moveCardOnServer(card.id, fromColumnIndex, columnIndex, 0);
+      // 🧠 Nếu thả vào column khác
+      if (fromColumnIndex !== columnIndex) {
+        const toCardIndex = column.cards.length; // thêm ở cuối
+        console.log("[DND][column-drop] 🚀 Moving card to another column...");
+
+        moveCard(fromColumnIndex, fromCardIndex, columnIndex, toCardIndex);
+        moveCardOnServer(card.id, fromColumnIndex, columnIndex, toCardIndex);
       }
     },
     collect: (monitor) => ({
