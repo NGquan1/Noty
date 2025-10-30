@@ -8,6 +8,7 @@ const ItemTypes = { CARD: "card" };
 const Column = ({
   column,
   columnIndex,
+  columns,
   moveCard,
   moveCardOnServer,
   onAddCard,
@@ -119,6 +120,7 @@ const Column = ({
             card={card}
             cardIndex={index}
             columnIndex={columnIndex}
+            columns={columns}
             moveCard={moveCard}
             moveCardOnServer={moveCardOnServer} // ✅ truyền xuống để log trong card
             onEdit={onEditCard}

@@ -237,6 +237,7 @@ const App = () => {
                             key={column.id || column._id}
                             column={column}
                             columnIndex={index}
+                            columns={columns}
                             moveCard={moveCardInClient}
                             moveCardOnServer={moveCardOnServer}
                             onAddCard={handleAddCard}
