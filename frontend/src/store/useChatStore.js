@@ -1,99 +1,80 @@
-import { create } from "zustand";
-import { axiosInstance } from "../lib/axios";
-import io from "socket.io-client";
-import toast from "react-hot-toast";
+connectSocket: (userId) => {
+  if (get().socket) return;
 
-export const useChatStore = create((set, get) => ({
-  socket: null,
-  messages: [],
-  isConnected: false,
+  const SOCKET_URL =
+    import.meta.env.MODE === "development"
+      ? "http://localhost:5001"
+      : "https://noty-backend-366n.onrender.com";
 
-  connectSocket: (userId) => {
-    if (get().socket) return;
+  console.log("🌐 Connecting to Socket.IO at:", import.meta.env.VITE_API_URL);
 
-    const newSocket = io(import.meta.env.VITE_API_URL);
+  const newSocket = io(import.meta.env.VITE_API_URL, {
+    withCredentials: true,
+    transports: ["websocket", "polling"],
+  });
 
-    newSocket.on("connect", () => {
-      console.log("Connected to Socket.IO server with ID:", newSocket.id);
-      set({ socket: newSocket, isConnected: true });
+  newSocket.on("connect", () => {
+    console.log("✅ Connected to Socket.IO server with ID:", newSocket.id);
+    console.log("Transport used:", newSocket.io.engine.transport.name);
+    set({ socket: newSocket, isConnected: true });
+  });
+
+  newSocket.io.on("reconnect_attempt", (attempt) => {
+    console.warn(`⚠️ Reconnect attempt #${attempt}`);
+  });
+
+  newSocket.io.on("reconnect_error", (err) => {
+    console.error("❌ Reconnect error:", err);
+  });
+
+  newSocket.io.on("error", (err) => {
+    console.error("❌ Socket.IO client error:", err);
+  });
+
+  newSocket.on("disconnect", (reason) => {
+    console.warn("⚠️ Disconnected from Socket.IO server. Reason:", reason);
+    set({ socket: null, isConnected: false });
+  });
+
+  newSocket.on("connect", () => {
+    console.log("✅ Connected to Socket.IO server:", newSocket.id);
+    set({ socket: newSocket, isConnected: true });
+  });
+
+  newSocket.on("receive_message", (newMessage) => {
+    set((state) => {
+      const optimisticMsg = state.messages.find(
+        (msg) =>
+          msg._id.startsWith("temp_") &&
+          msg.text === newMessage.text &&
+          msg.sender._id === newMessage.sender &&
+          msg.project === newMessage.project
+      );
+
+      if (optimisticMsg) {
+        return {
+          messages: state.messages.map((msg) =>
+            msg._id === optimisticMsg._id ? newMessage : msg
+          ),
+        };
+      }
+
+      if (!state.messages.some((msg) => msg._id === newMessage._id)) {
+        return { messages: [...state.messages, newMessage] };
+      }
+
+      return state;
     });
+  });
 
-    newSocket.on("receive_message", (newMessage) => {
-      set((state) => {
-        const optimisticMsg = state.messages.find(
-          (msg) =>
-            msg._id.startsWith("temp_") &&
-            msg.text === newMessage.text &&
-            msg.sender._id === newMessage.sender &&
-            msg.project === newMessage.project
-        );
-
-        if (optimisticMsg) {
-          return {
-            messages: state.messages.map((msg) =>
-              msg._id === optimisticMsg._id ? newMessage : msg
-            ),
-          };
-        }
-
-        if (!state.messages.some((msg) => msg._id === newMessage._id)) {
-          return { messages: [...state.messages, newMessage] };
-        }
-
-        return state;
-      });
-    });
-
-    newSocket.on("message_deleted", ({ messageId }) => {
-      set((state) => ({
-        messages: state.messages.filter((msg) => msg._id !== messageId),
-      }));
-    });
-
-    newSocket.on("disconnect", () => {
-      console.log("Disconnected from Socket.IO server");
-      set({ socket: null, isConnected: false });
-    });
-  },
-
-  disconnectSocket: () => {
-    get().socket?.disconnect();
-    set({ socket: null, isConnected: false, messages: [] });
-  },
-
-  fetchMessages: async (projectId) => {
-    try {
-      const res = await axiosInstance.get(`/messages/${projectId}`);
-      set({ messages: res.data });
-    } catch (error) {
-      console.error("Failed to fetch messages:", error);
-      set({ messages: [] });
-    }
-  },
-
-  sendMessage: (data) => {
-    get().socket?.emit("send_message", data);
-  },
-
-  addOptimisticMessage: (message) => {
-    set((state) => ({ messages: [...state.messages, message] }));
-  },
-
-  deleteMessage: async (messageId) => {
-    const originalMessages = get().messages;
+  newSocket.on("message_deleted", ({ messageId }) => {
     set((state) => ({
       messages: state.messages.filter((msg) => msg._id !== messageId),
     }));
+  });
 
-    if (messageId.startsWith("temp_")) {
-      return;
-    }
-
-    try {
-      await axiosInstance.delete(`/messages/${messageId}`);
-    } catch (error) {
-      toast.error("Can't delete messages");
-      set({ messages: originalMessages });
-    }
-  },
-}));
+  newSocket.on("disconnect", (reason) => {
+    console.log("⚠️ Disconnected from Socket.IO server:", reason);
+    set({ socket: null, isConnected: false });
+  });
+};
