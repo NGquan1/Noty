@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { Pencil, Trash2 } from "lucide-react";
-import { useColumnStore } from "../store/useColumnStore"; // ✅ import store để lấy ID
 
 const ItemTypes = {
   CARD: "card",
@@ -55,8 +54,6 @@ const Card = ({
   cardIndex,
 }) => {
   const ref = useRef(null);
-  const columns = useColumnStore((state) => state.columns); // ✅ lấy columns từ store
-
   const [{ isDragging }, drag] = useDrag({
     type: ItemTypes.CARD,
     item: {
@@ -94,23 +91,13 @@ const Card = ({
       const toColumnIndex = columnIndex;
       const toCardIndex = cardIndex;
 
-      // ✅ Lấy ID thật của column
-      const fromColumnId = columns[fromColumnIndex]?.id;
-      const toColumnId = columns[toColumnIndex]?.id;
-
-      if (fromColumnId && toColumnId) {
-        moveCardOnServer(card.id, fromColumnId, toColumnId, toCardIndex);
-      } else {
-        console.warn("Invalid column IDs while moving card", {
-          fromColumnIndex,
-          toColumnIndex,
-        });
+      if (fromColumnIndex !== toColumnIndex || fromCardIndex !== toCardIndex) {
+        moveCardOnServer(card.id, fromColumnIndex, toColumnIndex, toCardIndex);
       }
     },
   });
 
   drag(drop(ref));
-
   const opacity = isDragging ? 0 : 1;
   const maxTasksToShow = 3;
 
