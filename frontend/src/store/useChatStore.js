@@ -6,34 +6,12 @@ connectSocket: (userId) => {
       ? "http://localhost:5001"
       : "https://noty-backend-366n.onrender.com";
 
-  console.log("🌐 Connecting to Socket.IO at:", import.meta.env.VITE_API_URL);
-
-  const newSocket = io(import.meta.env.VITE_API_URL, {
+  const newSocket = io(SOCKET_URL, {
     withCredentials: true,
-    transports: ["websocket", "polling"],
-  });
-
-  newSocket.on("connect", () => {
-    console.log("✅ Connected to Socket.IO server with ID:", newSocket.id);
-    console.log("Transport used:", newSocket.io.engine.transport.name);
-    set({ socket: newSocket, isConnected: true });
-  });
-
-  newSocket.io.on("reconnect_attempt", (attempt) => {
-    console.warn(`⚠️ Reconnect attempt #${attempt}`);
-  });
-
-  newSocket.io.on("reconnect_error", (err) => {
-    console.error("❌ Reconnect error:", err);
-  });
-
-  newSocket.io.on("error", (err) => {
-    console.error("❌ Socket.IO client error:", err);
-  });
-
-  newSocket.on("disconnect", (reason) => {
-    console.warn("⚠️ Disconnected from Socket.IO server. Reason:", reason);
-    set({ socket: null, isConnected: false });
+    transports: ["websocket", "polling"], // fallback
+    query: { userId },
+    reconnectionAttempts: 5,
+    reconnectionDelay: 1000,
   });
 
   newSocket.on("connect", () => {
