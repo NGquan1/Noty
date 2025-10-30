@@ -1,58 +1,99 @@
-connectSocket: (userId) => {
-  if (get().socket) return;
+import { create } from "zustand";
+import { axiosInstance } from "../lib/axios";
+import io from "socket.io-client";
+import toast from "react-hot-toast";
 
-  const SOCKET_URL =
-    import.meta.env.MODE === "development"
-      ? "http://localhost:5001"
-      : "https://noty-backend-366n.onrender.com";
+export const useChatStore = create((set, get) => ({
+  socket: null,
+  messages: [],
+  isConnected: false,
 
-  const newSocket = io(SOCKET_URL, {
-    withCredentials: true,
-    transports: ["websocket", "polling"], // fallback
-    query: { userId },
-    reconnectionAttempts: 5,
-    reconnectionDelay: 1000,
-  });
+  connectSocket: (userId) => {
+    if (get().socket) return;
 
-  newSocket.on("connect", () => {
-    console.log("✅ Connected to Socket.IO server:", newSocket.id);
-    set({ socket: newSocket, isConnected: true });
-  });
+    const newSocket = io(import.meta.env.VITE_API_URL);
 
-  newSocket.on("receive_message", (newMessage) => {
-    set((state) => {
-      const optimisticMsg = state.messages.find(
-        (msg) =>
-          msg._id.startsWith("temp_") &&
-          msg.text === newMessage.text &&
-          msg.sender._id === newMessage.sender &&
-          msg.project === newMessage.project
-      );
-
-      if (optimisticMsg) {
-        return {
-          messages: state.messages.map((msg) =>
-            msg._id === optimisticMsg._id ? newMessage : msg
-          ),
-        };
-      }
-
-      if (!state.messages.some((msg) => msg._id === newMessage._id)) {
-        return { messages: [...state.messages, newMessage] };
-      }
-
-      return state;
+    newSocket.on("connect", () => {
+      console.log("Connected to Socket.IO server with ID:", newSocket.id);
+      set({ socket: newSocket, isConnected: true });
     });
-  });
 
-  newSocket.on("message_deleted", ({ messageId }) => {
+    newSocket.on("receive_message", (newMessage) => {
+      set((state) => {
+        const optimisticMsg = state.messages.find(
+          (msg) =>
+            msg._id.startsWith("temp_") &&
+            msg.text === newMessage.text &&
+            msg.sender._id === newMessage.sender &&
+            msg.project === newMessage.project
+        );
+
+        if (optimisticMsg) {
+          return {
+            messages: state.messages.map((msg) =>
+              msg._id === optimisticMsg._id ? newMessage : msg
+            ),
+          };
+        }
+
+        if (!state.messages.some((msg) => msg._id === newMessage._id)) {
+          return { messages: [...state.messages, newMessage] };
+        }
+
+        return state;
+      });
+    });
+
+    newSocket.on("message_deleted", ({ messageId }) => {
+      set((state) => ({
+        messages: state.messages.filter((msg) => msg._id !== messageId),
+      }));
+    });
+
+    newSocket.on("disconnect", () => {
+      console.log("Disconnected from Socket.IO server");
+      set({ socket: null, isConnected: false });
+    });
+  },
+
+  disconnectSocket: () => {
+    get().socket?.disconnect();
+    set({ socket: null, isConnected: false, messages: [] });
+  },
+
+  fetchMessages: async (projectId) => {
+    try {
+      const res = await axiosInstance.get(`/messages/${projectId}`);
+      set({ messages: res.data });
+    } catch (error) {
+      console.error("Failed to fetch messages:", error);
+      set({ messages: [] });
+    }
+  },
+
+  sendMessage: (data) => {
+    get().socket?.emit("send_message", data);
+  },
+
+  addOptimisticMessage: (message) => {
+    set((state) => ({ messages: [...state.messages, message] }));
+  },
+
+  deleteMessage: async (messageId) => {
+    const originalMessages = get().messages;
     set((state) => ({
       messages: state.messages.filter((msg) => msg._id !== messageId),
     }));
-  });
 
-  newSocket.on("disconnect", (reason) => {
-    console.log("⚠️ Disconnected from Socket.IO server:", reason);
-    set({ socket: null, isConnected: false });
-  });
-};
+    if (messageId.startsWith("temp_")) {
+      return;
+    }
+
+    try {
+      await axiosInstance.delete(`/messages/${messageId}`);
+    } catch (error) {
+      toast.error("Can't delete messages");
+      set({ messages: originalMessages });
+    }
+  },
+}));
