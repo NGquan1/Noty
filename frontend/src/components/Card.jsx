@@ -56,7 +56,6 @@ const Card = ({
 }) => {
   const ref = useRef(null);
 
-  // 🟦 Kéo thả card
   const [{ isDragging }, drag] = useDrag({
     type: ItemTypes.CARD,
     item: {
@@ -77,20 +76,19 @@ const Card = ({
     },
   });
 
-  // 🟥 Nhận thả (drop)
   const [, drop] = useDrop({
     accept: ItemTypes.CARD,
-    hover(item, monitor) {
+    hover(item) {
       if (!ref.current) return;
-      if (monitor.didDrop()) return; // 🧩 Ngăn propagation nếu đã handled
 
       const { fromColumnIndex, fromCardIndex } = item;
       const toColumnIndex = columnIndex;
       const toCardIndex = cardIndex;
 
-      // 🚫 Nếu khác column thì không xử lý (để Column.jsx xử lý cross-column)
-      if (fromColumnIndex !== toColumnIndex) return;
+      if (fromColumnIndex === toColumnIndex && fromCardIndex === toCardIndex)
+        return;
 
+      // ⚙️ Cho phép kéo trong cùng 1 column
       console.log("[DND][hover]", {
         cardId: item.id,
         fromColumnIndex,
@@ -99,16 +97,14 @@ const Card = ({
         toCardIndex,
       });
 
-      if (fromCardIndex === toCardIndex) return;
-
       moveCard(fromColumnIndex, fromCardIndex, toColumnIndex, toCardIndex);
+
+      // 🧠 Cập nhật lại vị trí mới
       item.fromCardIndex = toCardIndex;
       item.fromColumnIndex = toColumnIndex;
     },
 
-    drop(item, monitor) {
-      if (monitor.didDrop()) return; // 🧩 Ngăn double-drop
-
+    drop(item) {
       const { card, fromColumnIndex, fromCardIndex } = item;
       const toColumnIndex = columnIndex;
       const toCardIndex = cardIndex;
@@ -126,14 +122,6 @@ const Card = ({
         toColumnId,
       });
 
-      // 🚫 Không gọi API khi khác cột — Column.jsx sẽ xử lý
-      if (fromColumnIndex !== toColumnIndex) {
-        console.log(
-          "[DND][drop] ⏭ Skipping cross-column drop (handled by Column.jsx)"
-        );
-        return;
-      }
-
       if (!fromColumnId || !toColumnId) {
         console.error("[DND][drop] ❌ Missing column IDs!", {
           fromColumnId,
@@ -142,9 +130,12 @@ const Card = ({
         return;
       }
 
-      // ✅ Cùng column thì sync server
-      if (fromColumnIndex === toColumnIndex && fromCardIndex !== toCardIndex) {
-        console.log("[DND][drop] 🔄 Syncing reorder with server...");
+      const isSameColumn = fromColumnId === toColumnId;
+      const movedToDifferentPosition =
+        fromCardIndex !== toCardIndex || !isSameColumn;
+
+      if (movedToDifferentPosition) {
+        console.log("[DND][drop] 🔄 Syncing with server...");
         moveCardOnServer(card.id, fromColumnId, toColumnId, toCardIndex)
           .then((res) =>
             console.log("[DND][drop] ✅ Server update success:", res)
