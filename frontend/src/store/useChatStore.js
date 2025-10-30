@@ -19,7 +19,11 @@ export const useChatStore = create((set, get) => ({
       import.meta.env.VITE_API_URL
     );
 
-    const newSocket = io(import.meta.env.VITE_API_URL, {
+    // Chuẩn hóa URL socket (bỏ /api nếu có)
+    const socketUrl = import.meta.env.VITE_API_URL.replace(/\/api\/?$/, "");
+    console.log("🌐 Attempting to connect to Socket.IO server at:", socketUrl);
+
+    const newSocket = io(socketUrl, {
       withCredentials: true,
       transports: ["websocket", "polling"],
     });
