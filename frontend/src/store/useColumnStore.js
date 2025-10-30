@@ -98,14 +98,21 @@ export const useColumnStore = create((set, get) => ({
   },
 
   moveCardOnServer: async (cardId, fromColumnId, toColumnId, toCardIndex) => {
+    console.log("[STORE][moveCardOnServer] Moving card:", {
+      cardId,
+      fromColumnId,
+      toColumnId,
+      toCardIndex,
+    });
     try {
-      await API.patch(`/cards/${cardId}/move`, {
+      const res = await API.patch(`/cards/${cardId}/move`, {
         fromColumnId,
         toColumnId,
         toCardIndex,
       });
+      console.log("[STORE][moveCardOnServer] ✅ Server response:", res.data);
     } catch (err) {
-      console.error("Move card failed on server", err);
+      console.error("[STORE][moveCardOnServer] ❌ Failed:", err);
       await get().fetchColumns(get().selectedProjectId);
     }
   },

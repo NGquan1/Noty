@@ -123,7 +123,12 @@ const Card = ({
 
       if (fromColumnIndex !== toColumnIndex || fromCardIndex !== toCardIndex) {
         console.log("[DND][drop] 🔄 Syncing with server...");
-        moveCardOnServer(card.id, fromColumnIndex, toColumnIndex, toCardIndex)
+        moveCardOnServer(
+          card.id,
+          getColumnId(fromColumnIndex),
+          getColumnId(toColumnIndex),
+          toCardIndex
+        )
           .then((res) => {
             console.log("[DND][drop] ✅ Server update success:", res);
           })

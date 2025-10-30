@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDrop } from "react-dnd";
 import { Plus, Trash2 } from "lucide-react";
 import Card from "./Card";
 
-const ItemTypes = {
-  CARD: "card",
-};
+const ItemTypes = { CARD: "card" };
 
 const Column = ({
   column,
@@ -21,7 +19,7 @@ const Column = ({
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [newTitle, setNewTitle] = useState(column.title);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setNewTitle(column.title);
   }, [column.title]);
 
@@ -39,29 +37,43 @@ const Column = ({
   };
 
   const handleTitleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      e.target.blur();
-    }
+    if (e.key === "Enter") e.target.blur();
   };
 
-  const [{ isOver }, drop] = useDrop({
+  // 🎯 useDrop cho phép thả card vào vùng trống của column
+  const [{ isOver, canDrop }, drop] = useDrop({
     accept: ItemTypes.CARD,
-    drop: (item) => {
-      const { card, fromColumnIndex } = item;
+    drop: (item, monitor) => {
+      const { card, fromColumnIndex, fromCardIndex } = item;
+      console.log("[DND][column-drop] 🟢 Dropped on column:", {
+        cardId: card.id,
+        fromColumnIndex,
+        fromCardIndex,
+        toColumnIndex: columnIndex,
+        cardsInTarget: column.cards.length,
+      });
+
+      // ✅ Nếu thả vào column khác (và column này trống)
       if (fromColumnIndex !== columnIndex && column.cards.length === 0) {
-        moveCard(fromColumnIndex, item.fromCardIndex, columnIndex, 0);
+        console.log("[DND][column-drop] 🚀 Moving to empty column...");
+        moveCard(fromColumnIndex, fromCardIndex, columnIndex, 0);
+        moveCardOnServer(card.id, fromColumnIndex, columnIndex, 0);
       }
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
     }),
   });
 
   return (
     <div
       ref={drop}
-      className="bg-gray-200/90 p-4 rounded-lg shadow-inner w-full md:w-1/3 flex flex-col min-h-[300px]"
+      className={`bg-gray-200/90 p-4 rounded-lg shadow-inner w-full md:w-1/3 flex flex-col min-h-[300px] transition-all ${
+        isOver ? "ring-2 ring-blue-400" : ""
+      }`}
     >
+      {/* ===== HEADER ===== */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex-grow flex items-center gap-2">
           {isEditingTitle ? (
@@ -98,6 +110,8 @@ const Column = ({
           <Plus size={18} />
         </button>
       </div>
+
+      {/* ===== CARD LIST ===== */}
       <div className="flex-grow">
         {column.cards.map((card, index) => (
           <Card
@@ -106,10 +120,22 @@ const Column = ({
             cardIndex={index}
             columnIndex={columnIndex}
             moveCard={moveCard}
+            moveCardOnServer={moveCardOnServer} // ✅ truyền xuống để log trong card
             onEdit={onEditCard}
             onDelete={onDeleteCard}
           />
         ))}
+
+        {/* 🧭 Hiển thị khi column trống */}
+        {column.cards.length === 0 && (
+          <div
+            className={`text-center text-gray-500 italic p-3 rounded ${
+              isOver ? "bg-blue-50 border border-blue-300" : ""
+            }`}
+          >
+            Drop a card here
+          </div>
+        )}
       </div>
     </div>
   );
