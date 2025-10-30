@@ -127,7 +127,6 @@ export const useColumnStore = create((set, get) => ({
     });
   },
 
-  // ✅ FIXED: convert index -> _id để tránh lỗi 400
   moveCardOnServer: async (
     cardId,
     fromColumnIndex,
@@ -135,26 +134,37 @@ export const useColumnStore = create((set, get) => ({
     toCardIndex
   ) => {
     const state = get();
-    const fromColumnId =
-      state.columns[fromColumnIndex]?._id || state.columns[fromColumnIndex]?.id;
-    const toColumnId =
-      state.columns[toColumnIndex]?._id || state.columns[toColumnIndex]?.id;
-
-    console.log("[STORE][moveCardOnServer] Moving card:", {
+    console.group("[STORE][moveCardOnServer] 🟡 Start");
+    console.log(
+      "👉 Columns in state:",
+      state.columns.map((c) => ({
+        id: c.id,
+        _id: c._id,
+        title: c.title,
+      }))
+    );
+    console.log("🧭 Params:", {
       cardId,
       fromColumnIndex,
       toColumnIndex,
       toCardIndex,
-      fromColumnId,
-      toColumnId,
     });
 
+    const fromColumn = state.columns[fromColumnIndex];
+    const toColumn = state.columns[toColumnIndex];
+
+    console.log("📦 fromColumn:", fromColumn);
+    console.log("📦 toColumn:", toColumn);
+
+    const fromColumnId = fromColumn?._id || fromColumn?.id;
+    const toColumnId = toColumn?._id || toColumn?.id;
+    const projectId = state.selectedProjectId;
+
+    console.log("🧩 Calculated IDs:", { fromColumnId, toColumnId });
+
     if (!fromColumnId || !toColumnId) {
-      console.error(
-        "[STORE][moveCardOnServer] ❌ Missing column IDs:",
-        fromColumnId,
-        toColumnId
-      );
+      console.error("[STORE][moveCardOnServer] ❌ Missing column IDs");
+      console.groupEnd();
       return;
     }
 
@@ -165,9 +175,14 @@ export const useColumnStore = create((set, get) => ({
         toCardIndex,
       });
       console.log("[STORE][moveCardOnServer] ✅ Server response:", res.data);
+      console.log("[STORE][moveCardOnServer] 🔁 Refetching columns...");
+      await get().fetchColumns(projectId);
+      console.log("[STORE][moveCardOnServer] ✅ Columns updated after move");
     } catch (err) {
       console.error("[STORE][moveCardOnServer] ❌ Failed:", err);
-      await get().fetchColumns(get().selectedProjectId);
+      await get().fetchColumns(projectId);
+    } finally {
+      console.groupEnd();
     }
   },
 }));
