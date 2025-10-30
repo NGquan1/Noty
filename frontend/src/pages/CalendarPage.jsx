@@ -37,12 +37,16 @@ const CalendarPage = ({ projectId }) => {
   }, [activeProjectId]);
 
   const handleDayClick = (date) => {
-    setSelectedDate(date);
+    // Đảm bảo date là đúng múi giờ địa phương
+    const localDate = new Date(
+      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+    );
+    setSelectedDate(localDate);
     setSelectedEvent(null);
     //setModalOpen(true);
     setEventForm({
       ...eventForm,
-      startDate: formatDate(date),
+      startDate: formatDate(localDate),
       project: activeProjectId,
     });
   };
@@ -64,7 +68,9 @@ const CalendarPage = ({ projectId }) => {
     loadEvents(activeProjectId);
   };
 
-  const selectedKey = formatDate(selectedDate);
+  const selectedKey = selectedDate
+    ? selectedDate.toLocaleDateString("en-CA")
+    : "";
   const events = tasks[selectedKey] || [];
 
   return (
@@ -105,6 +111,17 @@ const CalendarPage = ({ projectId }) => {
             value={selectedDate}
             onChange={setSelectedDate}
             onClickDay={handleDayClick}
+            locale="en-US"
+            formatDay={(locale, date) => date.getDate()}
+            formatMonth={(locale, date) =>
+              date.toLocaleString("en-US", { month: "long", year: "numeric" })
+            }
+            formatMonthYear={(locale, date) =>
+              date.toLocaleString("en-US", { month: "long", year: "numeric" })
+            }
+            formatShortWeekday={(locale, date) =>
+              date.toLocaleString("en-US", { weekday: "short" })
+            }
             tileContent={({ date }) => {
               const key = formatDate(date);
               return (
@@ -157,7 +174,8 @@ const CalendarPage = ({ projectId }) => {
           >
             <div className="flex items-center justify-between mb-6">
               <h3 className="font-bold text-xl text-gray-800">
-                Events for {formatDate(selectedDate)}
+                Events for{" "}
+                {selectedDate ? selectedDate.toLocaleDateString("en-CA") : ""}
               </h3>
             </div>
             <div className="space-y-4">
