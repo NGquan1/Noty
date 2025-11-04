@@ -142,7 +142,6 @@ const Card = ({
         return;
       }
 
-      // ✅ Cùng column thì sync server
       if (fromColumnIndex === toColumnIndex && fromCardIndex !== toCardIndex) {
         console.log("[DND][drop] 🔄 Syncing reorder with server...");
         moveCardOnServer(card.id, fromColumnId, toColumnId, toCardIndex)
