@@ -217,6 +217,10 @@ export const useColumnStore = create((set, get) => ({
       }
       console.log("[STORE][moveCardOnServer] ✅ Server response:", res.data);
       console.log("[STORE][moveCardOnServer] 🔁 Refetching columns...");
+      
+      // Small delay to ensure server has processed the update before fetching
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       await get().fetchColumns(projectId);
       console.log("[STORE][moveCardOnServer] ✅ Columns updated after move");
       
