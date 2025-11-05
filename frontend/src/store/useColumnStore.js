@@ -150,8 +150,22 @@ export const useColumnStore = create((set, get) => ({
       toCardIndex,
     });
 
-    const fromColumn = state.columns[fromColumnIndex];
-    const toColumn = state.columns[toColumnIndex];
+    // Nếu fromColumnIndex là id, cần tìm index thực trong mảng columns
+    let fromColIdx = fromColumnIndex;
+    let toColIdx = toColumnIndex;
+    if (typeof fromColumnIndex === "string") {
+      fromColIdx = state.columns.findIndex(
+        (col) => col.id === fromColumnIndex || col._id === fromColumnIndex
+      );
+    }
+    if (typeof toColumnIndex === "string") {
+      toColIdx = state.columns.findIndex(
+        (col) => col.id === toColumnIndex || col._id === toColumnIndex
+      );
+    }
+
+    const fromColumn = state.columns[fromColIdx];
+    const toColumn = state.columns[toColIdx];
 
     console.log("📦 fromColumn:", fromColumn);
     console.log("📦 toColumn:", toColumn);
