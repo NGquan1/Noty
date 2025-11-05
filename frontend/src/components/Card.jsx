@@ -142,7 +142,12 @@ const Card = ({
         return;
       }
 
-      if (fromColumnIndex === toColumnIndex && fromCardIndex !== toCardIndex) {
+      // Luôn gọi moveCardOnServer nếu có thao tác drop và vị trí thực sự thay đổi
+      if (
+        fromColumnIndex === toColumnIndex &&
+        (fromCardIndex !== toCardIndex ||
+          columns[toColumnIndex].cards[toCardIndex]?.id !== card.id)
+      ) {
         console.log("[DND][drop] 🔄 Syncing reorder with server...");
         moveCardOnServer(card.id, fromColumnId, toColumnId, toCardIndex)
           .then((res) =>
