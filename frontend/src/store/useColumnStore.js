@@ -190,20 +190,19 @@ export const useColumnStore = create((set, get) => ({
         // We need to find the original position of the card before any client-side updates
         const cards = fromColumn.cards;
         let originalCardPosition = -1;
-        
-        // Find the original position based on the card ID
+
         for (let i = 0; i < cards.length; i++) {
           if (cards[i]._id === cardId || cards[i].id === cardId) {
             originalCardPosition = i;
             break;
           }
         }
-        
+
         if (originalCardPosition === -1) {
           console.error("Card not found in column for reorder operation");
           return;
         }
-        
+
         res = await API.patch(`/columns/${fromColumnId}/cards/reorder`, {
           fromIndex: originalCardPosition,
           toIndex: toCardIndex,
