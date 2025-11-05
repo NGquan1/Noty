@@ -169,11 +169,24 @@ export const useColumnStore = create((set, get) => ({
     }
 
     try {
-      const res = await API.patch(`/cards/${cardId}/move`, {
-        fromColumnId,
-        toColumnId,
-        toCardIndex,
-      });
+      let res;
+      if (fromColumnId === toColumnId) {
+        // Kéo thả trong cùng column
+        const fromCardIndex = fromColumn.cards.findIndex(
+          (c) => c.id === cardId || c._id === cardId
+        );
+        res = await API.patch(`/columns/${fromColumnId}/cards/reorder`, {
+          fromIndex: fromCardIndex,
+          toIndex: toCardIndex,
+        });
+      } else {
+        // Kéo sang column khác
+        res = await API.patch(`/cards/${cardId}/move`, {
+          fromColumnId,
+          toColumnId,
+          toCardIndex,
+        });
+      }
       console.log("[STORE][moveCardOnServer] ✅ Server response:", res.data);
       console.log("[STORE][moveCardOnServer] 🔁 Refetching columns...");
       await get().fetchColumns(projectId);
