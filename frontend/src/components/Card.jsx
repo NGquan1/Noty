@@ -63,6 +63,8 @@ const Card = ({
       id: card.id,
       fromColumnIndex: columnIndex,
       fromCardIndex: cardIndex,
+      originalFromColumnIndex: columnIndex,
+      originalFromCardIndex: cardIndex,
       card,
     },
     collect: (monitor) => ({
@@ -109,17 +111,25 @@ const Card = ({
     drop(item, monitor) {
       if (monitor.didDrop()) return; // 🧩 Ngăn double-drop
 
-      const { card, fromColumnIndex, fromCardIndex } = item;
+      // Use the original indices when drag started, not the updated ones
+      const originalFromColumnIndex = item.originalFromColumnIndex !== undefined 
+        ? item.originalFromColumnIndex 
+        : item.fromColumnIndex;
+      const originalFromCardIndex = item.originalFromCardIndex !== undefined 
+        ? item.originalFromCardIndex 
+        : item.fromCardIndex;
+      
+      const card = item.card;
       const toColumnIndex = columnIndex;
       const toCardIndex = cardIndex;
 
-      const fromColumnId = columns?.[fromColumnIndex]?._id;
+      const fromColumnId = columns?.[originalFromColumnIndex]?._id;
       const toColumnId = columns?.[toColumnIndex]?._id;
 
       console.log("[DND][drop] 🟢 Dropped card:", {
         cardId: card.id,
-        fromColumnIndex,
-        fromCardIndex,
+        originalFromColumnIndex,
+        originalFromCardIndex,
         toColumnIndex,
         toCardIndex,
         fromColumnId,
@@ -127,7 +137,7 @@ const Card = ({
       });
 
       // 🚫 Không gọi API khi khác cột — Column.jsx sẽ xử lý
-      if (fromColumnIndex !== toColumnIndex) {
+      if (originalFromColumnIndex !== toColumnIndex) {
         console.log(
           "[DND][drop] ⏭ Skipping cross-column drop (handled by Column.jsx)"
         );
@@ -143,9 +153,9 @@ const Card = ({
       }
 
       // Luôn gọi moveCardOnServer nếu có thao tác drop trong cùng column
-      if (fromColumnIndex === toColumnIndex) {
+      if (originalFromColumnIndex === toColumnIndex) {
         console.log("[DND][drop] 🔄 Syncing reorder with server...");
-        moveCardOnServer(card.id, fromColumnId, toColumnId, toCardIndex)
+        moveCardOnServer(card.id, originalFromColumnIndex, toColumnIndex, toCardIndex)
           .then((res) =>
             console.log("[DND][drop] ✅ Server update success:", res)
           )

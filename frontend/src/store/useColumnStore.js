@@ -185,12 +185,27 @@ export const useColumnStore = create((set, get) => ({
     try {
       let res;
       if (fromColumnId === toColumnId) {
-        // Kéo thả trong cùng column
-        const fromCardIndex = fromColumn.cards.findIndex(
-          (c) => c.id === cardId || c._id === cardId
-        );
+        // For same column reorder, we need to determine the original position
+        // The fromColumnIndex refers to the array index, and fromCardIndex is the card position
+        // We need to find the original position of the card before any client-side updates
+        const cards = fromColumn.cards;
+        let originalCardPosition = -1;
+        
+        // Find the original position based on the card ID
+        for (let i = 0; i < cards.length; i++) {
+          if (cards[i]._id === cardId || cards[i].id === cardId) {
+            originalCardPosition = i;
+            break;
+          }
+        }
+        
+        if (originalCardPosition === -1) {
+          console.error("Card not found in column for reorder operation");
+          return;
+        }
+        
         res = await API.patch(`/columns/${fromColumnId}/cards/reorder`, {
-          fromIndex: fromCardIndex,
+          fromIndex: originalCardPosition,
           toIndex: toCardIndex,
         });
       } else {
