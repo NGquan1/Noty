@@ -179,7 +179,7 @@ export const useColumnStore = create((set, get) => ({
     if (!fromColumnId || !toColumnId) {
       console.error("[STORE][moveCardOnServer] ❌ Missing column IDs");
       console.groupEnd();
-      return;
+      return { error: "Missing column IDs" };
     }
 
     try {
@@ -200,7 +200,7 @@ export const useColumnStore = create((set, get) => ({
 
         if (originalCardPosition === -1) {
           console.error("Card not found in column for reorder operation");
-          return;
+          return { error: "Card not found in column" };
         }
 
         res = await API.patch(`/columns/${fromColumnId}/cards/reorder`, {
@@ -219,9 +219,13 @@ export const useColumnStore = create((set, get) => ({
       console.log("[STORE][moveCardOnServer] 🔁 Refetching columns...");
       await get().fetchColumns(projectId);
       console.log("[STORE][moveCardOnServer] ✅ Columns updated after move");
+      
+      // Return the server response so the calling function can access it
+      return res.data;
     } catch (err) {
       console.error("[STORE][moveCardOnServer] ❌ Failed:", err);
       await get().fetchColumns(projectId);
+      throw err; // Re-throw the error so the calling function can handle it
     } finally {
       console.groupEnd();
     }

@@ -156,9 +156,9 @@ const Card = ({
       if (originalFromColumnIndex === toColumnIndex) {
         console.log("[DND][drop] 🔄 Syncing reorder with server...");
         moveCardOnServer(card.id, originalFromColumnIndex, toColumnIndex, toCardIndex)
-          .then((res) =>
-            console.log("[DND][drop] ✅ Server update success:", res)
-          )
+          .then((res) => {
+            console.log("[DND][drop] ✅ Server update success:", res);
+          })
           .catch((err) => {
             console.error(
               "[DND][drop] ❌ Server update failed:",
