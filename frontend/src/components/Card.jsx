@@ -155,7 +155,7 @@ const Card = ({
       // Luôn gọi moveCardOnServer nếu có thao tác drop trong cùng column
       if (originalFromColumnIndex === toColumnIndex) {
         console.log("[DND][drop] 🔄 Syncing reorder with server...");
-        moveCardOnServer(card.id, originalFromColumnIndex, toColumnIndex, toCardIndex)
+        moveCardOnServer(card.id, originalFromColumnIndex, toColumnIndex, toCardIndex, item.originalFromCardIndex)
           .then((res) => {
             console.log("[DND][drop] ✅ Server update success:", res);
           })

@@ -131,7 +131,8 @@ export const useColumnStore = create((set, get) => ({
     cardId,
     fromColumnIndex,
     toColumnIndex,
-    toCardIndex
+    toCardIndex,
+    originalFromCardIndex // Add original card index parameter
   ) => {
     const state = get();
     console.group("[STORE][moveCardOnServer] 🟡 Start");
@@ -148,6 +149,7 @@ export const useColumnStore = create((set, get) => ({
       fromColumnIndex,
       toColumnIndex,
       toCardIndex,
+      originalFromCardIndex,
     });
 
     // Nếu fromColumnIndex là id, cần tìm index thực trong mảng columns
@@ -185,22 +187,13 @@ export const useColumnStore = create((set, get) => ({
     try {
       let res;
       if (fromColumnId === toColumnId) {
-        // For same column reorder, we need to determine the original position
-        // The fromColumnIndex refers to the array index, and fromCardIndex is the card position
-        // We need to find the original position of the card before any client-side updates
-        const cards = fromColumn.cards;
-        let originalCardPosition = -1;
-
-        for (let i = 0; i < cards.length; i++) {
-          if (cards[i]._id === cardId || cards[i].id === cardId) {
-            originalCardPosition = i;
-            break;
-          }
-        }
-
-        if (originalCardPosition === -1) {
-          console.error("Card not found in column for reorder operation");
-          return { error: "Card not found in column" };
+        // For same column reorder, use the original card index passed from the drag item
+        // This avoids the issue of trying to find the card in the current state which may already be updated
+        const originalCardPosition = originalFromCardIndex;
+        
+        if (originalCardPosition === -1 || originalCardPosition === undefined) {
+          console.error("Original card position not provided for reorder operation");
+          return { error: "Original card position missing" };
         }
 
         res = await API.patch(`/columns/${fromColumnId}/cards/reorder`, {
