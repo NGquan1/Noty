@@ -142,12 +142,8 @@ const Card = ({
         return;
       }
 
-      // Luôn gọi moveCardOnServer nếu có thao tác drop và vị trí thực sự thay đổi
-      if (
-        fromColumnIndex === toColumnIndex &&
-        (fromCardIndex !== toCardIndex ||
-          columns[toColumnIndex].cards[toCardIndex]?.id !== card.id)
-      ) {
+      // Luôn gọi moveCardOnServer nếu có thao tác drop trong cùng column
+      if (fromColumnIndex === toColumnIndex) {
         console.log("[DND][drop] 🔄 Syncing reorder with server...");
         moveCardOnServer(card.id, fromColumnId, toColumnId, toCardIndex)
           .then((res) =>
@@ -159,10 +155,6 @@ const Card = ({
               err?.response?.data || err.message || err
             );
           });
-      } else {
-        console.log(
-          "[DND][drop] ⚠️ No movement detected, skipping server call."
-        );
       }
     },
   });
