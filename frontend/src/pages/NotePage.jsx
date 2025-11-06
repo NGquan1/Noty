@@ -166,7 +166,7 @@ const App = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="flex min-h-screen bg-gray-50 font-sans antialiased">
+      <div className="flex min-h-screen bg-gray-50 font-sans antialiased overflow-hidden">
         <Sidebar
           projects={projects}
           onAddProject={handleAddProject}
@@ -177,14 +177,6 @@ const App = () => {
           setActivePage={setActivePage}
         />
         <div className="flex-1 p-8 pt-20 mt-5">
-          <style>
-            {`
-              @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-              body {
-                font-family: 'Inter', sans-serif;
-              }
-            `}
-          </style>
           {!selectedProjectId ? (
             <div className="flex flex-col items-center justify-center h-[calc(100vh-100px)]">
               <div className="w-[420px] max-w-full text-center bg-gradient-to-br from-primary/5 to-white p-12 rounded-3xl shadow-xl border border-gray-100 flex flex-col items-center gap-6 animate-fade-in">
@@ -317,7 +309,9 @@ const App = () => {
               setCurrentProject(newProject._id || newProject.id);
             } else {
               await fetchProjects();
-              const lastProject = useProjectStore.getState().projects.slice(-1)[0];
+              const lastProject = useProjectStore
+                .getState()
+                .projects.slice(-1)[0];
               if (lastProject) {
                 setSelectedProjectId(lastProject._id || lastProject.id);
                 setCurrentProject(lastProject._id || lastProject.id);
