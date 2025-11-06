@@ -89,16 +89,16 @@ const Sidebar = ({
         onClose={() => setAIModalOpen(false)}
         onSubmit={async (data) => {
           try {
-            const res = await import("../lib/axios.js").then(
+            await import("../lib/axios.js").then(
               ({ axiosInstance }) =>
                 axiosInstance.post("/ai/generate-project", data)
             );
 
-            if (res.data.project) {
-              if (typeof onAddProject === "function") {
-                onAddProject(res.data.project);
-              }
-            }
+            // The AI endpoint already creates the project in the database
+            // Just refresh the projects list to get the newly created project
+            await import("../store/useProjectStore.js").then(
+              ({ useProjectStore }) => useProjectStore.getState().fetchProjects()
+            );
           } catch (err) {
             alert("AI failed: " + (err?.response?.data?.error || err.message));
           }
