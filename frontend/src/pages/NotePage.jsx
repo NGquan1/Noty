@@ -305,6 +305,26 @@ const App = () => {
           initialCardData={editingCard}
           columnIndex={currentColumnIndex}
         />
+
+        <ProjectModal
+          isOpen={projectModalOpen}
+          onClose={() => setProjectModalOpen(false)}
+          onSave={async (data) => {
+            const newProject = await createProject(data);
+            setProjectModalOpen(false);
+            if (newProject && (newProject._id || newProject.id)) {
+              setSelectedProjectId(newProject._id || newProject.id);
+              setCurrentProject(newProject._id || newProject.id);
+            } else {
+              await fetchProjects();
+              const lastProject = useProjectStore.getState().projects.slice(-1)[0];
+              if (lastProject) {
+                setSelectedProjectId(lastProject._id || lastProject.id);
+                setCurrentProject(lastProject._id || lastProject.id);
+              }
+            }
+          }}
+        />
       </div>
     </DndProvider>
   );
