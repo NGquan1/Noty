@@ -37,10 +37,8 @@ const CalendarPage = ({ projectId }) => {
   }, [activeProjectId]);
 
   const handleDayClick = (date) => {
-    // Đảm bảo date là đúng múi giờ địa phương
-    const localDate = new Date(
-      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
-    );
+    // Create a new Date object that represents the local date at midnight
+    const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     setSelectedDate(localDate);
     setSelectedEvent(null);
     //setModalOpen(true);
@@ -69,7 +67,7 @@ const CalendarPage = ({ projectId }) => {
   };
 
   const selectedKey = selectedDate
-    ? selectedDate.toLocaleDateString("en-CA")
+    ? formatDate(selectedDate)
     : "";
   const events = tasks[selectedKey] || [];
 

@@ -19,8 +19,13 @@ const COLORS = [
 
 const formatDate = (date) => {
   if (!date) return "";
+  // Handle different input types (string, Date object, etc.)
   const d = new Date(date);
-  return d.toISOString().slice(0, 10);
+  // Format to local date string without timezone conversion
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 const defaultEvent = (date) => ({
@@ -52,7 +57,7 @@ export const useCalendarStore = create((set, get) => ({
     const { currentProjectId } = get();
     set({
       selectedDate: date,
-      eventForm: defaultEvent(formatDate(date), currentProjectId),
+      eventForm: defaultEvent(formatDate(date)),
       selectedEvent: null,
     });
   },
@@ -116,17 +121,23 @@ export const useCalendarStore = create((set, get) => ({
         const res = await API.post("/calendar", eventData);
         newEvent = res.data;
       }
+      // Group by the actual event date from the saved event to ensure consistency
+      const eventKey = formatDate(newEvent.startDate);
       const updatedTasks = { ...tasks };
-      updatedTasks[key] = [...(updatedTasks[key] || [])];
-      updatedTasks[key] = updatedTasks[key].filter(
-        (e) => e._id !== newEvent._id
-      );
-      updatedTasks[key].push(newEvent);
+      // Remove the old event if it was in a different date slot
+      Object.keys(updatedTasks).forEach(dateKey => {
+        updatedTasks[dateKey] = updatedTasks[dateKey].filter(
+          (e) => e._id !== newEvent._id
+        );
+      });
+      // Add to the correct date slot
+      if (!updatedTasks[eventKey]) updatedTasks[eventKey] = [];
+      updatedTasks[eventKey].push(newEvent);
       set({
         tasks: updatedTasks,
         modalOpen: false,
         selectedEvent: null,
-        eventForm: defaultEvent(key, currentProjectId),
+        eventForm: defaultEvent(eventKey),
       });
     } catch (err) {
       console.error("Failed to add/update event:", err);
@@ -135,7 +146,7 @@ export const useCalendarStore = create((set, get) => ({
 
   deleteEvent: async (eventId) => {
     try {
-      await API.delete(`/events/${eventId}`);
+      await API.delete(`/calendar/${eventId}`);
 
       const tasks = get().tasks;
       const updatedTasks = {};
