@@ -56,7 +56,6 @@ const Card = ({
 }) => {
   const ref = useRef(null);
 
-  // 🟦 Kéo thả card
   const [{ isDragging }, drag] = useDrag({
     type: ItemTypes.CARD,
     item: {
@@ -70,36 +69,20 @@ const Card = ({
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
-    end: (item, monitor) => {
-      if (monitor.didDrop()) {
-        console.log("[DND][end] ✅ Drag finished successfully for:", item.id);
-      } else {
-        console.log("[DND][end] ❌ Drag cancelled for:", item?.id);
-      }
-    },
+    end: (item, monitor) => {},
   });
 
-  // 🟥 Nhận thả (drop)
   const [, drop] = useDrop({
     accept: ItemTypes.CARD,
     hover(item, monitor) {
       if (!ref.current) return;
-      if (monitor.didDrop()) return; // 🧩 Ngăn propagation nếu đã handled
+      if (monitor.didDrop()) return;
 
       const { fromColumnIndex, fromCardIndex } = item;
       const toColumnIndex = columnIndex;
       const toCardIndex = cardIndex;
 
-      // 🚫 Nếu khác column thì không xử lý (để Column.jsx xử lý cross-column)
       if (fromColumnIndex !== toColumnIndex) return;
-
-      console.log("[DND][hover]", {
-        cardId: item.id,
-        fromColumnIndex,
-        fromCardIndex,
-        toColumnIndex,
-        toCardIndex,
-      });
 
       if (fromCardIndex === toCardIndex) return;
 
@@ -109,16 +92,17 @@ const Card = ({
     },
 
     drop(item, monitor) {
-      if (monitor.didDrop()) return; // 🧩 Ngăn double-drop
+      if (monitor.didDrop()) return;
 
-      // Use the original indices when drag started, not the updated ones
-      const originalFromColumnIndex = item.originalFromColumnIndex !== undefined 
-        ? item.originalFromColumnIndex 
-        : item.fromColumnIndex;
-      const originalFromCardIndex = item.originalFromCardIndex !== undefined 
-        ? item.originalFromCardIndex 
-        : item.fromCardIndex;
-      
+      const originalFromColumnIndex =
+        item.originalFromColumnIndex !== undefined
+          ? item.originalFromColumnIndex
+          : item.fromColumnIndex;
+      const originalFromCardIndex =
+        item.originalFromCardIndex !== undefined
+          ? item.originalFromCardIndex
+          : item.fromCardIndex;
+
       const card = item.card;
       const toColumnIndex = columnIndex;
       const toCardIndex = cardIndex;
@@ -126,45 +110,24 @@ const Card = ({
       const fromColumnId = columns?.[originalFromColumnIndex]?._id;
       const toColumnId = columns?.[toColumnIndex]?._id;
 
-      console.log("[DND][drop] 🟢 Dropped card:", {
-        cardId: card.id,
-        originalFromColumnIndex,
-        originalFromCardIndex,
-        toColumnIndex,
-        toCardIndex,
-        fromColumnId,
-        toColumnId,
-      });
-
-      // 🚫 Không gọi API khi khác cột — Column.jsx sẽ xử lý
       if (originalFromColumnIndex !== toColumnIndex) {
-        console.log(
-          "[DND][drop] ⏭ Skipping cross-column drop (handled by Column.jsx)"
-        );
         return;
       }
 
       if (!fromColumnId || !toColumnId) {
-        console.error("[DND][drop] ❌ Missing column IDs!", {
-          fromColumnId,
-          toColumnId,
-        });
         return;
       }
 
-      // Luôn gọi moveCardOnServer nếu có thao tác drop trong cùng column
       if (originalFromColumnIndex === toColumnIndex) {
-        console.log("[DND][drop] 🔄 Syncing reorder with server...");
-        moveCardOnServer(card.id, originalFromColumnIndex, toColumnIndex, toCardIndex, item.originalFromCardIndex)
-          .then((res) => {
-            console.log("[DND][drop] ✅ Server update success:", res);
-          })
-          .catch((err) => {
-            console.error(
-              "[DND][drop] ❌ Server update failed:",
-              err?.response?.data || err.message || err
-            );
-          });
+        moveCardOnServer(
+          card.id,
+          originalFromColumnIndex,
+          toColumnIndex,
+          toCardIndex,
+          item.originalFromCardIndex
+        )
+          .then((res) => {})
+          .catch((err) => {});
       }
     },
   });
@@ -215,7 +178,6 @@ const Card = ({
           </span>
           <button
             onClick={() => {
-              console.log("[CARD][Edit] Editing card:", card.id);
               onEdit(card, columnIndex);
             }}
             className="text-gray-500 hover:text-blue-600 p-1 rounded-full hover:bg-blue-100 transition-colors"
@@ -224,7 +186,6 @@ const Card = ({
           </button>
           <button
             onClick={() => {
-              console.log("[CARD][Delete] Deleting card:", card.id);
               onDelete(card.id, columnIndex);
             }}
             className="text-gray-500 hover:text-red-600 p-1 rounded-full hover:bg-red-100 transition-colors"

@@ -37,11 +37,13 @@ const CalendarPage = ({ projectId }) => {
   }, [activeProjectId]);
 
   const handleDayClick = (date) => {
-    // Create a new Date object that represents the local date at midnight
-    const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const localDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    );
     setSelectedDate(localDate);
     setSelectedEvent(null);
-    //setModalOpen(true);
     setEventForm({
       ...eventForm,
       startDate: formatDate(localDate),
@@ -66,9 +68,7 @@ const CalendarPage = ({ projectId }) => {
     loadEvents(activeProjectId);
   };
 
-  const selectedKey = selectedDate
-    ? formatDate(selectedDate)
-    : "";
+  const selectedKey = selectedDate ? formatDate(selectedDate) : "";
   const events = tasks[selectedKey] || [];
 
   return (

@@ -45,18 +45,9 @@ const Column = ({
     accept: ItemTypes.CARD,
     drop: (item, monitor) => {
       const { card, fromColumnIndex, fromCardIndex } = item;
-      console.log("[DND][column-drop] 🟢 Dropped on column:", {
-        cardId: card.id,
-        fromColumnIndex,
-        fromCardIndex,
-        toColumnIndex: columnIndex,
-        cardsInTarget: column.cards.length,
-      });
 
-      // 🧠 Nếu thả vào column khác
       if (fromColumnIndex !== columnIndex) {
-        const toCardIndex = column.cards.length; // thêm ở cuối
-        console.log("[DND][column-drop] 🚀 Moving card to another column...");
+        const toCardIndex = column.cards.length;
 
         moveCard(fromColumnIndex, fromCardIndex, columnIndex, toCardIndex);
         moveCardOnServer(card.id, fromColumnIndex, columnIndex, toCardIndex);
@@ -123,13 +114,11 @@ const Column = ({
             columnIndex={columnIndex}
             columns={columns}
             moveCard={moveCard}
-            moveCardOnServer={moveCardOnServer} // ✅ truyền xuống để log trong card
+            moveCardOnServer={moveCardOnServer}
             onEdit={onEditCard}
             onDelete={onDeleteCard}
           />
         ))}
-
-        {/* 🧭 Hiển thị khi column trống */}
         {column.cards.length === 0 && (
           <div
             className={`text-center text-gray-500 italic p-3 rounded ${

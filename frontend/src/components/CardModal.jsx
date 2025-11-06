@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-// 1. Import đối tượng statusBadge từ file Card.js
 import { statusBadge } from "./Card";
 
 const CardModal = ({
@@ -103,7 +102,7 @@ const CardModal = ({
                 <label className="block text-sm font-medium text-gray-600 mb-1">
                   Progression
                 </label>
-                {/* 2. Cập nhật thẻ Select để hiển thị màu */}
+                {/* 2. Update card colors */}
                 <select
                   className={`border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full font-semibold transition-colors duration-200 ${
                     statusBadge[status]?.color || "bg-gray-100 text-gray-700"
@@ -111,7 +110,7 @@ const CardModal = ({
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
                 >
-                  {/* 3. Tự động tạo các <option> từ statusBadge */}
+                  {/* 3. Auto creat option from statusBadge */}
                   {Object.entries(statusBadge).map(([key, value]) => (
                     <option
                       key={key}

@@ -12,7 +12,6 @@ const Navbar = () => {
     const handleScroll = () => {
       setIsDark(window.scrollY > 10);
     };
-    // Initialize the state based on current scroll position
     setIsDark(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
