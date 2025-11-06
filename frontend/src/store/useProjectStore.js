@@ -32,8 +32,15 @@ export const useProjectStore = create((set, get) => ({
   },
 
   deleteProject: async (projectId) => {
-    await API.delete(`/projects/${projectId}`);
-    await get().fetchProjects();
+    try {
+      await API.delete(`/projects/${projectId}`);
+      await get().fetchProjects();
+    } catch (error) {
+      if (error.response?.status === 403) {
+        throw new Error(error.response.data.error || "Only project owner can delete the project");
+      }
+      throw error;
+    }
   },
 
   shareProjectByLink: async (projectId, role) => {

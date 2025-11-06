@@ -44,7 +44,7 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
       setShowDeleteModal(false);
       if (onProjectDeleted) onProjectDeleted();
     } catch (err) {
-      setError("Delete failed");
+      setError(err.message || "Delete failed");
     }
     setLoading(false);
   };
