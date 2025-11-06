@@ -13,17 +13,11 @@ const HomePage = () => {
   const { authUser } = useAuthStore();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-20">
-        <div className="max-w-6xl mx-auto">
+    <div className="h-screen bg-gray-50 overflow-hidden">
+      <div className="container mx-auto px-4 h-full flex items-center pt-20">
+        <div className="max-w-6xl mx-auto w-full">
           {/* Hero Section */}
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 rounded-full mb-6">
-              <ListTodo className="w-5 h-5 text-white" />
-              <span className="text-sm font-semibold text-white">
-                Task Management Made Simple
-              </span>
-            </div>
+          <div className="text-center mb-12">
             <h1 className="text-6xl font-bold mb-6 text-gray-900">
               Welcome to Noty
             </h1>
@@ -34,7 +28,7 @@ const HomePage = () => {
           </div>
 
           {/* Main CTA Card */}
-          <div className="max-w-4xl mx-auto mb-16">
+          <div className="max-w-4xl mx-auto mb-12">
             <Link
               to="/tasks"
               className="group block p-8 rounded-3xl bg-gray-900 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
@@ -98,7 +92,7 @@ const HomePage = () => {
           </div>
 
           {authUser && (
-            <div className="text-center mt-12">
+            <div className="text-center mt-8">
               <p className="text-gray-600 text-lg">
                 Welcome back,{" "}
                 <span className="font-semibold text-gray-900">
