@@ -110,7 +110,7 @@ const Sidebar = ({
           </div>
         </div>
 
-        <div className="flex flex-col gap-2.5 max-h-[calc(100vh-450px)] overflow-y-auto pr-1 custom-scrollbar">
+        <div className="flex flex-col gap-2.5 max-h-[calc(100vh-450px)] overflow-y-auto px-1 custom-scrollbar">
           {filteredProjects.map((project) => (
             <button
               key={project._id || project.id}
@@ -183,23 +183,6 @@ const Sidebar = ({
           setAIModalOpen(false);
         }}
       />
-
-      <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(55, 65, 81, 0.3);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(139, 92, 246, 0.5);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(139, 92, 246, 0.7);
-        }
-      `}</style>
     </div>
   );
 };
