@@ -48,12 +48,12 @@ const Sidebar = ({
 
       <div className="mb-4 relative z-10">
         <div className="text-2xl font-extrabold mb-4 tracking-wide flex items-center gap-2">
-          <div className="p-2 bg-gradient-to-br from-violet-500/20 to-blue-500/20 rounded-lg backdrop-blur-sm border border-white/10">
-            <Folder className="w-6 h-6 text-violet-300" />
-          </div>
           <span className="drop-shadow-lg bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
             Workspace
           </span>
+          <div className="p-2 bg-gradient-to-br from-violet-500/20 to-blue-500/20 rounded-lg backdrop-blur-sm border border-white/10">
+            <Folder className="w-6 h-6 text-violet-300" />
+          </div>
         </div>
         <div className="relative">
           <input
