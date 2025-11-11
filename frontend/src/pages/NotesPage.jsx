@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Plus, MoreVertical } from "lucide-react";
+import { Plus, MoreVertical, StickyNote } from "lucide-react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useNoteStore } from "../store/useNoteStore";
@@ -51,8 +51,11 @@ const NotesPage = ({ selectedProjectId }) => {
   return (
     <div className="flex h-auto min-h-[500px]">
       <div className="w-72 bg-white/80 p-4 flex flex-col gap-2 border border-primary rounded-2xl shadow-xl mr-4">
-        <div className="font-extrabold text-lg mb-3 text-primary tracking-wide">
-          Notes
+        <div className="flex items-center justify-center gap-2">
+          <StickyNote className="w-7 h-7 text-primary" />
+          <div className="font-extrabold text-3xl text-primary tracking-wide">
+            Notes
+          </div>
         </div>
         {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
         {notes.length === 0 ? (
@@ -63,7 +66,7 @@ const NotesPage = ({ selectedProjectId }) => {
           notes.map((note) => (
             <div
               key={note._id}
-              className={`group relative rounded-2xl px-4 py-3 mb-2 cursor-pointer transition-all duration-150 border-2 ${
+              className={`group relative rounded-2xl px-4 py-3 mt-2 cursor-pointer transition-all duration-150 border-2 ${
                 selectedNote?._id === note._id
                   ? "bg-primary/10 border-gray-400 shadow-lg font-semibold scale-[1.03]"
                   : "bg-gray-200 border-transparent hover:bg-primary/5 hover:border-primary/40"

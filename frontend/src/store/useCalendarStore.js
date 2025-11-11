@@ -7,14 +7,14 @@ const API = axios.create({
 });
 
 const COLORS = [
-  "bg-sky-500 text-white",
-  "bg-rose-300 text-white",
-  "bg-amber-300 text-white",
-  "bg-emerald-400 text-white",
-  "bg-indigo-400 text-white",
-  "bg-cyan-400 text-white",
-  "bg-lime-400 text-white",
-  "bg-fuchsia-300 text-white",
+  "bg-gradient-to-r from-[#FFB3B3] to-[#FF7A7A] text-white", // đỏ pastel vừa
+  "bg-gradient-to-r from-[#81E6D9] to-[#14B8A6] text-white", // xanh lá vừa
+  "bg-gradient-to-r from-[#A5B4FC] to-[#6366F1] text-white", // xanh dương vừa
+  "bg-gradient-to-r from-[#FDE68A] to-[#FCD34D] text-black", // vàng vừa
+  "bg-gradient-to-r from-[#C4B5FD] to-[#A78BFA] text-white", // tím pastel vừa
+  "bg-gradient-to-r from-[#F9A8D4] to-[#F472B6] text-white", // hồng vừa
+  "bg-gradient-to-r from-[#5EEAD4] to-[#14B8A6] text-white", // teal vừa
+  "bg-gradient-to-r from-[#D8B4FE] to-[#C084FC] text-white",
 ];
 
 const formatDate = (date) => {

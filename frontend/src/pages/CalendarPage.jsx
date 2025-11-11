@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import Calendar from "react-calendar";
+import "../Calendar.css";
 import "react-calendar/dist/Calendar.css";
+import { CalendarDays } from "lucide-react";
 import { useCalendarStore } from "../store/useCalendarStore";
 import { AnimatePresence, motion } from "framer-motion";
 import EventModalForm from "../components/EventModal";
@@ -74,9 +76,15 @@ const CalendarPage = ({ projectId }) => {
   return (
     <div className="max-w-6xl mx-auto bg-gradient-to-br from-gray-100 to-white rounded-3xl shadow-2xl p-10 mt-8 border border-gray-200 overflow-y-scroll scrollbar-hide">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-4xl font-extrabold text-primary drop-shadow text-center w-full">
-          Event Calendar
-        </h2>
+        {/* Icon + Text */}
+        <div className="flex items-center justify-center gap-2 flex-1">
+          <CalendarDays className="w-7 h-7 text-primary" />
+          <h2 className="text-4xl font-extrabold text-primary drop-shadow">
+            Event Calendar
+          </h2>
+        </div>
+
+        {/* Button */}
         <button
           onClick={() => {
             setSelectedEvent(null);
@@ -86,7 +94,7 @@ const CalendarPage = ({ projectId }) => {
               project: activeProjectId,
             });
           }}
-          className="px-3 py-1 bg-gray-700 text-white rounded-md hover:scale-105 transition-all duration-200 flex items-center gap-1 shadow-md "
+          className="px-3 py-1 bg-gray-700 text-white rounded-md hover:scale-105 transition-all duration-200 flex items-center gap-1 shadow-md"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -103,6 +111,7 @@ const CalendarPage = ({ projectId }) => {
           <span className="text-sm font-medium">Add Event</span>
         </button>
       </div>
+
       <div className="flex flex-col md:flex-row gap-10">
         <div className="flex-1 min-w-[700px]">
           <Calendar
