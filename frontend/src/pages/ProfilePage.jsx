@@ -28,12 +28,9 @@ const ProfilePage = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center pt-48 px-4 overflow-hidden">
-      {/* ✅ Thêm Background động */}
       <Background />
 
-      {/* ✅ Nội dung chính nằm trên nền */}
-      <div className="relative z-10 max-w-5xl w-full flex flex-col lg:flex-row gap-8 bg-white rounded-2xl p-8 shadow-xl border border-gray-200">
-        {/* LEFT SIDE — Avatar + Basic Info */}
+      <div className="relative z-10 max-w-5xl w-full flex flex-col lg:flex-row gap-8 bg-white rounded-2xl p-8 shadow-xl border border-violet-300">
         <div className="flex flex-col items-center lg:w-1/3 border-r border-gray-200 pr-6 space-y-6">
           <div className="relative group">
             <img
@@ -78,9 +75,7 @@ const ProfilePage = () => {
           </p>
         </div>
 
-        {/* RIGHT SIDE — Info Sections */}
         <div className="flex-1 flex flex-col gap-6">
-          {/* Section 1 — About */}
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 hover:shadow-md transition-all">
             <div className="flex items-center gap-2 mb-3">
               <User className="w-5 h-5 text-gray-700" />
@@ -108,7 +103,6 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* Section 2 — Account */}
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 hover:shadow-md transition-all">
             <div className="flex items-center gap-2 mb-3">
               <Sparkles className="w-5 h-5 text-gray-700" />

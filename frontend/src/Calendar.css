@@ -1,12 +1,20 @@
+/* Ngày hôm nay */
 .react-calendar__tile--now {
-  background: #fed7aa !important;
-  color: #3f3f46 !important;
+  background: rgba(
+    139,
+    92,
+    246,
+    0.15
+  ) !important; /* tím nhạt trong suốt - violet-500/15 */
   border-radius: 8px;
+  font-weight: 600;
 }
 
+/* Ngày đang chọn */
 .react-calendar__tile--active {
-  border: 2px solid #dc2626 !important;
-  background: transparent !important;
-  color: inherit !important;
+  border: 2px solid #8b5cf6 !important; /* viền tím violet-500 */
+  background: transparent !important; /* giữ nền trong suốt */
+  color: #000000 !important; /* chữ tím sáng hơn - violet-300 */
   border-radius: 8px;
+  font-weight: 700;
 }

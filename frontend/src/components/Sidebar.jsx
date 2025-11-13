@@ -46,14 +46,11 @@ const Sidebar = ({
         <div className="absolute bottom-40 left-8 w-12 h-12 border border-white/5 rounded-full"></div>
       </div>
 
-      <div className="mb-4 relative z-10">
+      <div className="relative z-10">
         <div className="text-2xl font-extrabold mb-4 tracking-wide flex items-center gap-2">
           <span className="drop-shadow-lg bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
             Workspace
           </span>
-          <div className="p-2 bg-gradient-to-br from-violet-500/20 to-blue-500/20 rounded-lg backdrop-blur-sm border border-white/10">
-            <Folder className="w-6 h-6 text-violet-300" />
-          </div>
         </div>
         <div className="relative">
           <input
@@ -81,7 +78,7 @@ const Sidebar = ({
       </div>
 
       <div className="relative">
-        <hr className="border-gray-700/50 my-2 mt-0" />
+        <hr className="border-2 border-violet-500/40 rounded-full my-1" />
       </div>
 
       <div className="mb-4 relative z-10 flex-1">
