@@ -7,12 +7,13 @@ export const useChatStore = create((set, get) => ({
   socket: null,
   messages: [],
   isConnected: false,
+  onlineUsers: {},
+  remoteCursors: {},
 
-  connectSocket: () => {
+  connectSocket: (userId) => {
     if (get().socket) return;
 
     const socketUrl = import.meta.env.VITE_API_URL.replace(/\/api\/?$/, "");
-    console.log("🌐 Connecting to Socket.IO:", socketUrl);
 
     const newSocket = io(socketUrl, {
       withCredentials: true,
@@ -20,13 +21,23 @@ export const useChatStore = create((set, get) => ({
     });
 
     newSocket.on("connect", () => {
-      console.log("✅ Connected to Socket.IO:", newSocket.id);
       set({ socket: newSocket, isConnected: true });
     });
 
+    newSocket.on("connect_error", (error) => {
+      console.error("❌ Socket connection error:", error);
+    });
+
+    newSocket.on("reconnect", (attemptNumber) => {});
+
     newSocket.on("disconnect", (reason) => {
       console.warn("⚠️ Disconnected from Socket.IO:", reason);
-      set({ socket: null, isConnected: false });
+      set({
+        socket: null,
+        isConnected: false,
+        onlineUsers: {},
+        remoteCursors: {},
+      });
     });
 
     newSocket.on("receive_message", (newMessage) => {
@@ -54,12 +65,60 @@ export const useChatStore = create((set, get) => ({
         return state;
       });
     });
+
+    newSocket.on("user-joined", (userData) => {
+      console.log("👥 User joined project:", userData);
+      set((state) => ({
+        onlineUsers: {
+          ...state.onlineUsers,
+          [userData.userId]: userData,
+        },
+      }));
+    });
+
+    newSocket.on("user-left", (userData) => {
+      console.log("🚪 User left project:", userData);
+      set((state) => {
+        const newOnlineUsers = { ...state.onlineUsers };
+        const newRemoteCursors = { ...state.remoteCursors };
+
+        delete newOnlineUsers[userData.userId];
+        delete newRemoteCursors[userData.userId];
+
+        return {
+          onlineUsers: newOnlineUsers,
+          remoteCursors: newRemoteCursors,
+        };
+      });
+    });
+
+    newSocket.on("remote-cursor-move", (data) => {
+      console.log("🖱️ Remote cursor moved:", data);
+      set((state) => ({
+        remoteCursors: {
+          ...state.remoteCursors,
+          [data.userId]: {
+            ...data,
+            lastUpdated: Date.now(),
+          },
+        },
+      }));
+    });
   },
 
   disconnectSocket: () => {
     console.log("🔌 Disconnecting Socket.IO...");
-    get().socket?.disconnect();
-    set({ socket: null, isConnected: false, messages: [] });
+    const { socket } = get();
+    if (socket) {
+      socket.disconnect();
+      set({
+        socket: null,
+        isConnected: false,
+        messages: [],
+        onlineUsers: {},
+        remoteCursors: {},
+      });
+    }
   },
 
   fetchMessages: async (projectId) => {
@@ -94,6 +153,27 @@ export const useChatStore = create((set, get) => ({
     } catch (error) {
       toast.error("Can't delete messages");
       set({ messages: originalMessages });
+    }
+  },
+
+  sendCursorPosition: (projectId, position, elementId = null) => {
+    const { socket, isConnected } = get();
+    if (socket && isConnected) {
+      socket.emit("cursor-move", { projectId, position, elementId });
+    }
+  },
+
+  joinProject: (projectId) => {
+    const { socket, isConnected } = get();
+    if (socket && isConnected) {
+      socket.emit("join-project", projectId);
+    }
+  },
+
+  leaveProject: (projectId) => {
+    const { socket } = get();
+    if (socket) {
+      socket.emit("leave-project", projectId);
     }
   },
 }));

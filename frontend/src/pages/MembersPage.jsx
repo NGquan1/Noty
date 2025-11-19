@@ -3,6 +3,8 @@ import { axiosInstance } from "../lib/axios.js";
 import { useAuthStore } from "../store/useAuthStore";
 import toast from "react-hot-toast";
 import { Users, Trash2, Sparkles, Crown } from "lucide-react";
+import RemoteCursor from "../components/RemoteCursor";
+import { useChatStore } from "../store/useChatStore";
 
 const MembersPage = ({ projectId }) => {
   const [members, setMembers] = useState([]);
@@ -30,6 +32,20 @@ const MembersPage = ({ projectId }) => {
   useEffect(() => {
     fetchMembers();
   }, [projectId]);
+
+  const { joinProject, leaveProject } = useChatStore();
+
+  useEffect(() => {
+    if (projectId) {
+      joinProject(projectId);
+    }
+
+    return () => {
+      if (projectId) {
+        leaveProject(projectId);
+      }
+    };
+  }, [projectId, joinProject, leaveProject]);
 
   const handleRemove = async (userId) => {
     toast((t) => (
@@ -175,6 +191,9 @@ const MembersPage = ({ projectId }) => {
           </p>
         </div>
       )}
+
+      {/* Remote cursor component - renders when in a project */}
+      {projectId && <RemoteCursor projectId={projectId} />}
     </div>
   );
 };

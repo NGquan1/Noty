@@ -9,6 +9,8 @@ import {
   Sparkles,
   AlertTriangle,
 } from "lucide-react";
+import RemoteCursor from "../components/RemoteCursor";
+import { useChatStore } from "../store/useChatStore";
 
 const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
   const { projects, renameProject, deleteProject, shareProjectByLink } =
@@ -29,6 +31,20 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
   useEffect(() => {
     if (project) setNewName(project.name);
   }, [project]);
+
+  const { joinProject, leaveProject } = useChatStore();
+
+  useEffect(() => {
+    if (selectedProjectId) {
+      joinProject(selectedProjectId);
+    }
+
+    return () => {
+      if (selectedProjectId) {
+        leaveProject(selectedProjectId);
+      }
+    };
+  }, [selectedProjectId, joinProject, leaveProject]);
 
   const handleRename = async () => {
     setLoading(true);
@@ -265,6 +281,9 @@ const ProjectSettingsPage = ({ selectedProjectId, onProjectDeleted }) => {
           {error}
         </div>
       )}
+
+      {/* Remote cursor component - renders when in a project */}
+      {selectedProjectId && <RemoteCursor projectId={selectedProjectId} />}
     </div>
   );
 };

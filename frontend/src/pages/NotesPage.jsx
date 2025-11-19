@@ -10,6 +10,8 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useNoteStore } from "../store/useNoteStore";
 import Toast from "../components/Toast";
+import RemoteCursor from "../components/RemoteCursor";
+import { useChatStore } from "../store/useChatStore";
 
 const NotesPage = ({ selectedProjectId }) => {
   const { notes, fetchNotes, createNote, updateNote } = useNoteStore();
@@ -30,6 +32,20 @@ const NotesPage = ({ selectedProjectId }) => {
       setTitleValue(selectedNote.title);
     }
   }, [selectedNote]);
+
+  const { joinProject, leaveProject } = useChatStore();
+
+  useEffect(() => {
+    if (selectedProjectId) {
+      joinProject(selectedProjectId);
+    }
+
+    return () => {
+      if (selectedProjectId) {
+        leaveProject(selectedProjectId);
+      }
+    };
+  }, [selectedProjectId, joinProject, leaveProject]);
 
   const handleSave = async () => {
     if (!selectedNote) return;
@@ -287,6 +303,9 @@ const NotesPage = ({ selectedProjectId }) => {
         {showToast && (
           <Toast message="Note saved successfully!" type="success" />
         )}
+
+        {/* Remote cursor component - renders when in a project */}
+        {selectedProjectId && <RemoteCursor projectId={selectedProjectId} />}
       </div>
     </div>
   );

@@ -22,10 +22,13 @@ import CalendarPage from "./CalendarPage";
 import MembersPage from "./MembersPage";
 import AnimatedPageTransition from "../components/AnimatedPageTransition";
 import ChatWindow from "../components/ChatWindow";
+import RemoteCursor from "../components/RemoteCursor";
+import PresenceIndicator from "../components/PresenceIndicator";
 
 import { useColumnStore } from "../store/useColumnStore";
 import { useProjectStore } from "../store/useProjectStore";
 import { useCalendarStore } from "../store/useCalendarStore";
+import { useChatStore } from "../store/useChatStore";
 
 const App = () => {
   const {
@@ -66,6 +69,20 @@ const App = () => {
   useEffect(() => {
     if (selectedProjectId) fetchColumns(selectedProjectId);
   }, [fetchColumns, selectedProjectId]);
+
+  const { joinProject, leaveProject } = useChatStore();
+
+  useEffect(() => {
+    if (selectedProjectId) {
+      joinProject(selectedProjectId);
+    }
+
+    return () => {
+      if (selectedProjectId) {
+        leaveProject(selectedProjectId);
+      }
+    };
+  }, [selectedProjectId, joinProject, leaveProject]);
 
   const handleAddCard = (columnIndex) => {
     setCurrentColumnIndex(columnIndex);
@@ -253,6 +270,7 @@ const App = () => {
               ) : (
                 <>
                   <div className="flex gap-4 mb-10 justify-center items-center flex-wrap">
+                    <PresenceIndicator />
                     {pageList.map((page) => (
                       <button
                         key={page.key}
@@ -329,6 +347,11 @@ const App = () => {
                 </>
               )}
             </div>
+
+            {/* Remote cursor component - always renders when in a project */}
+            {selectedProjectId && (
+              <RemoteCursor projectId={selectedProjectId} />
+            )}
           </div>
 
           {/* Chat section */}

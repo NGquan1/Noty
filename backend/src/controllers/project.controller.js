@@ -64,9 +64,10 @@ export const deleteProject = async (req, res) => {
       return res.status(404).json({ error: "Project not found" });
     }
 
-    // Check if the user is the owner of the project
     if (!project.owner.equals(req.user._id)) {
-      return res.status(403).json({ error: "Only project owner can delete the project" });
+      return res
+        .status(403)
+        .json({ error: "Only project owner can delete the project" });
     }
 
     await Project.findByIdAndDelete(id);
