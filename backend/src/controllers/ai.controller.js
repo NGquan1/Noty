@@ -10,69 +10,66 @@ export const aiGenerateProject = async (req, res) => {
       return res.status(401).json({ error: "Authentication required" });
     }
 
-    const { name, description, deadline, members, goals } = req.body;
+    const { name, description, startDate, deadline, members, goals } = req.body;
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+      generationConfig: { responseMimeType: "application/json" },
+    });
 
     const prompt = `
-You are an AI project planner and task organizer.
-Your job is to generate a clear, structured JSON project plan ONLY — no text outside JSON.
+You are an expert Senior Project Manager.
+Your goal is to create a highly detailed, actionable project plan.
 
-Project Info:
-- Name: ${name}
-- Description: ${description}
-- Deadline: ${deadline}
-- Members: ${members}
-- Special Goals: ${goals}
+**CRITICAL INSTRUCTION: SEPARATE TASKS**
+- Do NOT group multiple tasks into one card.
+- Create **MANY individual cards**.
+- Each card should represent a single, atomic task.
+- If a phase has 5 steps, generate **5 separate cards**, not 1 card with 5 steps.
 
-Return strictly **valid JSON**, exactly like this (no markdown, no comments, no explanations):
+**Project Context:**
+- **Name:** ${name}
+- **Description:** ${description}
+- **Start Date:** ${startDate}
+- **Deadline:** ${deadline}
+- **Team Members:** ${members}
+- **Strategic Goals:** ${goals}
 
+**Output Schema (Strict JSON):**
 {
   "cards": [
     {
-      "title": "Research project goals",
-      "member": "Member 1"
+      "title": "Specific Task Title (e.g., 'Design Database Schema')",
+      "member": "Assigned Member Name"
     },
     {
-      "title": "Design system architecture",
-      "member": "Member 2"
-    },
-    {
-      "title": "Prepare presentation slides",
-      "member": "Member 3"
+      "title": "Next Specific Task (e.g., 'Setup CI/CD Pipeline')",
+      "member": "Assigned Member Name"
     }
   ],
   "notes": [
-    "Kickoff meeting scheduled for next week",
-    "Ensure all members review requirements document"
+    {
+      "title": "Strategic Insight",
+      "content": "Detailed advice..."
+    }
   ],
   "events": [
     {
       "title": "Kickoff Meeting",
-      "description": "Initial discussion about project goals and milestones",
-      "startDate": "2025-10-15",
-      "endDate": "2025-10-15",
-      "location": "Google Meet"
-    },
-    {
-      "title": "Final Review",
-      "description": "Evaluate final deliverables before deadline",
-      "startDate": "2025-10-28",
-      "endDate": "2025-10-28",
-      "location": "Main office"
+      "description": "Agenda...",
+      "startDate": "YYYY-MM-DD",
+      "endDate": "YYYY-MM-DD",
+      "location": "Online"
     }
   ]
 }
 
-Rules:
-- Each **card** represents ONE individual task.
-- Each card must have a "title" and a "member" (assigned person).
-- Distribute cards evenly among all members.
-- If "Members" is a number, create placeholder names like "Member 1", "Member 2", etc.
-- Notes summarize important ideas or reminders.
-- Events represent project milestones or meetings.
-- DO NOT include markdown formatting, code blocks, or any text outside the JSON braces.
+**Rules for "WOW" Quality:**
+1. **Granularity**: Break down the project into at least 10-15 separate cards if possible.
+2. **Specificity**: Titles should be action-oriented (e.g., "Write API Documentation" instead of just "Docs").
+3. **Distribution**: Assign cards intelligently to members.
+4. **Notes**: Provide high-value strategic advice in the notes.
 `;
 
     const result = await model.generateContent(prompt);
@@ -87,17 +84,23 @@ Rules:
       console.warn("⚠️ Gemini returned invalid JSON. Using fallback data.");
       aiData = {
         cards: [
-          { title: "Sample Task 1", member: "Member 1" },
-          { title: "Sample Task 2", member: "Member 2" },
+          { title: "Research Requirements", member: "Member 1" },
+          { title: "Draft Initial Design", member: "Member 2" },
+          { title: "Setup Project Repo", member: "Member 1" },
         ],
-        notes: ["Auto-generated project by AI"],
+        notes: [
+          {
+            title: "Getting Started",
+            content: "Break down tasks into small, manageable chunks.",
+          },
+        ],
         events: [
           {
-            title: "Kickoff Meeting",
-            description: "Initial discussion",
+            title: "Kickoff",
+            description: "Project start meeting",
             startDate: new Date().toISOString().slice(0, 10),
             endDate: new Date().toISOString().slice(0, 10),
-            location: "Default Room",
+            location: "Online",
           },
         ],
       };
@@ -123,12 +126,13 @@ Rules:
       createdColumns.push(column);
     }
 
+    // Process Cards - One Card per Task
     if (Array.isArray(aiData.cards) && aiData.cards.length > 0) {
       const todoColumn = createdColumns.find((c) => c.title === "To-do");
       if (todoColumn) {
         const cards = aiData.cards.map((card) => ({
           member: card.member || "Unassigned",
-          tasks: [card.title || "Untitled Task"],
+          tasks: [card.title || "Untitled Task"], // Single task per card
           status: "to-do",
           user: req.user._id,
         }));
@@ -137,17 +141,22 @@ Rules:
       }
     }
 
+    // Process Notes
     if (Array.isArray(aiData.notes)) {
       for (const note of aiData.notes) {
+        const title = note.title || "AI Insight";
+        const content = note.content || (typeof note === "string" ? note : JSON.stringify(note));
+        
         await Note.create({
-          title: typeof note === "string" ? note.slice(0, 100) : "AI Note",
-          content: typeof note === "string" ? note : JSON.stringify(note),
+          title: title.slice(0, 100),
+          content: content,
           user: req.user._id,
           projectId: project._id,
         });
       }
     }
 
+    // Process Events
     if (Array.isArray(aiData.events)) {
       for (const ev of aiData.events) {
         await Calendar.create({
@@ -156,7 +165,7 @@ Rules:
           startDate: ev.startDate || null,
           endDate: ev.endDate || null,
           location: ev.location || "",
-          labels: ev.labels || "",
+          labels: ev.labels || "meeting",
           client: ev.client || "",
           shareWith: [],
           file: "",
@@ -171,7 +180,7 @@ Rules:
       project,
       aiData,
       message:
-        "AI project generated successfully with columns, cards, notes, and calendar events!",
+        "AI has generated a detailed project plan with individual tasks for clarity!",
     });
   } catch (err) {
     console.error("AI Generate Project Error:", err);

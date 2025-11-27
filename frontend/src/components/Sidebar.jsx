@@ -19,7 +19,7 @@ const Sidebar = ({
   );
 
   return (
-    <div className="w-72 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-[90vh] flex flex-col p-6 gap-6 mt-24 rounded-2xl shadow-2xl mx-4 relative overflow-hidden">
+    <div className="w-72 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white h-[92vh] flex flex-col p-6 gap-6 mt-24 rounded-2xl shadow-2xl mx-4 relative overflow-hidden">
       {/* Decorative background elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Diagonal pattern */}
@@ -81,7 +81,7 @@ const Sidebar = ({
         <hr className="border-2 border-violet-500/40 rounded-full my-1" />
       </div>
 
-      <div className="mb-4 relative z-10 flex-1">
+      <div className="mb-4 relative z-10 flex-1 flex flex-col min-h-0">
         <div className="flex items-center justify-between mb-4">
           <span className="font-bold text-lg tracking-wide flex items-center gap-2">
             <span className="w-2 h-2 bg-violet-400 rounded-full animate-pulse"></span>
@@ -107,11 +107,11 @@ const Sidebar = ({
           </div>
         </div>
 
-        <div className="flex flex-col gap-2.5 max-h-[calc(100vh-450px)] overflow-y-auto px-1 custom-scrollbar">
+        <div className="flex flex-col gap-2.5 flex-1 min-h-0 overflow-y-auto px-1 custom-scrollbar">
           {filteredProjects.map((project) => (
             <button
               key={project._id || project.id}
-              className={`text-left px-4 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md border-2 relative overflow-hidden group ${
+              className={`shrink-0 text-left px-4 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md border-2 relative overflow-hidden group ${
                 selectedProjectId === (project._id || project.id)
                   ? "bg-gradient-to-r from-violet-600 to-violet-700 border-violet-500 text-white scale-[1.02] shadow-lg shadow-violet-500/30"
                   : "bg-gray-800/40 backdrop-blur-sm border-gray-700/30 hover:bg-gray-700/60 hover:border-violet-500/50 text-gray-200 hover:scale-[1.02]"

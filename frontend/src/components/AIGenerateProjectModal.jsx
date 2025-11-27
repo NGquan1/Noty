@@ -4,6 +4,7 @@ const AIGenerateProjectModal = ({ isOpen, onClose, onSubmit }) => {
   const [form, setForm] = useState({
     name: "",
     description: "",
+    startDate: "",
     deadline: "",
     members: 1,
     goals: "",
@@ -75,6 +76,20 @@ const AIGenerateProjectModal = ({ isOpen, onClose, onSubmit }) => {
               rows={3}
               required
               placeholder="Short description about goals, scope, content..."
+            />
+          </div>
+
+          <div>
+            <label className="block font-medium mb-1 text-gray-700">
+              Start Date
+            </label>
+            <input
+              type="date"
+              name="startDate"
+              value={form.startDate}
+              onChange={handleChange}
+              className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary outline-none text-gray-900"
+              required
             />
           </div>
 
