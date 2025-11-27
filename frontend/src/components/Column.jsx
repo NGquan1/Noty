@@ -105,7 +105,7 @@ const Column = ({
       </div>
 
       {/* ===== CARD LIST ===== */}
-      <div className="flex-grow max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
+      <div className="flex-grow max-h-[70vh] overflow-y-auto p-2 custom-scrollbar">
         {column.cards.map((card, index) => (
           <Card
             key={card.id}

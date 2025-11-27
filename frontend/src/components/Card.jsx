@@ -143,7 +143,7 @@ const Card = ({
       style={{ opacity }}
       className={`group p-5 rounded-2xl shadow-xl mb-4 cursor-grab active:cursor-grabbing relative transition-all duration-200 ${
         statusBadge[card.status]?.bg || "bg-white"
-      } hover:scale-[1.025] hover:shadow-2xl`}
+      } hover:scale-[1.025] hover:shadow-2xl hover:z-50`}
     >
       <div className="mb-2">
         <h4 className="font-semibold text-gray-800 truncate">{card.member}</h4>
