@@ -136,60 +136,81 @@ const Navbar = () => {
       </header>
 
       {showGame && selectedPrize && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="animate-fadeIn w-[340px] rounded-2xl shadow-2xl overflow-hidden">
-            <div className="bg-gray-100 p-2">
-              <div className="flex justify-between items-center">
-                <h2 className="text-5xl font-extrabold italic text-black tracking-wider">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fadeIn cursor-pointer"
+          onClick={() => setShowGame(false)}
+        >
+          <div
+            className="animate-scaleIn w-[360px] rounded-3xl shadow-2xl overflow-hidden relative cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header Section */}
+            <div className="bg-white p-4 pb-6 relative">
+              <div className="flex justify-between items-start">
+                <h2 className="text-6xl font-black italic text-black tracking-tighter transform -skew-x-6">
                   LUCKY
                 </h2>
-                <div className="w-8 h-8 rounded-full border-4 border-black flex items-center justify-center">
-                  <div className="w-0 h-0 border-x-[6px] border-x-transparent border-b-[9px] border-b-black transform translate-y-0.5"></div>
+                <div className="mt-1">
+                  <div className="w-10 h-10 rounded-full border-[3px] border-black flex items-center justify-center">
+                    <div className="w-0 h-0 border-x-[6px] border-x-transparent border-b-[10px] border-b-black mb-1"></div>
+                  </div>
+                  <div className="text-[0.5rem] font-bold text-center mt-0.5 tracking-tighter">
+                    Lucky-One.Corp
+                  </div>
                 </div>
+              </div>
+              
+              {/* Ticket Notches */}
+              <div className="absolute -bottom-3 -left-3 w-6 h-6 rounded-full bg-gray-900 z-10"></div>
+              <div className="absolute -bottom-3 -right-3 w-6 h-6 rounded-full bg-gray-900 z-10"></div>
+              
+              {/* Dashed Line */}
+              <div className="absolute bottom-0 left-0 w-full flex justify-center">
+                 <div className="w-[90%] border-b-2 border-dashed border-black/20"></div>
               </div>
             </div>
 
-            <div
-              className="p-4 text-center"
-              style={{ backgroundColor: "#63d44e" }}
-            >
-              <div className=" rounded-lg p-1 my-1 flex items-center justify-center">
-                <SimpleScratchCard
-                  onReveal={() => setIsRevealed(true)}
-                  prizeImage={selectedPrize.image}
-                />
+            {/* Body Section */}
+            <div className="p-6 pt-8 bg-gradient-to-br from-[#84e458] to-[#f2e74e] relative overflow-hidden">
+              {/* Grunge/Splatter Effects (Simulated with absolute shapes) */}
+              <div className="absolute top-10 left-[-20px] w-20 h-20 bg-yellow-300/40 rotate-45 transform skew-x-12"></div>
+              <div className="absolute bottom-10 right-[-10px] w-32 h-32 bg-green-400/30 rounded-full blur-xl"></div>
+
+              {/* Scratch Area */}
+              <div className="relative z-10 mx-auto w-full max-w-[280px] h-[100px] bg-black transform -rotate-1 shadow-lg border-2 border-black/10">
+                 <div className="w-full h-full p-1">
+                    <SimpleScratchCard
+                      onReveal={() => setIsRevealed(true)}
+                      prizeImage={selectedPrize.image}
+                    />
+                 </div>
               </div>
 
+              {/* Result Text */}
               {isRevealed && (
-                <div className="mt-4 text-black font-semibold animate-bounce">
-                  {selectedPrize.icon && (
-                    <img
-                      src={selectedPrize.icon}
-                      alt=""
-                      className="inline-block h-[1em] w-[1em]"
-                    />
-                  )}
-                  {selectedPrize.text}
+                <div className="mt-4 text-center">
+                  <div className="inline-block bg-white/90 backdrop-blur px-4 py-2 rounded-xl shadow-lg border-2 border-black animate-bounce">
+                    <div className="font-black text-xl text-black flex items-center gap-2">
+                       {selectedPrize.icon && (
+                        <img src={selectedPrize.icon} className="w-6 h-6" alt="" />
+                       )}
+                       {selectedPrize.text}
+                    </div>
+                  </div>
                 </div>
               )}
 
-              <div className="flex justify-between items-center mt-1 pt-1">
-                <span className="text-xs text-black/80 font-medium font-sans-serif">
-                  Only one scratch card per day!
-                </span>
-                <div className="flex ">
-                  <Star />
-                  <Star />
-                  <Star />
+              {/* Footer */}
+              <div className="mt-8 flex justify-between items-end">
+                <div className="text-xs font-bold text-black/80 tracking-tight">
+                  スクラッチは1日1回まで
+                </div>
+                <div className="flex gap-0.5 text-black">
+                  <Star size={14} fill="black" />
+                  <Star size={14} fill="black" />
+                  <Star size={14} fill="black" />
                 </div>
               </div>
-
-              <button
-                onClick={() => setShowGame(false)}
-                className="mt-3 px-4 py-1 bg-white hover:bg-gray-200 text-black font-bold rounded-lg shadow transition-all"
-              >
-                Close
-              </button>
             </div>
           </div>
         </div>

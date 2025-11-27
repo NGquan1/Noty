@@ -10,27 +10,42 @@ const SimpleScratchCard = ({ onReveal, prizeImage }) => {
     const canvas = canvasRef.current;
     if (!img || !canvas) return;
 
-    const ctx = canvas.getContext("2d");
-    ctx.globalCompositeOperation = "source-over";
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    img.onload = () => {
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
+    const initCanvas = () => {
+      canvas.width = img.clientWidth;
+      canvas.height = img.clientHeight;
 
       const ctx = canvas.getContext("2d");
-      ctx.fillStyle = "#242321";
+      ctx.fillStyle = "#1a1a1a"; // Slightly lighter black for better contrast
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = "#fff";
-      ctx.font = "bold 60px Arial";
+      // Draw "NXN" text
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate(-0.1); // Slight tilt like in the image
+      ctx.fillStyle = "#ffffff";
+      ctx.font = `900 italic ${canvas.width / 4}px Arial`; // Dynamic font size
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("NXN", canvas.width / 2, canvas.height / 2);
+      ctx.fillText("NXN", 0, 0);
+      
+      // Add some "grunge" noise if possible (simple dots)
+      for(let i=0; i<50; i++) {
+         ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.2})`;
+         ctx.beginPath();
+         ctx.arc(
+            Math.random() * canvas.width - canvas.width/2, 
+            Math.random() * canvas.height - canvas.height/2, 
+            Math.random() * 2, 0, Math.PI*2
+         );
+         ctx.fill();
+      }
+      ctx.restore();
     };
 
     if (img.complete) {
-      img.onload();
+      initCanvas();
+    } else {
+      img.onload = initCanvas;
     }
   }, [prizeImage]);
 
@@ -63,7 +78,7 @@ const SimpleScratchCard = ({ onReveal, prizeImage }) => {
     const end = () => {
       isDrawing = false;
       if (audioRef.current) audioRef.current.pause();
-      if (getPercent() > 50 && !revealed) {
+      if (getPercent() > 40 && !revealed) { // Lower threshold for easier reveal
         setRevealed(true);
         onReveal?.();
       }
@@ -77,12 +92,14 @@ const SimpleScratchCard = ({ onReveal, prizeImage }) => {
 
       if (!clientX || !clientY) return;
 
-      const x = (clientX - rect.left) * (canvas.width / rect.width);
-      const y = (clientY - rect.top) * (canvas.height / rect.height);
+      const x = (clientX - rect.left);
+      const y = (clientY - rect.top);
 
       ctx.globalCompositeOperation = "destination-out";
       ctx.beginPath();
-      ctx.arc(x, y, 25, 0, Math.PI * 2);
+      // Dynamic brush size
+      const brushSize = canvas.width / 10; 
+      ctx.arc(x, y, brushSize, 0, Math.PI * 2);
       ctx.fill();
     };
 
@@ -106,17 +123,17 @@ const SimpleScratchCard = ({ onReveal, prizeImage }) => {
   }, [revealed, onReveal]);
 
   return (
-    <div className="relative mx-auto overflow-hidden shadow-lg ">
+    <div className="relative w-full h-full overflow-hidden select-none">
       <img
         ref={imgRef}
         src={prizeImage}
         alt="Prize"
-        className="block w-full h-auto"
+        className="w-full h-full object-cover pointer-events-none"
         crossOrigin="anonymous"
       />
       <canvas
         ref={canvasRef}
-        className="absolute top-0 left-0 w-full h-full cursor-pointer"
+        className="absolute top-0 left-0 w-full h-full cursor-pointer touch-none"
       />
 
       <audio
