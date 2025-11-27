@@ -152,7 +152,7 @@ const Navbar = () => {
                 </h2>
                 <div className="mt-1">
                   <div className="w-10 h-10 rounded-full border-[3px] border-black flex items-center justify-center">
-                    <div className="w-0 h-0 border-x-[6px] border-x-transparent border-b-[10px] border-b-black mb-1"></div>
+                    <div className="w-0 h-0 border-x-[10px] border-x-transparent border-b-[10px] border-b-black mb-1"></div>
                   </div>
                   <div className="text-[0.5rem] font-bold text-center mt-0.5 tracking-tighter">
                     Lucky-One.Corp
@@ -203,7 +203,7 @@ const Navbar = () => {
               {/* Footer */}
               <div className="mt-8 flex justify-between items-end">
                 <div className="text-xs font-bold text-black/80 tracking-tight">
-                  スクラッチは1日1回まで
+                  Only once scratch per day
                 </div>
                 <div className="flex gap-0.5 text-black">
                   <Star size={14} fill="black" />

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 const SimpleScratchCard = ({ onReveal, prizeImage }) => {
   const canvasRef = useRef(null);
   const imgRef = useRef(null);
-  const audioRef = useRef(null);
   const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
@@ -68,16 +67,11 @@ const SimpleScratchCard = ({ onReveal, prizeImage }) => {
 
     const start = (e) => {
       isDrawing = true;
-      if (audioRef.current) {
-        audioRef.current.currentTime = 0;
-        audioRef.current.play();
-      }
       draw(e);
     };
 
     const end = () => {
       isDrawing = false;
-      if (audioRef.current) audioRef.current.pause();
       if (getPercent() > 40 && !revealed) { // Lower threshold for easier reveal
         setRevealed(true);
         onReveal?.();
@@ -134,11 +128,6 @@ const SimpleScratchCard = ({ onReveal, prizeImage }) => {
       <canvas
         ref={canvasRef}
         className="absolute top-0 left-0 w-full h-full cursor-pointer touch-none"
-      />
-
-      <audio
-        ref={audioRef}
-        src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_79f7c7b014.mp3?filename=scratch-1.mp3"
       />
     </div>
   );
